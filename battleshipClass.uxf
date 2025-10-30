@@ -1,0 +1,69 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>150</x><y>170</y><w>320</w><h>190</h></coordinates><panel_attributes>GUI
+--
+-bSize : uint
+- pBoard[][] : jbtn (probably maybe was anderes)
+- eBoard[][] : jbtn
+- newGame : jbtn
+- loadGame : jbtn
+- saveGame : jbtn
+
+--
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>330</y><w>210</w><h>190</h></coordinates><panel_attributes>Spiel
+--
+- humanE : bool
+- pBoats[] : Boot
+- eBoats[] : Boot
+--
++ startGame() 
++ loadGame()
++ saveGame() : file
++ turnP()
++ turnE()
++ checkWin()</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>680</x><y>0</y><w>210</w><h>190</h></coordinates><panel_attributes>Schiff
+--
+- length : uint
+- dReg[] : bool
+- img[] : images
+- pos[] : uint 
+--</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>410</x><y>930</y><w>210</w><h>190</h></coordinates><panel_attributes>Kommunikation
+--
+
+--
++ takeTurn()
++ connect()
++ receive()
++ send()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>50</x><y>500</y><w>210</w><h>330</h></coordinates><panel_attributes># GUI
+- somehow during the 'prep pahse' allow the player to rotate the ship their holding by pressing 'm2' or 'r' 
++ confirm button could optionally be added, could allow for less missclicks and multifunctionallity with the use to confirm a finalized ship placement
+- upon 'new game' open a "pop-up" menu to select between AI or human opponent (if difficulty settings are added simply split the AI selection button into the different difficulty settings)
++ maybe the playing area during the 'prep-phase' and the 'game-phase' will need to be two different jbtn[][]
+- after "opponent-selection" let the player choose a board size and find via an algorithm a fitting set of ships
+--
+ # Comms
+- 
+--
+# AI 
+- algo for playing
+(- maybe difficulties)
+--
+# AI &amp; Comms
+- should from an outside perspective function basically identically
+- potentially add a 'enemy' class which receives input from comms or AI and then normalizes the outputs</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>900</x><y>930</y><w>210</w><h>190</h></coordinates><panel_attributes>AI
+--
+(- difficulty : {0, 1, 2})
+--
++ placeShips()
++ takeTurn() </panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLNote</id><coordinates><x>680</x><y>950</y><w>140</w><h>110</h></coordinates><panel_attributes>receive() 
+&amp; 
+takeTurn() 
+should ideally have
+ identical parameter 
+and return types</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>770</x><y>180</y><w>30</w><h>170</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;150</additional_attributes></element><element><id>Relation</id><coordinates><x>460</x><y>250</y><w>230</w><h>160</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;120;10;120;140;210;140</additional_attributes></element><element><id>Relation</id><coordinates><x>290</x><y>60</y><w>410</w><h>130</h></coordinates><panel_attributes>lt=-
+kann gut sein, dass die Verbindung irrelevant ist</panel_attributes><additional_attributes>10;110;10;20;390;20</additional_attributes></element><element><id>UMLClass</id><coordinates><x>650</x><y>610</y><w>210</w><h>190</h></coordinates><panel_attributes>Opponent
+--
+
+--
++ placeShip()
++ takeTurn()
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>510</x><y>790</y><w>220</w><h>160</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>200;10;200;70;10;70;10;140</additional_attributes></element><element><id>Relation</id><coordinates><x>820</x><y>790</y><w>190</w><h>160</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;10;80;170;80;170;140</additional_attributes></element><element><id>Relation</id><coordinates><x>730</x><y>510</y><w>30</w><h>120</h></coordinates><panel_attributes>lt=-</panel_attributes><additional_attributes>10;10;10;100</additional_attributes></element></diagram>
