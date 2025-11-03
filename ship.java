@@ -14,10 +14,10 @@ public class ship {
     }
     public void show() {
         for (int i = 0; i < coordinates.length; i++) {
-            coordinate kor = coordinates[i];
-            if (kor != null) {
-                System.out.print("x = " + kor.x + "\t");
-                System.out.println("y = " + kor.y);
+            coordinate coor = coordinates[i];
+            if (coor != null) {
+                System.out.print("x = " + coor.x + "\t");
+                System.out.println("y = " + coor.y);
             }
         }
     }
@@ -36,8 +36,8 @@ public class ship {
     }
     public boolean hit (coordinate coordinate) {
         for (int i = 0; i < coordinates.length; i++) {
-            coordinate cor = coordinates[i];
-            if (cor.x == coordinate.x && cor.y == coordinate.y) {
+            coordinate coor = coordinates[i];
+            if (coor.x == coordinate.x && coor.y == coordinate.y) {
                 return true;
             }
         }

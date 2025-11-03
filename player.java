@@ -1,10 +1,10 @@
 public class player {
-    static int number_of_ships;
+    int number_of_ships;
     boolean player = false;
     ship[] ships; // muss man im Konstruktor initialisieren, da erst die Attribute initialisiert werden bevor der Konstruktor ausgeführt wird
-    public player(int anzahl_Schiffe) {
-        this.number_of_ships = anzahl_Schiffe;
-        ships = new ship[anzahl_Schiffe];
+    public player(int number_of_ships) {
+        this.number_of_ships = number_of_ships;
+        ships = new ship[number_of_ships];
     }
     int i = 0;
     public player(){}
@@ -22,9 +22,9 @@ public class player {
     }
     public boolean check_loose() {
         for (int i = 0; i < ships.length; i++) {
-            ship schiff = ships[i];
+            ship ship = ships[i];
             int j = 0;
-            if (schiff.destroyed()) {
+            if (ship.destroyed()) {
                 j++;
             }
             if (j == number_of_ships) {
