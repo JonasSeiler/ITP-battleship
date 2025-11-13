@@ -1,3 +1,5 @@
+package src;
+
 public class player {
     int number_of_ships;
     ship[] ships; // muss man im Konstruktor initialisieren, da erst die Attribute initialisiert werden bevor der Konstruktor ausgeführt wird

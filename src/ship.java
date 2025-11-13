@@ -1,46 +1,37 @@
+package src;
+import java.util.Arrays;
+// rm coordinate class and incorporate it into ship
 public class ship {
     int length;
-    String name;
-    coordinate[] coordinates;
-    int i = 0;
-    public ship(int length, String name) {
+    int head_x;
+    int head_y;
+    int dir;        // 0 = x+, 1 = y+ , 2 = x-, 3 = y-
+    boolean[] lifes;
+    coordinate[] pos;
+
+    public ship(int length) {
         this.length = length;
-        coordinates = new coordinate[length];
-        this.name = name;
+        this.lifes = new boolean[length];
+        this.pos = new coordinate[length];
+        Arrays.fill(lifes, true);
     }
-    public void place(coordinate coordinate) {
-        if (i < length) {
-            this.coordinates[i] = coordinate;
-            i++;
+    public void set_pos(coordinate coord, int index) {
+        pos[index] = coord;
+    }
+
+    public void print_ship() {
+        System.out.println("Length: " + length);
+        for(int i = 0; i < pos.length; i++) {
+            System.out.print("x = " + pos[i].x + "\t");
+            System.out.print("y = " + pos[i].y + "\t");
+            System.out.println("alive? = " + lifes[i]);
         }
     }
-    public void show() {
-        for (coordinate coordinate : coordinates) {
-            if (coordinate != null) {
-                System.out.println(name);
-                System.out.print("x = " + coordinate.x + "\t");
-                System.out.println("y = " + coordinate.y);
-            }
-        }
-    }
+
     public boolean destroyed () {
-        for (coordinate coordinate : coordinates) {
-            int j = 0;
-            if (coordinate.lives) {
-                j++;
-            }
-            if (j == 0) {
-                return true;
-            }
+        for(int i=0; i < length; i++) {
+            if(lifes[i]) return false;
         }
-        return false;
-    }
-    public boolean hit (coordinate coordinate1) {
-        for (coordinate coordinate2 : coordinates) {
-            if (coordinate2.x == coordinate1.x && coordinate2.y == coordinate1.y) {
-                return true;
-            }
-        }
-        return false;
+        return true;
     }
 }

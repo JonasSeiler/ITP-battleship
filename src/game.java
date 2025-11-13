@@ -1,19 +1,16 @@
+package src;
+
 public class game {
-    player player1;
-    player player2;
-    int x;
-    int y;
-    int battleships;
-    int cruisers;
-    int destroyers;
-    int submarines;
+    //player player1;
+    //player player2;
+    int size;
     int[][] map;
     public game(int x, int y) {
         map = new int[x][y];
         this.x = x;
         this.y = y;
     }
-    void calculate_ships () {
+/*    void calculate_ships () {
         int anzahl = ((x * y) / 3);
         boolean nochmal = true;
         int anzahl2 = anzahl;
@@ -84,7 +81,7 @@ public class game {
             case 28:
                 break;
             case 29:
-                break;
-        }
-    }
+                break; 
+        }   
+    } */
 }
