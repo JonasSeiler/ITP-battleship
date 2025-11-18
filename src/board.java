@@ -1,25 +1,29 @@
 package src;
+import java.util.Arrays;
 
 public class board {
     private int[][] ship_pos;
     private Boolean[][] hit_pos;
     private ship[] fleet;
     
-    5 4 4 3 3 2 2 
+    /*5 4 4 3 3 2 2
     c 
-    d 
+    d */
     public board(int size, int[] ship_set) {
         ship_pos = new int[size][size];
         hit_pos = new Boolean[size][size];
+        Arrays.fill(hit_pos, false);
         fleet = new ship[ship_set.length];
-        // schiffe initialisieren 
+        for (int i = 0; i < ship_set.length; i++) { // Schiffe initialisieren
+            fleet[i] = new ship(ship_set[i]);
+        }
 
     }
 // add x- and y-
     
     public void place_ship(coordinate head, int dir, int s_index) {
         if(dir % 2 == 0) {
-            for (int i = 0; i < fleet[s_index].length; i++) {    
+            for (int i = 0; i < fleet[s_index].length; i++) {
                 head.x += i;
                 ship_pos[head.x][head.y] = 1;
                 fleet[s_index].set_pos(head, i);
@@ -32,6 +36,7 @@ public class board {
                 fleet[s_index].set_pos(head, i);
             }
         }
+        fleet[s_index].set_dir_head(head, dir);
     }
 
     public int check_hit(coordinate att) {
@@ -49,6 +54,17 @@ public class board {
             }
         }
         return -1;      // would mean a major error in the op. should never be reached
+    }
+
+    public void hit_checked (coordinate att) {
+        hit_pos[att.x][att.y] = true;
+        for (ship ship : fleet) {
+            for (int i = 0; i < ship.length; i++) {
+                if (ship.get_pos(i) == att) {
+                    ship.set_life(i);
+                }
+            }
+        }
     }
 
     public boolean lost() {

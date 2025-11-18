@@ -19,6 +19,20 @@ public class ship {
         pos[index] = coord;
     }
 
+    public void set_dir_head(coordinate head, int index) {
+        this.dir = index;
+        this.head_x = head_x;
+        this.head_y = head.y;
+    }
+
+    public coordinate get_pos (int index) {
+        return pos[index];
+    }
+
+    public void set_life (int index) {
+        lifes[index] = false;
+    }
+
     public void print_ship() {
         System.out.println("Length: " + length);
         for(int i = 0; i < pos.length; i++) {

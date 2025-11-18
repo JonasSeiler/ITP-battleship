@@ -16,7 +16,7 @@ public class player {
     }
     public void ships_show () {
         for (ship ship : ships) {
-            ship.show();
+            ship.print_ship();
         }
     }
 
@@ -32,14 +32,14 @@ public class player {
         }
         return false;
     }
-    public boolean hit (coordinate coordinate) {
+    /*public boolean hit (coordinate coordinate) {
         for (ship ship : ships) {
             if (ship.hit(coordinate)) {
                 return true;
             }
         }
         return false;
-    }
+    }*/
     public coordinate attack (coordinate coordinate) {
         return coordinate;
     }
