@@ -6,6 +6,7 @@ public class coordinate {
         this.x = x;
         this.y = y;
     }
+    // override for equals function
     public boolean equals(Object obj) {
         if(this == obj) return true;
         if(obj == null || getClass() != obj.getClass()) return false;

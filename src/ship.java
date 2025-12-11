@@ -1,19 +1,18 @@
 package src;
 import java.util.Arrays;
-// rm coordinate class and incorporate it into ship
 public class ship {
     int length;
     int head_x;
     int head_y;
     int dir;        // 0 = x+, 1 = y+ , 2 = x-, 3 = y-
-    boolean[] lifes;
+    int[] lifes;
     coordinate[] pos;
 
     public ship(int length) {
         this.length = length;
-        this.lifes = new boolean[length];
+        this.lifes = new int[length];
         this.pos = new coordinate[length];
-        Arrays.fill(lifes, true);
+        Arrays.fill(lifes, 1);
     }
     public void set_pos(coordinate coord, int index) {
         pos[index] = coord;
@@ -21,7 +20,7 @@ public class ship {
 
     public void set_dir_head(coordinate head, int index) {
         this.dir = index;
-        this.head_x = head_x;
+        this.head_x = head.x;
         this.head_y = head.y;
     }
 
@@ -30,7 +29,7 @@ public class ship {
     }
 
     public void set_life (int index) {
-        lifes[index] = false;
+        lifes[index] = 0;
     }
 
     public void print_ship() {
@@ -44,7 +43,7 @@ public class ship {
 
     public boolean destroyed () {
         for(int i=0; i < length; i++) {
-            if(lifes[i]) return false;
+            if(lifes[i] == 1) return false;
         }
         return true;
     }

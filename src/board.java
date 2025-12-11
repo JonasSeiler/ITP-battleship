@@ -1,70 +1,76 @@
 package src;
-import java.util.Arrays;
-
+import java.util.*;
+import java.io.*;
 public class board {
-    private int[][] ship_pos;
-    private Boolean[][] hit_pos;
-    private ship[] fleet;
+    public int[][] ship_pos;
+    public int[][] hit_pos;
+    public ship[] fleet;
+    private int size;
     
-    /*5 4 4 3 3 2 2
-    c 
-    d */
-    public board(int size, int[] ship_set) {
+    public board(int s, int[] ship_set) {
+        size = s;
         ship_pos = new int[size][size];
-        hit_pos = new Boolean[size][size];
+        hit_pos = new int[size][size];
         Arrays.fill(hit_pos, false);
         fleet = new ship[ship_set.length];
+
         for (int i = 0; i < ship_set.length; i++) { // Schiffe initialisieren
             fleet[i] = new ship(ship_set[i]);
         }
 
     }
-// add x- and y-
-    
+
     public void place_ship(coordinate head, int dir, int s_index) {
+        // dir: 0 || 2 -> x,     1 || 3 -> y
+        fleet[s_index].set_dir_head(head, dir);
         if(dir % 2 == 0) {
-            for (int i = 0; i < fleet[s_index].length; i++) {
-                head.x += i;
-                ship_pos[head.x][head.y] = 1;
-                fleet[s_index].set_pos(head, i);
+            if(dir == 0) {
+                for (int i = 0; i < fleet[s_index].length; i++) {
+                    head.x += i;
+                    ship_pos[head.x][head.y] = 1;
+                    fleet[s_index].set_pos(head, i);
+                }
+            } else {
+                for (int i = 0; i < fleet[s_index].length; i++) {
+                    head.x -= i;
+                    ship_pos[head.x][head.y] = 1;
+                    fleet[s_index].set_pos(head, i);
+                }
             }
         }
         else {
-            for (int i = 0; i < fleet[s_index].length; i++) {
-                head.y += i;
-                ship_pos[head.x][head.y] = 1;
-                fleet[s_index].set_pos(head, i);
+            if(dir == 1) {
+                for (int i = 0; i < fleet[s_index].length; i++) {
+                    head.y += i;
+                    ship_pos[head.x][head.y] = 1;
+                    fleet[s_index].set_pos(head, i);
+                }
+            } else {
+                 for (int i = 0; i < fleet[s_index].length; i++) {
+                    head.y -= i;
+                    ship_pos[head.x][head.y] = 1;
+                    fleet[s_index].set_pos(head, i);
+                }              
             }
         }
-        fleet[s_index].set_dir_head(head, dir);
     }
 
     public int check_hit(coordinate att) {
-        hit_pos[att.x][att.y] = true;
+        // registers hit
+        hit_pos[att.x][att.y] = 1;
         if(ship_pos[att.x][att.y] == 0) { 
             return 0;
     }
         for (ship ship : fleet) {
             for(int i = 0; i < ship.length; i++) {
                 if(att.equals(ship.pos[i])) {
-                    ship.lifes[i] = false;
+                    ship.lifes[i] = 0;
                     if(ship.destroyed()) return 2;
                     return 1;
                 }
             }
         }
         return -1;      // would mean a major error in the op. should never be reached
-    }
-
-    public void hit_checked (coordinate att) {
-        hit_pos[att.x][att.y] = true;
-        for (ship ship : fleet) {
-            for (int i = 0; i < ship.length; i++) {
-                if (ship.get_pos(i) == att) {
-                    ship.set_life(i);
-                }
-            }
-        }
     }
 
     public boolean lost() {
@@ -75,5 +81,56 @@ public class board {
         }
         return true;
     }
-    
+
+    public void save_game(String file) {
+        //long u_time = java.time.Instant.now().toEpochMilli();
+        //String file = "TB_" + u_time;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            // write size into file
+            writer.write(String.valueOf(size));
+            writer.newLine();
+            // write ship_set array into file 
+            for(ship ship : fleet) {
+                writer.write(ship.length);
+                writer.write(" ");
+            }
+            writer.newLine();
+            // write ship_pos into file
+            for (int i = 0; i < size; i++) {
+                StringBuilder row = new StringBuilder();
+                for (int j = 0; j < size; j++) {
+                    row.append(ship_pos[i][j]);
+                }
+                writer.write(row.toString());
+                writer.newLine();
+            }
+            // write hit_pos into file
+            for (int i = 0; i < size; i++) {
+                StringBuilder row = new StringBuilder();
+                for (int j = 0; j < size; j++) {
+                    row.append(hit_pos[i][j]);
+                }
+                writer.write(row.toString());
+                writer.newLine();
+            }
+            // write entire fleet into file
+            // order: x-pos, y-pos, lifes
+            for (ship ship : fleet) {
+                for (int i = 0; i < ship_pos.length; i++) {
+                    writer.write(ship.pos[i].x);
+                }
+                writer.newLine();
+                for (int i = 0; i < ship_pos.length; i++) {
+                    writer.write(ship.pos[i].y);
+                }
+                writer.newLine();
+                for (int i = 0; i < ship_pos.length; i++) {
+                    writer.write((ship.lifes[i]));
+                }
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            System.err.println("Failed saving: " + e.getMessage());
+        }
+    }
 }
