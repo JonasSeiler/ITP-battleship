@@ -27,9 +27,13 @@ public class mainframe extends JFrame {
         titlescreen titlescreen = new titlescreen(this);
         singleplayer singleplayer = new singleplayer(this);
         multiplayer multiplayer = new multiplayer(this);
-        pregamescreen pregamescreen = new pregamescreen(this);
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
+        pregamescreen pregamescreen = new pregamescreen(this);
+        int gridSize = 15;
+        int[] ships = {1,2,3,1};
+        gamescreen gamescreen = new gamescreen(this, gridSize, ships);
+
         
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
@@ -38,6 +42,7 @@ public class mainframe extends JFrame {
         cPanel.add(pregamescreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
+        cPanel.add(gamescreen, "gamescreen");
         add(cPanel);
         setVisible(true);
         pack();
