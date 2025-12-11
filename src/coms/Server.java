@@ -1,12 +1,9 @@
 import java.net.*;
 import java.io.*;
-import java.util.Arrays;
 
 class Server {
     final static int PORT = 50000;
-    private static boolean gameStarted = false;
-    private static boolean myTurn = true; // Server beginnt
-
+    
     public static void main(String[] args) {
         ServerSocket ss = null;
         Socket s = null;
@@ -36,48 +33,60 @@ class Server {
                 String command = parts[0].toLowerCase();
                 
                 if (command.equals("size") && parts.length == 2) {
-                    // Neue Spielgröße
-                    send(out, "size " + parts[1]);
-                    System.out.println("Gesendet: size " + parts[1]);
+                    // Option 1: size
+                    send(out, input);
+                    System.out.println("Gesendet: " + input);
                     
                     // Warte auf done vom Client
                     String response = receive(in);
                     if (response.equals("done")) {
-                        // Schiffe eingeben
-                        System.out.print("[SERVER SETUP] Schiffe eingeben (Längen absteigend, z.B. '5 4 3'): ");
+                        System.out.println("Empfangen: " + response);
+                        
+                        // Eingabe der Schiffe
+                        System.out.print("\n[SERVER SETUP] Schiffe eingeben (absteigend, z.B. '5 4 3'): ");
                         String shipsInput = usr.readLine();
-                        send(out, "ships " + shipsInput);
-                        System.out.println("Gesendet: ships " + shipsInput);
+                        String shipsMessage = "ships " + shipsInput;
+                        send(out, shipsMessage);
+                        System.out.println("Gesendet: " + shipsMessage);
                         
                         // Warte auf done vom Client
                         response = receive(in);
                         if (response.equals("done")) {
-                            // Beide ready senden
+                            System.out.println("Empfangen: " + response);
+                            
+                            // Sende ready
                             send(out, "ready");
                             System.out.println("Gesendet: ready");
                             
+                            // Empfange ready vom Client
                             response = receive(in);
                             if (response.equals("ready")) {
+                                System.out.println("Empfangen: " + response);
                                 setupComplete = true;
-                                gameStarted = true;
-                                System.out.println("\n=== SPIEL BEGINNT ===");
-                                System.out.println("Server ist am Zug (beginnt).");
                             }
                         }
                     }
                     
                 } else if (command.equals("load") && parts.length == 2) {
-                    // Geladenes Spiel
+                    // Option 2: load
                     send(out, input);
                     System.out.println("Gesendet: " + input);
                     
                     // Warte auf ok vom Client
                     String response = receive(in);
                     if (response.equals("ok")) {
-                        setupComplete = true;
-                        gameStarted = true;
-                        System.out.println("\n=== SPIEL GELADEN ===");
-                        System.out.println("Server ist am Zug (beginnt).");
+                        System.out.println("Empfangen: " + response);
+                        
+                        // Sende ready
+                        send(out, "ready");
+                        System.out.println("Gesendet: ready");
+                        
+                        // Empfange ready vom Client
+                        response = receive(in);
+                        if (response.equals("ready")) {
+                            System.out.println("Empfangen: " + response);
+                            setupComplete = true;
+                        }
                     }
                 } else {
                     System.out.println("Ungültige Eingabe. Format: 'size 10' oder 'load 123456'");
@@ -85,9 +94,15 @@ class Server {
             }
 
             // --- GAME LOOP ---
-            while (gameStarted) {
+            System.out.println("\n=== SPIEL BEGINNT ===");
+            
+            boolean gameActive = true;
+            boolean myTurn = true; // Server beginnt
+            
+            while (gameActive) {
                 if (myTurn) {
-                    System.out.print("\n[SERVER ZUG] Eingabe ('shot row col' oder 'options'): ");
+                    // Server ist am Zug
+                    System.out.print("\n[SERVER ZUG] Eingabe ('shot x y' oder 'save id'): ");
                     String input = usr.readLine();
                     
                     if (input == null || input.trim().isEmpty()) continue;
@@ -100,54 +115,48 @@ class Server {
                         send(out, input);
                         System.out.println("Gesendet: " + input);
                         
-                        // Antwort vom Client erhalten
+                        // Warte auf answer vom Client
                         String answer = receive(in);
+                        System.out.println("Empfangen: " + answer);
+                        
                         if (answer.startsWith("answer")) {
                             String[] answerParts = answer.split(" ");
                             int result = Integer.parseInt(answerParts[1]);
                             
                             if (result == 0) {
-                                System.out.println("Antwort: WASSER (0)");
-                                System.out.println("Zug wechselt zu Client.");
+                                // Bei Wasser: pass senden
+                                System.out.print("\n[SERVER ZUG] Eingabe ('pass'): ");
+                                String passInput = usr.readLine();
+                                while (!passInput.equals("pass")) {
+                                    System.out.print("Ungültig! Bitte 'pass' eingeben: ");
+                                    passInput = usr.readLine();
+                                }
+                                send(out, passInput);
+                                System.out.println("Gesendet: " + passInput);
                                 myTurn = false; // Client ist jetzt am Zug
-                            } else if (result == 1) {
-                                System.out.println("Antwort: TREFFER (1)");
-                                System.out.println("Server darf nochmal schießen!");
-                                // Server bleibt am Zug (myTurn bleibt true)
-                            } else if (result == 2) {
-                                System.out.println("Antwort: VERSENKT (2)");
-                                System.out.println("Zug wechselt zu Client.");
-                                myTurn = false; // Client ist jetzt am Zug
+                            } else if (result == 1 || result == 2) {
+                                // Bei Treffer oder Versenkt: Server bleibt am Zug
+                                // (keine Aktion nötig)
                             }
                         }
                         
-                    } else if (command.equals("options")) {
-                        // Options-Menü
-                        System.out.println("\n=== OPTIONS MENÜ ===");
-                        System.out.println("1. save - Spiel speichern und beenden");
-                        System.out.println("2. continue - Weiter spielen");
-                        System.out.print("Auswahl: ");
-                        String option = usr.readLine();
+                    } else if (command.equals("save") && parts.length == 2) {
+                        // Save senden
+                        send(out, input);
+                        System.out.println("Gesendet: " + input);
                         
-                        if (option.equals("1") || option.toLowerCase().equals("save")) {
-                            System.out.print("Speicher-ID eingeben: ");
-                            String saveId = usr.readLine();
-                            send(out, "save " + saveId);
-                            System.out.println("Gesendet: save " + saveId);
-                            
-                            // Warte auf ok vom Client
-                            String response = receive(in);
-                            if (response.equals("ok")) {
-                                System.out.println("Spiel gespeichert. Verbindung wird beendet.");
-                                gameStarted = false;
-                            }
-                        } else {
-                            System.out.println("Weiter spielen...");
+                        // Warte auf ok vom Client
+                        String response = receive(in);
+                        if (response.equals("ok")) {
+                            System.out.println("Empfangen: " + response);
+                            gameActive = false;
                         }
+                    } else {
+                        System.out.println("Ungültiges Kommando. Erwartet: 'shot x y' oder 'save id'");
                     }
                     
                 } else {
-                    // Client ist am Zug - warte auf seinen Schuss
+                    // Client ist am Zug
                     System.out.println("\n[WARTE AUF CLIENT] Client ist am Zug...");
                     
                     String clientMessage = receive(in);
@@ -158,40 +167,47 @@ class Server {
                     
                     if (command.equals("shot")) {
                         // Client hat geschossen
-                        System.out.println("Client schießt auf: Reihe " + parts[1] + ", Spalte " + parts[2]);
-                        
-                        // Antwort eingeben
-                        System.out.print("[SERVER ANTWORT] Antwort eingeben (0=Wasser, 1=Treffer, 2=Versenkt): ");
+                        System.out.print("\n[SERVER ANTWORT] Eingabe ('answer 0', 'answer 1' oder 'answer 2'): ");
                         String answerInput = usr.readLine();
                         
                         // Validierung der Eingabe
-                        while (!answerInput.equals("0") && !answerInput.equals("1") && !answerInput.equals("2")) {
-                            System.out.print("Ungültig! Bitte 0, 1 oder 2 eingeben: ");
+                        while (!answerInput.equals("answer 0") && 
+                               !answerInput.equals("answer 1") && 
+                               !answerInput.equals("answer 2")) {
+                            System.out.print("Ungültig! Bitte 'answer 0', 'answer 1' oder 'answer 2' eingeben: ");
                             answerInput = usr.readLine();
                         }
                         
-                        send(out, "answer " + answerInput);
-                        System.out.println("Gesendet: answer " + answerInput);
+                        send(out, answerInput);
+                        System.out.println("Gesendet: " + answerInput);
                         
-                        int result = Integer.parseInt(answerInput);
-                        if (result == 0 || result == 2) {
-                            // Bei Wasser oder Versenkt: Client beendet seinen Zug
-                            System.out.println("Client ist fertig mit diesem Zug.");
-                            // Server wird am Zug sein
-                            myTurn = true;
-                        } else if (result == 1) {
-                            System.out.println("Client darf nochmal schießen (Treffer).");
-                            // Client bleibt am Zug (myTurn bleibt false)
+                        if (answerInput.equals("answer 0")) {
+                            // Warte auf pass vom Client
+                            String passMsg = receive(in);
+                            if (passMsg.equals("pass")) {
+                                System.out.println("Empfangen: " + passMsg);
+                                myTurn = true; // Server ist jetzt am Zug
+                            }
+                        } else {
+                            // Bei Treffer oder Versenkt: Client bleibt am Zug
+                            // (keine Aktion nötig)
                         }
                         
                     } else if (command.equals("save")) {
                         // Client möchte speichern
-                        System.out.println("Client möchte speichern: " + clientMessage);
-                        send(out, "ok");
-                        System.out.println("Gesendet: ok");
-                        gameStarted = false;
-                    } else {
-                        System.out.println("Unerwartete Nachricht vom Client: " + clientMessage);
+                        System.out.print("\n[SERVER ANTWORT] Eingabe ('ok'): ");
+                        String okInput = usr.readLine();
+                        while (!okInput.equals("ok")) {
+                            System.out.print("Ungültig! Bitte 'ok' eingeben: ");
+                            okInput = usr.readLine();
+                        }
+                        send(out, okInput);
+                        System.out.println("Gesendet: " + okInput);
+                        gameActive = false;
+                        
+                    } else if (command.equals("pass")) {
+                        // Client gibt Zug ab
+                        myTurn = true;
                     }
                 }
             }
