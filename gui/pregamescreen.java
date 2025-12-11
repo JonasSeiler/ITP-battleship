@@ -2,7 +2,7 @@ import javax.swing.*; // Importiert die gesamte Swing Bibliothek, moderne und pl
 import java.awt.*; // Importiert das Abstract Window Toolkit (AWT) liefert grundlegende Grafik- und Farbobjekte und einige Layout Manager
 import javax.swing.JButton; // aus der Java Swing Bibliothek wird die JButton Klasse bekannt und verfügbar gemacht
 
-public class pregame extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private JSpinner gridSizeSpinner; // Dekleration des hoch und runter klickbaren Buttons
     private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
     private JSpinner ship_size3;
@@ -12,7 +12,7 @@ public class pregame extends JPanel { // JPanel ist ein Standard-Container oder 
     private JButton start_button;
     private mainframe frame; // Referenz auf das Hauptfenster
 
-    public pregame(mainframe frame) { // mainframe ist das Hauptfenster und pregame gibt Befehle an den mainframe
+    public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregame gibt Befehle an den mainframe
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden
         setOpaque(false); // Erlaubt der paintComponent-Methode den Hintergrund zu zeichnen
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
