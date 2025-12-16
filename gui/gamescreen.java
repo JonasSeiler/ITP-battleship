@@ -213,7 +213,7 @@ public class gamescreen extends JPanel {
             int rr = r + (horizontal ? 0 : i);
             int cc = c + (horizontal ? i : 0);
             /*--invalid if tile is outside of game board or if it's already occupied by another ship--*/
-            if (!isInBounds(rr, cc) || occupied[rr][cc]) {valid = false;}
+            if (!isInBounds(rr, cc) || occupied[rr][cc] || hasAdjacentOccupied(rr, cc)) {valid = false;}
         }
 
         /*--highlight--*/
@@ -224,7 +224,7 @@ public class gamescreen extends JPanel {
             /*--valid if tile is inside of game board and if it's not occupied by another ship--*/
             if (isInBounds(rr, cc) && !occupied[rr][cc]) {
             pCells[rr][cc].setBackground(valid ? Color.GREEN : Color.RED);
-        }
+            }
         }
     }
 
@@ -246,7 +246,7 @@ public class gamescreen extends JPanel {
             int cc = c + (horizontal ? i : 0);
 
             if (!isInBounds(rr, cc)) {return;}
-            if (occupied[rr][cc]) {return;}
+            if (occupied[rr][cc] || hasAdjacentOccupied(rr, cc)) {return;}
         }
 
         /*--place ship, color it blue and save it in 'occupied'-array--*/
@@ -318,4 +318,20 @@ public class gamescreen extends JPanel {
                r < pCells.length &&
                c < pCells[0].length;
     }
+
+    /*--checks if any adjacent cell (including diagonals) is occupied--*/
+    private boolean hasAdjacentOccupied(int r, int c) {
+        for (int dr = -1; dr <= 1; dr++) {
+            for (int dc = -1; dc <= 1; dc++) {
+                int rr = r + dr;
+                int cc = c + dc;
+
+                if (isInBounds(rr, cc) && occupied[rr][cc]) {
+                return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

@@ -12,8 +12,6 @@ public class mainframe extends JFrame {
         this.setTitle("Tidebreaker"); // title of frame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits program when hitting the close button
         this.setSize(640, 640); // sets x- and y-dimension
-        //this.setLayout(new BorderLayout());
-        //this.setVisible(true); // makes this visible
 
         /*--game logo--*/
         ImageIcon logo = new ImageIcon("../img/TidebreakerLogo.jpg");
@@ -43,9 +41,9 @@ public class mainframe extends JFrame {
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
         cPanel.add(gamescreen, "gamescreen");
-        add(cPanel);
-        setVisible(true);
-        pack();
+        this.add(cPanel);
+        this.setVisible(true);
+        this.pack();
     }
     /*--public method to switch screens--*/
     public void showScreen(String name) {
