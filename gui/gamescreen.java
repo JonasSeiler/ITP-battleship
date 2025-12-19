@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+// package ../src;
 
 public class gamescreen extends JPanel {
 
@@ -14,9 +15,11 @@ public class gamescreen extends JPanel {
     private boolean horizontal = true;
     private int currentShipSize = 2;
     private boolean[][] occupied;
+    private boolean[][] eOccupied;
 
     /*--remaining ships per size--*/
     private int[] shipsLeft;
+    private int[] shipConfig;
 
     /*--hover tracking (for rotation preview)--*/
     private int hoverRow = -1;
@@ -25,8 +28,13 @@ public class gamescreen extends JPanel {
     /*--string combo box ship selector--*/
     private JComboBox<String> shipSelector;
 
+    // 1. ships -> Länge abwärts sortiert bsp. [5, 5, 4, 3, 3, 2]
+    // 2. Richtung: 0 -> rechts, 1 -> unten
+    // 3. Koordinate von Zellenposition (x und y-Position/Indizies) -> coordinate class verwenden
+
     /*--constructor--*/
     public gamescreen(mainframe frame, int gridSize, int[] ships) {
+        // int a = pregamescreen.gridSize()
         /*--layout for 'this' panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
@@ -55,6 +63,7 @@ public class gamescreen extends JPanel {
         occupied = new boolean[gridSize][gridSize];
 
         /*--clone ships array--*/
+        shipConfig = ships.clone();
         shipsLeft = ships.clone();
 
         /*--player field panel (left) for combobox and start-button--*/
@@ -86,6 +95,7 @@ public class gamescreen extends JPanel {
 
         /*--create enemy field (right cells)--*/
         eCells = new JButton[gridSize][gridSize];
+        eOccupied = new boolean[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells);
         eSide.add(eField, BorderLayout.CENTER);
 
@@ -213,7 +223,7 @@ public class gamescreen extends JPanel {
             int rr = r + (horizontal ? 0 : i);
             int cc = c + (horizontal ? i : 0);
             /*--invalid if tile is outside of game board or if it's already occupied by another ship--*/
-            if (!isInBounds(rr, cc) || occupied[rr][cc] || hasAdjacentOccupied(rr, cc)) {valid = false;}
+            if (!isInBounds(rr, cc) || occupied[rr][cc] || hasAdjacentOccupied(rr, cc, occupied)) {valid = false;}
         }
 
         /*--highlight--*/
@@ -246,7 +256,7 @@ public class gamescreen extends JPanel {
             int cc = c + (horizontal ? i : 0);
 
             if (!isInBounds(rr, cc)) {return;}
-            if (occupied[rr][cc] || hasAdjacentOccupied(rr, cc)) {return;}
+            if (occupied[rr][cc] || hasAdjacentOccupied(rr, cc, occupied)) {return;}
         }
 
         /*--place ship, color it blue and save it in 'occupied'-array--*/
@@ -265,10 +275,15 @@ public class gamescreen extends JPanel {
         /*--refresh combo box display (shipSelector)--*/
         updateComboBoxDisplayPreserveSelection();
 
-        /*--if all ships placed, disable selector so the user knows placement is done--*/
         if (allShipsPlaced()) {
             shipSelector.setEnabled(false);
+            placeEnemyShips(shipConfig); // or original ships array
         }
+
+        /*--if all ships placed, disable selector so the user knows placement is done--
+        if (allShipsPlaced()) {
+            shipSelector.setEnabled(false);
+        }*/
 
         clearPreview();
     }
@@ -320,18 +335,65 @@ public class gamescreen extends JPanel {
     }
 
     /*--checks if any adjacent cell (including diagonals) is occupied--*/
-    private boolean hasAdjacentOccupied(int r, int c) {
+    private boolean hasAdjacentOccupied(int r, int c, boolean[][] board) {
         for (int dr = -1; dr <= 1; dr++) {
             for (int dc = -1; dc <= 1; dc++) {
                 int rr = r + dr;
                 int cc = c + dc;
-
-                if (isInBounds(rr, cc) && occupied[rr][cc]) {
-                return true;
+                if (rr >= 0 && cc >= 0 &&
+                    rr < board.length && cc < board[0].length &&
+                    board[rr][cc]) {
+                    return true;
                 }
             }
         }
         return false;
     }
+    private void placeEnemyShips(int[] ships) {
+        int gridSize = eCells.length;
+        java.util.Random rand = new java.util.Random();
 
+        for (int sizeIndex = 0; sizeIndex < ships.length; sizeIndex++) {
+            int shipSize = sizeIndex + 2;
+            int shipsToPlace = ships[sizeIndex];
+
+            for (int s = 0; s < shipsToPlace; s++) {
+                boolean placed = false;
+
+                while (!placed) {
+                    boolean horizontal = rand.nextBoolean();
+                    int r = rand.nextInt(gridSize);
+                    int c = rand.nextInt(gridSize);
+
+                    /*--validate placement--*/
+                    boolean valid = true;
+                    for (int i = 0; i < shipSize; i++) {
+                        int rr = r + (horizontal ? 0 : i);
+                        int cc = c + (horizontal ? i : 0);
+
+                        if (!isInBounds(rr, cc) ||
+                            eOccupied[rr][cc] ||
+                            hasAdjacentOccupied(rr, cc, eOccupied)) {
+                            valid = false;
+                            break;
+                        }
+                    }
+
+                    /*--place ship--*/
+                    if (valid) {
+                        for (int i = 0; i < shipSize; i++) {
+                            int rr = r + (horizontal ? 0 : i);
+                            int cc = c + (horizontal ? i : 0);
+
+                            eOccupied[rr][cc] = true;
+
+                            /*--OPTIONAL: hide ships (recommended)--*/
+                            eCells[rr][cc].setBackground(Color.BLUE);
+                        }
+                        placed = true;
+                    }
+                }
+            }
+        }
+    }
 }
