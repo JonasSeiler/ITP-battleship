@@ -3,25 +3,32 @@ import java.awt.*; // Importiert das Abstract Window Toolkit (AWT) liefert grund
 import javax.swing.JButton; // aus der Java Swing Bibliothek wird die JButton Klasse bekannt und verfügbar gemacht
 
 public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private JSpinner gridSizeSpinner; // Dekleration des hoch und runter klickbaren Buttons
     private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
     private JSpinner ship_size3;
     private JSpinner ship_size4;
     private JSpinner ship_size5;
     private JProgressBar capacityBar; // Balken der Anzeigen soll wie viele Platz man noch mit Schiffen belegen kann
     private JButton start_button;
+    private JButton zurueck_button;
+    public JSpinner gridSizeSpinner; // Dekleration des hoch und runter klickbaren Buttons
+    public int[] ships;
+
     private mainframe frame; // Referenz auf das Hauptfenster
 
     public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregame gibt Befehle an den mainframe
-        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden
+        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen gepackt
         setOpaque(false); // Erlaubt der paintComponent-Methode den Hintergrund zu zeichnen
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,2,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         capacityBar = new JProgressBar(0, 100); // 0 = min, 100 = max in Prozent wahrscheinlich
         capacityBar.setValue(100); // Der Balken ist standardmäßig voll, weil es eine Vorauswahl an Schiffen gibt
-        capacityBar.setStringPainted(true); // Zeigt %-Zahl als Text im Balken an
-        SpinnerNumberModel mapSizeModel = new SpinnerNumberModel(7, 5, 15, 1); // legt die Logik fest also startet bei 10 usw.
+        capacityBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI()); // verbietet dem Betriebssystem sich in das Design einzumischen, man nimmt die Original JProgressBar
+        capacityBar.setForeground(new Color(0,191,255)); // Der Fortschrittsbalken ist in einem "Deep Sky Blue". Es wird ein neues Color Objekt mit diesen Werten erstellt, was diese Farbe ist
+        capacityBar.setBackground(new Color(20,30,50)); // Der noch zu füllende Bereich ist in einem sehr dunklen Blau
+        capacityBar.setFont(new Font("SansSerif",Font.PLAIN,16));
+        capacityBar.setBorder(BorderFactory.createLineBorder(new Color(20,30,50),3,true)); // es wird ein Rahmen um die capacityBar gelegt der außen ein ganz bisschen abgerundet ist
+        SpinnerNumberModel mapSizeModel = new SpinnerNumberModel(7, 5, 30, 1); // legt die Logik fest also startet bei 10 usw.
         SpinnerNumberModel shipSizeModel5 = new SpinnerNumberModel(1,0,6,1);
         SpinnerNumberModel shipSizeModel4 = new SpinnerNumberModel(1,0,7,1);
         SpinnerNumberModel shipSizeModel3 = new SpinnerNumberModel(1,0,10,1);
@@ -29,11 +36,13 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         start_button = new JButton("Start"); // neuer Button mit Text im Button
         start_button.setBackground(Color.GREEN); // Hintergrund grün
         start_button.setForeground(Color.BLACK); // Schrift weiß
-        start_button.setFont(new Font("SansSerif", Font.BOLD,16)); // Schriftart
+        start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
         start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
         start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
+        zurueck_button = new JButton("   <-   ");
+        zurueck_button.setForeground(Color.BLACK);
+        zurueck_button.setFont(new Font("SansSerif", Font.BOLD,22));
         gridSizeSpinner = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
-        gridSizeSpinner.setPreferredSize(new Dimension(100, 30)); // legt die größe fest in Pixel
         ship_size5 = new JSpinner(shipSizeModel5);
         ship_size4 = new JSpinner(shipSizeModel4);
         ship_size3 = new JSpinner(shipSizeModel3);
@@ -68,16 +77,48 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         contentPanel.add(ship_size3);
         contentPanel.add(shipSizeLabel2);
         contentPanel.add(ship_size2);
-        contentPanel.add(new JLabel(""));
+        contentPanel.add(zurueck_button);
         contentPanel.add(start_button);
         gridSizeSpinner.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
         ship_size5.addChangeListener(e -> {updateCapacity();});
         ship_size4.addChangeListener(e -> {updateCapacity();});
         ship_size3.addChangeListener(e -> {updateCapacity();});
         ship_size2.addChangeListener(e -> {updateCapacity();});
-        start_button.addActionListener(e -> {frame.showScreen("gamescreen");}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
+        start_button.addChangeListener(e -> {updateCapacity();});
+        zurueck_button.addActionListener(e -> {frame.showScreen("singleplayer");});
+        start_button.addActionListener(e -> { // Der ActionListener ist ein Objekt der als Zuhörer am Button klebt und eine Methode mit dem Parameter e besitzen muss, um die Klick-Details zu empfangen und daraufhin wird der Code in den {} ausführt
+            int occupied = (Integer) capacityBar.getValue();
+            int max = (Integer) capacityBar.getMaximum();
+            if (max == occupied) {
+                start();
+                frame.showScreen("gamescreen");
+            }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
         add(contentPanel); // das contentPanel wird auf das pregame-Panel gelegt
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
+    }
+
+    private void start() {
+        int shipSize5 = (Integer) ship_size5.getValue();
+        int shipSize4 = (Integer) ship_size4.getValue();
+        int shipSize3 = (Integer) ship_size3.getValue();
+        int shipSize2 = (Integer) ship_size2.getValue();
+        int total = shipSize5 + shipSize4 + shipSize3 + shipSize2;
+        ships = new int[total];
+        int shipSizes4_5 = shipSize4 + shipSize5;
+        int shipSizes3_4_5 = shipSize3 + shipSize4 + shipSize5;
+        for (int i = 0; i < shipSize5; i++) {
+            ships[i] = 5;
+        }
+        for (int i = shipSize5; i < shipSizes4_5; i++) {
+            ships[i] = 4;
+        }
+        for (int i = shipSizes4_5; i < shipSizes3_4_5; i++) {
+            ships[i] = 3;
+        }
+        for (int i = shipSizes3_4_5; i < total; i++) {
+            ships[i] = 2;
+        }
+
     }
 
     @Override
@@ -92,11 +133,11 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private void updateCapacity() {
         int gridSize = (Integer) gridSizeSpinner.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert
         int max = (int) (gridSize * gridSize * 0.3); // maximale Flächenfelder die mit Schiffen belegt werden darf wird berechnet. Man muss Cast (Integer) machen, weil man ein Objekt zurück bekommt und man muss sagen, was es ist, in diesem Fall ein Integer
-        int shipSize5 = (Integer) ship_size5.getValue();
+        int shipSize5 = (Integer) ship_size5.getValue(); // aktueller Wert der gerade in dem JSpinner drin steht wird in einem int gespeichert
         int shipSize4 = (Integer) ship_size4.getValue();
         int shipSize3 = (Integer) ship_size3.getValue();
         int shipSize2 = (Integer) ship_size2.getValue();
-        SpinnerNumberModel model5 = (SpinnerNumberModel) ship_size5.getModel();
+        SpinnerNumberModel model5 = (SpinnerNumberModel) ship_size5.getModel(); // Mit model5 ändert man das ursprüngliche Objekt
         SpinnerNumberModel model4 = (SpinnerNumberModel) ship_size4.getModel();
         SpinnerNumberModel model3 = (SpinnerNumberModel) ship_size3.getModel();
         SpinnerNumberModel model2 = (SpinnerNumberModel) ship_size2.getModel();
@@ -106,6 +147,11 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
             model4.setValue(0);
             model3.setValue(0);
             model2.setValue(0);
+            occupied = 0;
+            shipSize5 = 0;
+            shipSize4 = 0;
+            shipSize3 = 0;
+            shipSize2 = 0;
         }
         int free = max - occupied;
         int freeShipSize5 = (int) (free / 5) + shipSize5; // Berechnet wie viele 5er Schiffe bei der Größe der map aktuell noch ausgewählt werden dürften
@@ -114,9 +160,30 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         int freeShipSize2 = (int) (free / 2) + shipSize2;
         capacityBar.setMaximum(max); // der Wert was 100% bei der Anzeige ist
         capacityBar.setValue(occupied); // der Wert der gerade belegt ist also der aktuell gefüllte Balken
+        occupied = (Integer) capacityBar.getValue(); // Man bekommt ein Objekt zurück und man muss sagen, dass es sich dabei um einen Integer handelt
+        max = (Integer) capacityBar.getMaximum();
+        if (occupied < max) {
+            capacityBar.setString(occupied + "/" + max);
+        } else {
+            capacityBar.setString("Alle Felder belegt");
+        }
+        capacityBar.setStringPainted(true);
         model5.setMaximum(freeShipSize5);
         model4.setMaximum(freeShipSize4);
         model3.setMaximum(freeShipSize3);
         model2.setMaximum(freeShipSize2);
+        if (occupied == max) {
+            start_button.setBackground(Color.GREEN); // Hintergrund grün
+            start_button.setForeground(Color.BLACK); // Schrift weiß
+            start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
+            start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
+            start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
+        } else {
+            start_button.setBackground(Color.GRAY); // Hintergrund grün
+            start_button.setForeground(Color.BLACK); // Schrift weiß
+            start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
+            start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
+            start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
+        }
     }
 }
