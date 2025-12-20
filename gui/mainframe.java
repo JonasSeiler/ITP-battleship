@@ -22,7 +22,7 @@ public class mainframe extends JFrame {
         /*--create card layout (for multiple screens)--*/
         cLayout = new CardLayout();
         cPanel = new JPanel(cLayout);
-        
+
         /*--create different screens--*/
         titlescreen titlescreen = new titlescreen(this);
         singleplayer singleplayer = new singleplayer(this);
@@ -30,11 +30,12 @@ public class mainframe extends JFrame {
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
         pregamescreen pregamescreen = new pregamescreen(this);
+        hostpregamescreen hostpregamescreen = new hostpregamescreen(this);
         int gridSize = 15;
         int[] ships = {1,2,3,1};
         gamescreen gamescreen = new gamescreen(this, gridSize, ships);
 
-        
+
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
         cPanel.add(singleplayer, "singleplayer");
@@ -43,6 +44,7 @@ public class mainframe extends JFrame {
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
         cPanel.add(gamescreen, "gamescreen");
+        cPanel.add(hostpregamescreen,"hostpregamescreen");
         add(cPanel);
         setVisible(true);
         pack();
