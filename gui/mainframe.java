@@ -28,9 +28,7 @@ public class mainframe extends JFrame {
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
         pregamescreen pregamescreen = new pregamescreen(this);
-        int gridSize = 15;
-        int[] ships = {1,2,3,1};
-        gamescreen gamescreen = new gamescreen(this, gridSize, ships);
+        gamescreen gamescreen = new gamescreen(this);
 
         
         /*--add to cPanel--*/
