@@ -1,3 +1,4 @@
+package src.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -7,9 +8,9 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class multiplayer extends JPanel {
+public class singleplayer extends JPanel {
 
-    public multiplayer(mainframe frame) {
+    public singleplayer(mainframe frame) {
         /*--set layout manager--*/
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.black);
@@ -21,12 +22,12 @@ public class multiplayer extends JPanel {
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         /*--button--*/
-        JButton join = new JButton("Join Game");
-        join.setAlignmentX(Component.CENTER_ALIGNMENT);
-        join.addActionListener(e -> frame.showScreen("joinscreen"));
-        JButton host = new JButton("Host Game");
-        host.setAlignmentX(Component.CENTER_ALIGNMENT);
-        host.addActionListener(e -> frame.showScreen("hostscreen"));
+        JButton newgame = new JButton("New Game");
+        newgame.setAlignmentX(Component.CENTER_ALIGNMENT);
+        newgame.addActionListener(e -> frame.showScreen("pregamescreen"));
+        JButton loadgame = new JButton("Load Game");
+        loadgame.setAlignmentX(Component.CENTER_ALIGNMENT);
+        loadgame.addActionListener(e -> frame.showScreen("gamescreen"));
         JButton exit = new JButton("Exit");
         exit.setAlignmentX(Component.CENTER_ALIGNMENT);
         exit.addActionListener(e -> frame.showScreen("titlescreen"));
@@ -35,9 +36,9 @@ public class multiplayer extends JPanel {
         add(Box.createVerticalGlue());
         add(title);
         add(Box.createVerticalStrut(30));
-        add(join);
+        add(newgame);
         add(Box.createVerticalStrut(15));
-        add(host);
+        add(loadgame);
         add(Box.createVerticalStrut(15));
         add(exit);
         add(Box.createVerticalGlue());

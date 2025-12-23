@@ -1,3 +1,4 @@
+package src.gui;
 import java.awt.CardLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
