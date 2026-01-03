@@ -1,4 +1,4 @@
-package src.gui;
+package gui;
 import java.awt.CardLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -8,6 +8,8 @@ import javax.swing.SwingUtilities;
 public class mainframe extends JFrame {
     private CardLayout cLayout;
     private JPanel cPanel;
+    public gamescreen GameScreen;
+    public battlescreen BattleScreen;
 
     public mainframe() {
         this.setTitle("Tidebreaker"); // title of frame
@@ -29,8 +31,7 @@ public class mainframe extends JFrame {
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
         pregamescreen pregamescreen = new pregamescreen(this);
-        gamescreen gamescreen = new gamescreen(this);
-
+        GameScreen = new gamescreen(this);
         
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
@@ -39,7 +40,7 @@ public class mainframe extends JFrame {
         cPanel.add(pregamescreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
-        cPanel.add(gamescreen, "gamescreen");
+        cPanel.add(GameScreen, "gamescreen");
         this.add(cPanel);
         this.setVisible(true);
         this.pack();
@@ -48,6 +49,19 @@ public class mainframe extends JFrame {
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
+
+    public void startBattle() {
+        if (BattleScreen != null) cPanel.remove(BattleScreen);
+
+        BattleScreen = new battlescreen(this,
+            GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR);
+
+        cPanel.add(BattleScreen, "battlescreen");
+        cLayout.show(cPanel, "battlescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }

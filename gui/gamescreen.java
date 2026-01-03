@@ -1,16 +1,22 @@
-package src.gui;
+package gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-// package ../src;
+import src.coordinate;
 
 public class gamescreen extends JPanel {
 
     /*--field data--*/
     private JButton[][] pCells;
     private JButton[][] eCells;
-    private JPanel pField;
+    public JPanel pField;
     private JPanel eField;
+    private int placedShipCount = 0;
+    /*--shared data--*/
+    public coordinate[] COR; // x- and y-coordinate of ships
+    public int[] SHIPS; // length of ships
+    public boolean[] DIR; // direction of ships 0 -> right; 1 -> down
+    public int gridSize;
 
     /*--ship placement state--*/
     private boolean horizontal = true;
@@ -33,8 +39,19 @@ public class gamescreen extends JPanel {
 
     /*--constructor--*/
     public gamescreen(mainframe frame) {
-        int gridSize = 15;
+        int inGridSize = 15;
+        this.gridSize = inGridSize;
         int[] inShips = {5, 4, 4, 3, 3, 3, 2};
+        int totalShips = inShips.length;
+
+        COR = new coordinate[totalShips];
+        DIR = new boolean[totalShips];
+        SHIPS = new int[totalShips];
+
+        /*--ships[0] = 2-sized--
+        ----ships[1] = 3-sized--
+        ----ships[2] = 4-sized--
+        ----ships[3] = 5-sized--*/
         int[] ships = convertShipArray(inShips);
         // int a = pregamescreen.gridSize();
         /*--layout for 'this' panel--*/
@@ -85,6 +102,7 @@ public class gamescreen extends JPanel {
 
         /*--build start button--*/
         JButton startButton = new JButton("Start Game");
+        startButton.addActionListener(e -> frame.startBattle());
         pFieldPanel.add(startButton);
 
         /*--add player field panel to player side panel--*/
@@ -269,6 +287,20 @@ public class gamescreen extends JPanel {
             pCells[rr][cc].setBackground(Color.BLUE);
         }
 
+        /*--save placed ship data--*/
+        COR[placedShipCount] = new coordinate(r, c);   // starting coordinate
+        DIR[placedShipCount] = horizontal;             // direction
+        SHIPS[placedShipCount] = currentShipSize;      // ship length
+        
+        /*System.out.println(
+            "Saved ship #" + placedShipCount +
+            " | size=" + SHIPS[placedShipCount] +
+            " | dir=" + (DIR[placedShipCount] ? "V" : "H") +
+            " | at=(" + COR[placedShipCount].x +
+            "," + COR[placedShipCount].y + ")"
+        );*/
+        placedShipCount++;
+        
         /*--decrement ship count--*/
         shipsLeft[index]--;
 
@@ -349,7 +381,7 @@ public class gamescreen extends JPanel {
         int[] shipCount = new int[4];
 
         for (int size : ships) {
-            int index = 5 - size;
+            int index = size - 2;
             if (index >= 0 && index < shipCount.length) {
                 shipCount[index]++;
             }

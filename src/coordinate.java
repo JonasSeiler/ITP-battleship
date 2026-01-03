@@ -1,5 +1,4 @@
 package src;
-
 public class coordinate {
     public int x, y;
     public coordinate(int x, int y) {
