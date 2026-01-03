@@ -32,7 +32,7 @@ public class mainframe extends JFrame {
         hostpregamescreen hostpregamescreen = new hostpregamescreen(this);
         int gridSize = 15;
         int[] ships = {1,2,3,1};
-        gamescreen gamescreen = new gamescreen(this, gridSize, ships);
+        //gamescreen gamescreen = new gamescreen(this, gridSize, ships);
 
 
         /*--add to cPanel--*/
@@ -42,7 +42,7 @@ public class mainframe extends JFrame {
         cPanel.add(pregamescreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
-        cPanel.add(gamescreen, "gamescreen");
+        //cPanel.add(gamescreen, "gamescreen");
         cPanel.add(hostpregamescreen,"hostpregamescreen");
         add(cPanel);
         setVisible(true);
