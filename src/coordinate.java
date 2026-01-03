@@ -26,4 +26,6 @@ Jonas Methode mit Parameter (coordinate) und Rückgabewerte 0, 1 oder 2
 Ich brauche noch eine Schießmethode getroffen werden. Parameter: (cor, int a) -> a: 0: verfehlt, 1: getroffen, 2:versenkt Rückgabewert: void
  -> linkes Feld (player field) richtig einfärben 0: verfehlt(rot), 1: getroffen(gelb), 2: versenkt(grün) 
 Matthias Klasse: int gridSize; int ships[] = {5, 5, 4, 3, 2, 2}
+
+Jonas Methode: 
 */
