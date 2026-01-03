@@ -93,7 +93,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
             int max = (Integer) capacityBar.getMaximum();
             if (max == occupied) {
                 start();
-                frame.showScreen("gamescreen");
+                frame.startGamescreen();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
         add(contentPanel); // das contentPanel wird auf das pregamescreen-Panel gelegt
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht

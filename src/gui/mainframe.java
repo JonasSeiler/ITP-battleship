@@ -6,6 +6,10 @@ import java.awt.*;
 public class mainframe extends JFrame {
     private CardLayout cLayout;
     private JPanel cPanel;
+    /*--shared data--*/
+    public gamescreen GameScreen;
+    public battlescreen BattleScreen;
+    public pregamescreen PreGameScreen;
 
     public mainframe() {
         this.setTitle("Tidebreaker"); // title of frame
@@ -30,9 +34,6 @@ public class mainframe extends JFrame {
         hostscreen hostscreen = new hostscreen(this);
         pregamescreen pregamescreen = new pregamescreen(this);
         hostpregamescreen hostpregamescreen = new hostpregamescreen(this);
-        int gridSize = 15;
-        int[] ships = {1,2,3,1};
-        //gamescreen gamescreen = new gamescreen(this, gridSize, ships);
 
 
         /*--add to cPanel--*/
@@ -42,7 +43,6 @@ public class mainframe extends JFrame {
         cPanel.add(pregamescreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
-        //cPanel.add(gamescreen, "gamescreen");
         cPanel.add(hostpregamescreen,"hostpregamescreen");
         add(cPanel);
         setVisible(true);
@@ -51,6 +51,27 @@ public class mainframe extends JFrame {
     /*--public method to switch screens--*/
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
+    }
+    public void startGamescreen() {
+        if (GameScreen != null) cPanel.remove(GameScreen);
+
+        GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
+
+        cPanel.add(GameScreen, "gamescreen");
+        cLayout.show(cPanel, "gamescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
+    }
+
+    public void startBattle() {
+        if (BattleScreen != null) cPanel.remove(BattleScreen);
+
+        BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR);
+
+        cPanel.add(BattleScreen, "battlescreen");
+        cLayout.show(cPanel, "battlescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
     }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
