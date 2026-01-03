@@ -12,8 +12,8 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private JButton start_button;
     private JButton zurueck_button;
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
-    public int gridSize;
-    public int[] ships;
+    public int gridSize; // wird für den GameScreen gebraucht
+    public int[] ships; // // wird für den GameScreen gebraucht
 
     private mainframe frame; // Referenz auf das Hauptfenster
 
