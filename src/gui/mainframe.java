@@ -32,15 +32,15 @@ public class mainframe extends JFrame {
         multiplayer multiplayer = new multiplayer(this);
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
-        pregamescreen pregamescreen = new pregamescreen(this);
         hostpregamescreen hostpregamescreen = new hostpregamescreen(this);
+        PreGameScreen = new pregamescreen(this);
 
 
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
         cPanel.add(singleplayer, "singleplayer");
         cPanel.add(multiplayer, "multiplayer");
-        cPanel.add(pregamescreen, "pregamescreen");
+        cPanel.add(PreGameScreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
         cPanel.add(hostpregamescreen,"hostpregamescreen");
@@ -52,6 +52,7 @@ public class mainframe extends JFrame {
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
+
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
@@ -66,7 +67,7 @@ public class mainframe extends JFrame {
     public void startBattle() {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
-        BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR);
+        BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
 
         cPanel.add(BattleScreen, "battlescreen");
         cLayout.show(cPanel, "battlescreen");

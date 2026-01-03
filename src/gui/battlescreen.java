@@ -15,6 +15,7 @@ public class battlescreen extends JPanel {
     public coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
+    /*--Matthias' Parameter--*/
     public int gridSize;
     /*--battle state--*/
     private boolean[][] shots;   // where has been shot
@@ -28,16 +29,13 @@ public class battlescreen extends JPanel {
     // 3. Koordinate von Zellenposition (x und y-Position/Indizies) -> coordinate class verwenden
 
     /*--constructor--*/
-    public battlescreen(mainframe frame, coordinate[] c, int[] s, boolean[] d) {
+    public battlescreen(mainframe frame, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         this.COR = c;
         this.SHIPS = s;
         this.DIR = d;
-        int inGridSize = 15;
         this.gridSize = inGridSize;
 
-        int gridSize = 15;
-        int[] inShips = {5, 4, 4, 3, 3, 3, 2};
-        int totalShips = inShips.length;
+        //int totalShips = inShips.length;
 
         /*COR = new coordinate[totalShips];
         DIR = new boolean[totalShips];
