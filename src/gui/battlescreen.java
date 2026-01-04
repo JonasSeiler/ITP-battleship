@@ -40,13 +40,7 @@ public class battlescreen extends JPanel {
         /*COR = new coordinate[totalShips];
         DIR = new boolean[totalShips];
         SHIPS = new int[totalShips];*/
-
-        /*--ships[0] = 2-sized--
-        ----ships[1] = 3-sized--
-        ----ships[2] = 4-sized--
-        ----ships[3] = 5-sized--*/
-        //int[] ships = convertShipArray(inShips);
-        // int a = prebattlescreen.gridSize();
+        
         /*--layout for 'this' panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
@@ -68,7 +62,7 @@ public class battlescreen extends JPanel {
 
         /*--create player field (left cells)--*/
         pCells = new JButton[gridSize][gridSize];
-        pField = createField(gridSize, gridSize, pCells);
+        pField = createField(gridSize, gridSize, pCells, false);
         pSide.add(pField, BorderLayout.CENTER);
 
         /*--player field panel (left) for combobox and start-button--*/
@@ -89,7 +83,7 @@ public class battlescreen extends JPanel {
 
         /*--create enemy field (right cells)--*/
         eCells = new JButton[gridSize][gridSize];
-        eField = createField(gridSize, gridSize, eCells);
+        eField = createField(gridSize, gridSize, eCells, true);
         eSide.add(eField, BorderLayout.CENTER);
 
         /*--build load/exit button--*/
@@ -114,17 +108,29 @@ public class battlescreen extends JPanel {
         setFocusable(true);
     }
 
-
     /*--methods--*/
-    private JPanel createField(int x, int y, JButton[][] array) {
-        JPanel field = new JPanel(new GridLayout(x, y));
+    private JPanel createField(int a, int b, JButton[][] array, boolean clickable) {
+        JPanel field = new JPanel(new GridLayout(a, b));
         field.setBackground(Color.black);
 
-        for (int r = 0; r < x; r++) {
-            for (int c = 0; c < y; c++) {
+        for (int r = 0; r < a; r++) {
+            for (int c = 0; c < b; c++) {
                 JButton cell = new JButton();
                 cell.setBackground(Color.DARK_GRAY);
                 array[r][c] = cell;
+
+                int x = r;
+                int y = c;
+
+                if(clickable) {
+                    cell.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            onEnemyCellClicked(x, y);
+                        }
+                    });
+                }
+
                 field.add(cell);
             }
         }
@@ -150,5 +156,29 @@ public class battlescreen extends JPanel {
             pCells[r][c].setBackground(Color.BLUE);
             }
         }
+    }
+
+    /*--i=0 -> verfehlt (rot); i=1 -> getroffen (gelb); i=2 -> versunken (grün) */
+    private void colorShip(int x, int y, int i) {
+        switch(i) {
+            case 0:
+                eCells[x][y].setBackground(Color.red);
+                break;
+            case 1:
+                eCells[x][y].setBackground(Color.yellow);
+                break;
+            case 2:
+                eCells[x][y].setBackground(Color.green);
+                break;
+        }
+    }
+
+    private void onEnemyCellClicked(int x, int y) {
+        /*--Jonas' Methode kommt hier hin--*/
+        int status = 0;
+
+        colorShip(x, y, status);
+
+        eCells[x][y].setEnabled(false);
     }
 }
