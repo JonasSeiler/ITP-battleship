@@ -15,6 +15,7 @@ public class battlescreen extends JPanel {
     public coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
+    public int status = 0;
     /*--Matthias' Parameter--*/
     public int gridSize;
     /*--battle state--*/
@@ -158,8 +159,22 @@ public class battlescreen extends JPanel {
         }
     }
 
+    public void colorPlayerShip(int x, int y, int i) {
+        switch(i) {
+            case 0:
+                pCells[x][y].setBackground(Color.red);
+                break;
+            case 1:
+                pCells[x][y].setBackground(Color.yellow);
+                break;
+            case 2:
+                pCells[x][y].setBackground(Color.green);
+                break;
+        }
+    }
+
     /*--i=0 -> verfehlt (rot); i=1 -> getroffen (gelb); i=2 -> versunken (grün) */
-    private void colorShip(int x, int y, int i) {
+    private void colorEnemyShip(int x, int y, int i) {
         switch(i) {
             case 0:
                 eCells[x][y].setBackground(Color.red);
@@ -169,16 +184,37 @@ public class battlescreen extends JPanel {
                 break;
             case 2:
                 eCells[x][y].setBackground(Color.green);
+                if (isInBounds(x-1, y) && eCells[x-1][y].getBackground() == Color.yellow) {
+                    colorEnemyShip(x-1, y, i);
+                }
+                if (isInBounds(x+1, y) && eCells[x+1][y].getBackground() == Color.yellow) {
+                    colorEnemyShip(x+1, y, i);
+                }
+                if (isInBounds(x, y-1) && eCells[x][y-1].getBackground() == Color.yellow) {
+                    colorEnemyShip(x, y-1, i);
+                }
+                if (isInBounds(x, y+1) && eCells[x][y+1].getBackground() == Color.yellow) {
+                    colorEnemyShip(x, y+1, i);
+                }
                 break;
         }
     }
 
     private void onEnemyCellClicked(int x, int y) {
         /*--Jonas' Methode kommt hier hin--*/
-        int status = 0;
+        //int status = 0;
 
-        colorShip(x, y, status);
+        if (status != 4) {
+            colorEnemyShip(x, y, 1);
+        } else {
+            colorEnemyShip(x, y, 2);
+            status = 0;
+        }
+        // colorEnemyShip(x, y, status);
+        status++;
 
         eCells[x][y].setEnabled(false);
     }
 }
+
+/*--JavaDocs irgendwas--*/
