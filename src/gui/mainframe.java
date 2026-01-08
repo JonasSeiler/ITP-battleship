@@ -10,6 +10,7 @@ public class mainframe extends JFrame {
     public gamescreen GameScreen;
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
+    public hostpregamescreen Hostpregamescreen;
 
     public mainframe() {
         this.setTitle("Tidebreaker"); // title of frame
@@ -32,7 +33,7 @@ public class mainframe extends JFrame {
         multiplayer multiplayer = new multiplayer(this);
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
-        hostpregamescreen hostpregamescreen = new hostpregamescreen(this);
+        Hostpregamescreen = new hostpregamescreen(this);
         PreGameScreen = new pregamescreen(this);
 
 
@@ -43,7 +44,7 @@ public class mainframe extends JFrame {
         cPanel.add(PreGameScreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
-        cPanel.add(hostpregamescreen,"hostpregamescreen");
+        cPanel.add(Hostpregamescreen,"hostpregamescreen");
         add(cPanel);
         setVisible(true);
         pack();
@@ -57,6 +58,17 @@ public class mainframe extends JFrame {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
         GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
+
+        cPanel.add(GameScreen, "gamescreen");
+        cLayout.show(cPanel, "gamescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
+    }
+
+    public void startGamescreen_host() {
+        if (GameScreen != null) cPanel.remove(GameScreen);
+
+        GameScreen = new gamescreen(this, Hostpregamescreen.ships, Hostpregamescreen.gridSize);
 
         cPanel.add(GameScreen, "gamescreen");
         cLayout.show(cPanel, "gamescreen");

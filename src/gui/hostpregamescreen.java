@@ -11,8 +11,9 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
     private JProgressBar capacityBar; // Balken der Anzeigen soll wie viele Platz man noch mit Schiffen belegen kann
     private JButton start_button;
     private JButton zurueck_button;
-    public JSpinner gridSizeSpinner; // Dekleration des hoch und runter klickbaren Buttons
-    public int[] ships;
+    private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
+    public int gridSize; // wird für den GameScreen gebraucht
+    public int[] ships; // // wird für den GameScreen gebraucht
 
     private mainframe frame; // Referenz auf das Hauptfenster
 
@@ -43,7 +44,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         zurueck_button = new JButton("   <-   ");
         zurueck_button.setForeground(Color.BLACK);
         zurueck_button.setFont(new Font("SansSerif", Font.BOLD,22));
-        gridSizeSpinner = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
+        gridSize1 = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
         ship_size5 = new JSpinner(shipSizeModel5);
         ship_size4 = new JSpinner(shipSizeModel4);
         ship_size3 = new JSpinner(shipSizeModel3);
@@ -69,7 +70,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         contentPanel.add(BarLabel);
         contentPanel.add(capacityBar);
         contentPanel.add(sizeLabel); // fügt die Objekte auf die innere Leinwand Schritt für Schritt also erst das erste, dann das zweite...
-        contentPanel.add(gridSizeSpinner);
+        contentPanel.add(gridSize1);
         contentPanel.add(shipSizeLabel5);
         contentPanel.add(ship_size5);
         contentPanel.add(shipSizeLabel4);
@@ -80,7 +81,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         contentPanel.add(ship_size2);
         contentPanel.add(zurueck_button);
         contentPanel.add(start_button);
-        gridSizeSpinner.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
+        gridSize1.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
         ship_size5.addChangeListener(e -> {updateCapacity();});
         ship_size4.addChangeListener(e -> {updateCapacity();});
         ship_size3.addChangeListener(e -> {updateCapacity();});
@@ -92,7 +93,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
             int max = (Integer) capacityBar.getMaximum();
             if (max == occupied) {
                 start();
-                frame.showScreen("gamescreen");
+                frame.startGamescreen_host();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
         add(contentPanel); // das contentPanel wird auf das hostpregamescreen-Panel gelegt
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
@@ -119,7 +120,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         for (int i = shipSizes3_4_5; i < total; i++) {
             ships[i] = 2;
         }
-
+        gridSize = (Integer) gridSize1.getValue();
     }
 
     @Override
@@ -132,7 +133,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe
     }
     private void updateCapacity() {
-        int gridSize = (Integer) gridSizeSpinner.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert
+        int gridSize = (Integer) gridSize1.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert
         int max = (int) (gridSize * gridSize * 0.3); // maximale Flächenfelder die mit Schiffen belegt werden darf wird berechnet. Man muss Cast (Integer) machen, weil man ein Objekt zurück bekommt und man muss sagen, was es ist, in diesem Fall ein Integer
         int shipSize5 = (Integer) ship_size5.getValue(); // aktueller Wert der gerade in dem JSpinner drin steht wird in einem int gespeichert
         int shipSize4 = (Integer) ship_size4.getValue();
