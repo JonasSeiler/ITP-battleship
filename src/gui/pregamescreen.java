@@ -3,6 +3,11 @@ package src.gui;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Screen um die Spieleinstellungen im Singleplayermodus zu treffen
+ * Festlegung der Anzahl der Schiffe und der Spielfeldgröße
+ * @author Matthias
+ */
 public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
     private JSpinner ship_size3;
@@ -14,12 +19,15 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
-
     private mainframe frame; // Referenz auf das Hauptfenster
 
+    /**
+     * Erstellt den Screen für die Spieleinstellungen und erstellt und initialisiert Objekte
+     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     */
     public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen gepackt
-        setOpaque(false); // Erlaubt der paintComponent-Methode den Hintergrund zu zeichnen
+        setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,2,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
@@ -99,6 +107,10 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
     }
 
+    /**
+     * Methode die aufgerufen wird, wenn man auf den Start Button drückt
+     * in der Methode werden die gewählten Einstellungen in einem Array und int gespeichert
+     */
     private void start() {
         int shipSize5 = (Integer) ship_size5.getValue();
         int shipSize4 = (Integer) ship_size4.getValue();
@@ -123,15 +135,26 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         gridSize = (Integer) gridSize1.getValue();
     }
 
+    /**
+     * Methode für den Farbverlauf des Screens
+     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
+     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
-        super.paintComponent(g); // alte Inhalt der Komponente wird gelöscht
+        super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, new Color(20, 30, 50), 0, getHeight(), new Color(0, 100, 160)); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // der oceanGradient Farbverlauf soll für nachfolgende Füllbefehle verwendet werden
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom Titlescreenobjekt
     }
+
+    /**
+     * Methode die aufgerufen wird, wenn eine Spieleinstellung verändert worden ist
+     * Es wird berechnet wie viel Platz man noch belegen darf und ob man noch ein Schiff mit größe x aktuell hinzufügen kann
+     * Zudem wird die Kapazitätsanzeige aktualisiert
+     */
     private void updateCapacity() {
         int gridSize = (Integer) gridSize1.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert
         int max = (int) (gridSize * gridSize * 0.3); // maximale Flächenfelder die mit Schiffen belegt werden darf wird berechnet. Man muss Cast (Integer) machen, weil man ein Objekt zurück bekommt und man muss sagen, was es ist, in diesem Fall ein Integer
@@ -169,7 +192,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         } else {
             capacityBar.setString("Alle Felder belegt");
         }
-        capacityBar.setStringPainted(true);
+        capacityBar.setStringPainted(true); // der Text wird in die Bar geschrieben, der in setString gespeichert ist
         model5.setMaximum(freeShipSize5);
         model4.setMaximum(freeShipSize4);
         model3.setMaximum(freeShipSize3);
