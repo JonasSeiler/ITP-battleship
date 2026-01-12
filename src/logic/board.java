@@ -11,7 +11,8 @@ public class board {
         size = s;
         ship_pos = new int[size][size];
         hit_pos = new int[size][size];
-        Arrays.fill(hit_pos, false);
+        Arrays.fill(ship_pos, 0);
+        Arrays.fill(hit_pos, 0);
         fleet = new ship[ship_set.length];
 
         for (int i = 0; i < ship_set.length; i++) { // Schiffe initialisieren
@@ -21,7 +22,7 @@ public class board {
     }
 
     public void place_ship(coordinate head, int dir, int s_index) {
-        // dir: 0 || 2 -> x,     1 || 3 -> y
+        // dir: 0 = x,     1 =  y
         fleet[s_index].set_dir_head(head, dir);
         if(dir % 2 == 0) {
             if(dir == 0) {
@@ -60,7 +61,7 @@ public class board {
         hit_pos[att.x][att.y] = 1;
         if(ship_pos[att.x][att.y] == 0) { 
             return 0;
-    }
+        }
         for (ship ship : fleet) {
             for(int i = 0; i < ship.length; i++) {
                 if(att.equals(ship.pos[i])) {

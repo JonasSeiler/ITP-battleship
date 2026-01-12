@@ -1,16 +1,14 @@
 package src;
 import java.io.*;
 
-public class game {
-    static board board1;
-    static board board2;
-    static boolean board_1 = true;
-    static boolean board_2 = false;
-    static coordinate attack;
+import src.gui.battlescreen;
 
+public class game {
+    private board board1;
+    // add gui and coms classes
+    private battlescreen gui;
     public game(int size, int[] ship_set) {
         board1 = new board(size, ship_set);
-        board2 = new board(size, ship_set);
     }
 
     public void load_game(String filepath) {
@@ -18,7 +16,7 @@ public class game {
            
             // read grid size
             int new_s = Integer.parseInt(reader.readLine().trim());
-
+            
             // read ship array
             String line = reader.readLine();
             String[] parts = line.trim().split("\\s+");
@@ -73,8 +71,36 @@ public class game {
 
         }
     }
+    
+    public int send_shot(int x, int y) {
+        //server msg here 
+        int response = ; // response = 0,1,2
+        
+        return response;
+    }
 
-    public static void main(String[] args) {
+    public int get_hit(coordinate p) {
+        int answer = board1.check_hit(p); 
+        switch(answer) {
+            case 0:
+                
+                break;
+            case 1:
+
+                break;
+            case 2:
+                
+                break;
+            case -1:
+
+                break;
+        }
+        return answer; 
+        
+    }
+
+
+/*    public static void main(String[] args) {
         // add pre-game init || load game 
         while (!board1.lost() || !board2.lost()) {
             if (board_1 == true) {
@@ -118,5 +144,5 @@ public class game {
             }
         }
         // add winning sequence
-    }
+    }*/ 
 }
