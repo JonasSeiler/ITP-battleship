@@ -3,119 +3,142 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import src.logic.*;
+/**
+ * Hauptspielscreen, wo der Spieler auf das 
+ * Gegnerfeld schießt.
+ * @author Max Steingräber
+ */
 
 public class battlescreen extends JPanel {
-
-    /*--field data--*/
+    /**
+     * Spielattribute
+     * 
+     * Felddaten
+     * @param pCells    Spielerzellen
+     * @param eCells    Gegnerzellen
+     * @param pField    Spielerfeld
+     * @param eField    Gegnerfeld
+     * 
+     * Gemeinsame Daten
+     * @param COR       Koordinaten (x, y) des jeweiligen Schiffs
+     * @param SHIPS     Schiffslänge des jeweilgen Schiffs
+     * @param DIR       Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
+     * @param status    Speichert Rückgabewert von 'send_shot' Methode
+     *                  (0 -> Daneben   1 -> Getroffen  2 -> Versunken)
+     * @param gridSize  Speichert die übergebene Spielfeldgröße
+     * @param gLogic    Enthält Spielelogik und 'send_shot' Methode
+     * 
+     */
     private JButton[][] pCells;
     private JButton[][] eCells;
     private JPanel pField;
     private JPanel eField;
-    /*--shared data--*/
+    
     public coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
     public int status = 0;
-    /*--Matthias' Parameter--*/
     public int gridSize;
-    public game gLogic;  
-
-    /*--string combo box ship selector--*/
-    // private JComboBox<String> shipSelector;
-
-    // 1. ships -> Länge abwärts sortiert bsp. [5, 5, 4, 3, 3, 2] -> X
-    // 2. Richtung: 0 -> rechts, 1 -> unten -> X
-    // 3. Koordinate von Zellenposition (x und y-Position/Indizies) -> coordinate class verwenden
-
-    /*--constructor--*/
+    public game gLogic;
+    /**
+     * Konstruiert den Hauptspielscreen.
+     * 
+     * @param frame         Hauptfensterscreen, der alle Screens enthält und verwaltet
+     * @param c             Koordinaten (x, y) des jeweiligen Schiffs
+     * @param s             Schiffslänge des jeweilgen Schiffs
+     * @param d             Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
+     * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
+     */
     public battlescreen(mainframe frame, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
+        /*--Speichern der übergebenen Input-Parameter--*/
         this.COR = c;
         this.SHIPS = s;
         this.DIR = d;
         this.gridSize = inGridSize;
 
-        //int totalShips = inShips.length;
-
-        /*COR = new coordinate[totalShips];
-        DIR = new boolean[totalShips];
-        SHIPS = new int[totalShips];*/
-        
-        /*--layout for 'this' panel--*/
+        /*--Layoutmanager 'this'-Panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
 
-        /*--title--*/
+        /*--Titel--*/
         JLabel title = new JLabel("Tidebreaker");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Sans Serif", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
         this.add(title, BorderLayout.NORTH);
 
-        /*--create game board panel--*/
+        /*--Erstellung des Spielboards--*/
         JPanel board = new JPanel(new GridLayout(1, 2, 20, 0));
         board.setBackground(Color.black);
 
-        /*--player side (left) panel--*/
+        /*--Spielerseite (links) Panel--*/
         JPanel pSide = new JPanel(new BorderLayout());
         pSide.setBackground(Color.black);
 
-        /*--create player field (left cells)--*/
+        /*--Spielerfelderstellung (linke Zellen)--*/
         pCells = new JButton[gridSize][gridSize];
         pField = createField(gridSize, gridSize, pCells, false);
         pSide.add(pField, BorderLayout.CENTER);
 
-        /*--player field panel (left) for combobox and start-button--*/
+        /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
 
-        /*--build start button--*/
-        JButton startButton = new JButton("Save Game");
-        startButton.setEnabled(false);
-        // startButton.addActionListener(e -> gLogic.save_game());
-        pFieldPanel.add(startButton);
+        /*--saveButton--*/
+        JButton saveButton = new JButton("Save Game");
+        saveButton.setEnabled(false);
+        // saveButton.addActionListener(e -> gLogic.save_game());
+        pFieldPanel.add(saveButton);
 
-        /*--add player field panel to player side panel--*/
+        /*--Fügt Spielerfeld-Panel auf Spielerseite (links) hinzu--*/
         pSide.add(pFieldPanel, BorderLayout.SOUTH);
 
-        /*--enemy side (right) panel--*/
+        /*--Gegnerseite (rechts) Panel--*/
         JPanel eSide = new JPanel(new BorderLayout());
         eSide.setBackground(Color.black);
 
-        /*--create enemy field (right cells)--*/
+        /*--Gegnerfelderstellung (rechte Zellen)--*/
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells, true);
         eSide.add(eField, BorderLayout.CENTER);
 
-        /*--build load/exit button--*/
+        /*--Load/Exit button--*/
         JButton loadButton = new JButton("Load Game");
         loadButton.setEnabled(false);
-        // startButton.addActionListener(e -> gLogic.load_game());
+        // saveButton.addActionListener(e -> gLogic.load_game());
         JButton exitButton = new JButton("Exit Game");
         exitButton.setEnabled(false);
 
-        /*--build enemy field panel for buttons--*/
+        /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
         eFieldPanel.add(loadButton);
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
 
-        /*--add player side and enemy side to game board--*/
+        /*--Fügt Spielerseite und Gegnerseite zu Spielboard hinzu--*/
         board.add(pSide);
         board.add(eSide);
         this.add(board, BorderLayout.CENTER);
         drawPlayerShips();
-
         setFocusable(true);
     }
-
-    /*--methods--*/
-    private JPanel createField(int a, int b, JButton[][] array, boolean clickable) {
-        JPanel field = new JPanel(new GridLayout(a, b));
+    
+    /**
+     * Erstellt ein Spielfeld
+     * 
+     * @param row           Reihenanzahl
+     * @param col           Spaltenanzahl
+     * @param array         Button Array (Zellen)
+     * @param clickable     Bestimmt, ob Zellen auf Clicks reagieren sollen
+     * @return              Generiertes Spielfeld
+     */
+    private JPanel createField(int row, int col, JButton[][] array, boolean clickable) {
+        JPanel field = new JPanel(new GridLayout(row, col));
         field.setBackground(Color.black);
 
-        for (int r = 0; r < a; r++) {
-            for (int c = 0; c < b; c++) {
+        for (int r = 0; r < row; r++) {
+            for (int c = 0; c < col; c++) {
                 JButton cell = new JButton();
                 cell.setBackground(Color.DARK_GRAY);
                 array[r][c] = cell;
@@ -137,13 +160,23 @@ public class battlescreen extends JPanel {
         }
         return field;
     }
-
+    /**
+     * Überprüft, ob Koordinaten sich innerhalb des Spielfelds befinden
+     * 
+     * @param r     x-Koordinate
+     * @param c     y-Koordinate
+     * @return      true, wenn innerhalb des Spielfelds
+     *              false, wenn außerhalb des Spielfelds
+     */
     private boolean isInBounds(int r, int c) {
         return r >= 0 && c >= 0 &&
                r < pCells.length &&
                c < pCells[0].length;
     }
-
+    /**
+     * Zeichnet alle Spielerschiffe in das Spielerfeld ein, die in
+     * den gemeinsamen Daten (COR, SHIPS, DIR) gespeichert sind
+     */
     private void drawPlayerShips() {
     for (int i = 0; i < COR.length; i++) {
         coordinate start = COR[i];
@@ -158,7 +191,13 @@ public class battlescreen extends JPanel {
             }
         }
     }
-
+    /**
+     * Färbt Spielerschiffe
+     * 
+     * @param x     x-Koordinate
+     * @param y     y-Koordinate
+     * @param i     Statuscode (0: rot, 1: gelb, 2: grün)
+     */
     public void colorPlayerShip(int x, int y, int i) {
         switch(i) {
             case 0:
@@ -172,8 +211,13 @@ public class battlescreen extends JPanel {
                 break;
         }
     }
-
-    /*--i=0 -> verfehlt (rot); i=1 -> getroffen (gelb); i=2 -> versunken (grün) */
+    /**
+     * Färbt Gegnerschiffe
+     * 
+     * @param x     x-Koordinate
+     * @param y     y-Koordinate
+     * @param i     Statuscode (0: rot, 1: gelb, 2: grün)
+     */
     private void colorEnemyShip(int x, int y, int i) {
         switch(i) {
             case 0:
@@ -199,16 +243,24 @@ public class battlescreen extends JPanel {
                 break;
         }
     }
-
+    /**
+     * Checkt Clicks auf die Gegenerzellen des Gegnerspielfelds
+     * 
+     * @param x     x-Koordinate
+     * @param y     y-Koordinate
+     */
     private void onEnemyCellClicked(int x, int y) {
-        /*--Jonas' Methode kommt hier hin--*/
         int status = gLogic.send_shot(x, y);
-        
+
         colorEnemyShip(x, y, status);
 
         eCells[x][y].setEnabled(false);
     }
-
+    /**
+     * Setzt Spielelogik
+     * 
+     * @param g     Spiellogikobjekt
+     */
     public void setGame(game g) {
         this.gLogic = g;
     }

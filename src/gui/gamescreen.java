@@ -5,42 +5,64 @@ import javax.swing.*;
 import src.logic.*;
 
 public class gamescreen extends JPanel {
-
-    /*--field data--*/
+    /**
+     * Spielattribute
+     * 
+     * Felddaten
+     * @param pCells    Spielerzellen
+     * @param eCells    Gegnerzellen
+     * @param pField    Spielerfeld
+     * @param eField    Gegnerfeld
+     * 
+     * Schiffbearbeitungsdaten
+     * @param horizontal        Richtung (0 -> horizontal, 1 -> vertikal)
+     * @param currentShipSize   Aktuelle ausgewählte Schiffsgröße
+     * @param occupied          Feld, das Schiffskoordinaten speichert
+     *                          (0 -> Zelle frei  1 -> Zelle belegt)   
+     * @param shipsLeft         Übrige Schiffe pro Größe
+     * @param hoverRow          Rotationsvorschau (Reihe)
+     * @param hoverCol          Rotationsvorschau (Spalte)
+     * @param shipSelector      Auswahlbox für Schiffsgröße
+     * 
+     * Gemeinsame Daten
+     * @param COR       Koordinaten (x, y) des jeweiligen Schiffs
+     * @param SHIPS     Schiffslänge des jeweilgen Schiffs
+     * @param DIR       Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
+     * @param status    Speichert Rückgabewert von 'send_shot' Methode
+     *                  (0 -> Daneben   1 -> Getroffen  2 -> Versunken)
+     * @param gridSize  Speichert die übergebene Spielfeldgröße
+     * @param gLogic    Enthält Spielelogik und 'send_shot' Methode
+     * 
+     */
     private JButton[][] pCells;
     private JButton[][] eCells;
     public JPanel pField;
     private JPanel eField;
     private int placedShipCount = 0;
-    /*--shared data--*/
-    public coordinate[] COR; // x- and y-coordinate of ships
-    public int[] SHIPS; // length of ships
-    public boolean[] DIR; // direction of ships 0 -> right; 1 -> down
-    /*--Matthias' Parameter--*/
+
+    public coordinate[] COR;
+    public int[] SHIPS;
+    public boolean[] DIR;
     public int gridSize;
     public int[] ships;
 
-    /*--ship placement state--*/
     private boolean horizontal = true;
     private int currentShipSize = 2;
     private boolean[][] occupied;
-
-    /*--remaining ships per size--*/
     private int[] shipsLeft;
-
-    /*--hover tracking (for rotation preview)--*/
     private int hoverRow = -1;
     private int hoverCol = -1;
-
-    /*--string combo box ship selector--*/
     private JComboBox<String> shipSelector;
 
-    // 1. ships -> Länge abwärts sortiert bsp. {5, 5, 4, 3, 3, 2} -> X
-    // 2. Richtung: 0 -> rechts, 1 -> unten -> X
-    // 3. Koordinate von Zellenposition (x und y-Position/Indizies) -> coordinate class verwenden
-
-    /*--constructor--*/
+    /**
+     * Konstruiert den Schiffplatzierungsscreen ('gamescreen')
+     * 
+     * @param frame         Hauptfensterscreen, der alle Screens enthält und verwaltet
+     * @param inShips       Übergebenes Schiffsfeld Bsp. {5, 5, 4, 3, 3, 3, 2} von {@link hostpregamescreen}
+     * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
+     */
     public gamescreen(mainframe frame, int[] inShips, int inGridSize) {
+        /*--Speichern der übergebenen Input-Parameter--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;
 
@@ -48,101 +70,109 @@ public class gamescreen extends JPanel {
         DIR = new boolean[totalShips];
         SHIPS = new int[totalShips];
 
-        /*--ships[0] = 2-sized--
-        ----ships[1] = 3-sized--
-        ----ships[2] = 4-sized--
-        ----ships[3] = 5-sized--*/
+        /*--Konvertierung in Schiffbearbeitungsformat--
+        --ships[0] = 2-sized--
+        --ships[1] = 3-sized--
+        --ships[2] = 4-sized--
+        --ships[3] = 5-sized--*/
         ships = convertShipArray(inShips);
-        // int a = pregamescreen.gridSize();
-        /*--layout for 'this' panel--*/
+
+        /*--Layoutmanager 'this'-Panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
 
-        /*--title--*/
+        /*--Titel--*/
         JLabel title = new JLabel("Tidebreaker");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Sans Serif", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
         this.add(title, BorderLayout.NORTH);
 
-        /*--create game board panel--*/
+        /*--Erstellung des Spielboards--*/
         JPanel board = new JPanel(new GridLayout(1, 2, 20, 0));
         board.setBackground(Color.black);
 
-        /*--player side (left) panel--*/
+        /*--Spielerseite (links) Panel--*/
         JPanel pSide = new JPanel(new BorderLayout());
         pSide.setBackground(Color.black);
 
-        /*--create player field (left cells)--*/
+        /*--Spielerfelderstellung (linke Zellen)--*/
         pCells = new JButton[gridSize][gridSize];
         pField = createField(gridSize, gridSize, pCells);
         pSide.add(pField, BorderLayout.CENTER);
 
-        /*--boolean player field to know where ships are stored--*/
+        /*--Feld, das Schiffskoordinaten speichert--*/
         occupied = new boolean[gridSize][gridSize];
 
-        /*--clone ships array--*/
+        /*--Klone Schiffsfeld--*/
         shipsLeft = ships.clone();
 
-        /*--player field panel (left) for combobox and start-button--*/
+        /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
 
-        /*--build ship selector text--*/
+        /*--Kombobox Textfeld--*/
         String[] shipNames = new String[ships.length];
         for (int i = 0; i < ships.length; i++) {
             shipNames[i] = (i + 2) + "-ships: " + ships[i] + "x";
         }
 
-        /*--build ship selector combo-box--*/
+        /*--Erstellung 'shipSelector' Kombobox--*/
         shipSelector = new JComboBox<>(shipNames);
         shipSelector.setSelectedIndex(0);
         currentShipSize = shipSelector.getSelectedIndex() + 2;
         pFieldPanel.add(shipSelector);
 
-        /*--build start button--*/
+        /*--Start Button--*/
         JButton startButton = new JButton("Start Game");
         startButton.addActionListener(e -> frame.startBattle());
         pFieldPanel.add(startButton);
 
-        /*--add player field panel to player side panel--*/
+        /*--Fügt Spielerfeld-Panel auf Spielerseite (links) hinzu--*/
         pSide.add(pFieldPanel, BorderLayout.SOUTH);
 
-        /*--enemy side (right) panel--*/
+        /*--Gegnerseite (rechts) Panel--*/
         JPanel eSide = new JPanel(new BorderLayout());
         eSide.setBackground(Color.black);
 
-        /*--create enemy field (right cells)--*/
+        /*--Gegnerfelderstellung (rechte Zellen)--*/
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells);
         eSide.add(eField, BorderLayout.CENTER);
 
-        /*--build load/exit button--*/
+        /*--Load/Exit button--*/
         JButton loadButton = new JButton("Load Game");
         loadButton.setEnabled(false);
         JButton exitButton = new JButton("Exit Game");
         exitButton.setEnabled(false);
 
-        /*--build enemy field panel for buttons--*/
+        /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
         eFieldPanel.add(loadButton);
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
 
-        /*--add player side and enemy side to game board--*/
+        /*--Fügt Spielerseite und Gegnerseite zu Spielboard hinzu--*/
         board.add(pSide);
         board.add(eSide);
         this.add(board, BorderLayout.CENTER);
 
+        /*--Fügt interaktive Spielfeld-Komponenten hinzu--*/
         addPlacementListeners();
         setupKeyBindings();
-
         setFocusable(true);
     }
 
 
-    /*--methods--*/
+    /**
+     * Erstellt ein Spielfeld
+     * 
+     * @param x         Reihenanzahl
+     * @param y         Spaltenanzahl
+     * @param array     Button Array (Zellen)
+     * @return          Generiertes Spielfeld
+     */
     private JPanel createField(int x, int y, JButton[][] array) {
         JPanel field = new JPanel(new GridLayout(x, y));
         field.setBackground(Color.black);
@@ -158,9 +188,10 @@ public class gamescreen extends JPanel {
         return field;
     }
 
-    /*--listeners--*/
+    /**
+     * Fügt interaktive Maussteuerung (hover, exit, click) hinzu
+     */
     private void addPlacementListeners() {
-
         /*--update selected ship size using the combo box index (safe)--*/
         shipSelector.addActionListener(e -> {
             currentShipSize = shipSelector.getSelectedIndex() + 2;
@@ -201,7 +232,10 @@ public class gamescreen extends JPanel {
         }
     }
 
-    /*--key bindings for rotation--*/
+    /**
+     * Fügt interaktives Tastatursteuerung hinzu, um Schiffe
+     * mit 'r' oder 'R' drehen zu können
+     */
     private void setupKeyBindings() {
         /*--build input/action map to use key-bindings--*/
         InputMap im = this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -225,8 +259,12 @@ public class gamescreen extends JPanel {
         });
     }
 
-
-    /*--ship preview (only if ship type still available!)--*/
+    /**
+     * Schiffsvorschau
+     * 
+     * @param r     Ausgewählte Reihe
+     * @param c     Ausgewählte Spalte
+     */
     private void previewShip(int r, int c) {
         int index = currentShipSize - 2;
 
@@ -256,8 +294,12 @@ public class gamescreen extends JPanel {
         }
     }
 
-
-    /*--place ship permanently (only if available!)--*/
+    /**
+     * Platziert Spielerschiffe
+     * 
+     * @param r     Ausgewählte Reihe
+     * @param c     Ausgewählte Spalte
+     */
     private void placeShip(int r, int c) {
         /*--get index of each ship size--*/
         int index = currentShipSize - 2;
@@ -292,13 +334,6 @@ public class gamescreen extends JPanel {
         DIR[placedShipCount] = horizontal;             // direction
         SHIPS[placedShipCount] = currentShipSize;      // ship length
         
-        /*System.out.println(
-            "Saved ship #" + placedShipCount +
-            " | size=" + SHIPS[placedShipCount] +
-            " | dir=" + (DIR[placedShipCount] ? "V" : "H") +
-            " | at=(" + COR[placedShipCount].x +
-            "," + COR[placedShipCount].y + ")"
-        );*/
         placedShipCount++;
         
         /*--decrement ship count--*/
@@ -314,7 +349,10 @@ public class gamescreen extends JPanel {
         clearPreview();
     }
 
-
+    /**
+     * Wechselt automatisch die Schiffsauswahl zur nächsten Schiffsgröße
+     * in der Kombobox, nachdem ein Schiffstyp 'leer' ist
+     */
     private void updateComboBoxDisplayAutoSkip() {
         int previousIndex = shipSelector.getSelectedIndex();
 
@@ -324,7 +362,7 @@ public class gamescreen extends JPanel {
         shipSelector.addItem((i + 2) + "-ships: " + shipsLeft[i] + "x");
         }
 
-    // --- auto-select next valid ship ---
+        /*--auto-select next valid ship--*/
         int newIndex = findNextAvailableIndex(previousIndex);
 
         if (newIndex != -1) {
@@ -336,7 +374,9 @@ public class gamescreen extends JPanel {
     }
 
 
-    /*--clear preview (only non-occupied)--*/
+    /**
+     * Setzt Schiffsvorschau zurück
+     */
     private void clearPreview() {
         for (int r = 0; r < pCells.length; r++) {
             for (int c = 0; c < pCells[r].length; c++) {
@@ -347,7 +387,12 @@ public class gamescreen extends JPanel {
         }
     }
 
-    /*--checks if all ships have been placed yet--*/
+    /**
+     * Überprüft, ob alle Schiffe platziert wurden
+     * 
+     * @return  true, wenn alle Schiffe platziert wurden
+     *          false, wenn noch nicht alle Schiffe platziert wurden
+     */
     private boolean allShipsPlaced() {
         for (int v : shipsLeft) {
             if (v > 0) return false;
@@ -355,13 +400,29 @@ public class gamescreen extends JPanel {
         return true;
     }
 
+    /**
+     * Überprüft, ob Koordinaten sich innerhalb des Spielfelds befinden
+     * 
+     * @param r     x-Koordinate
+     * @param c     y-Koordinate
+     * @return      true, wenn innerhalb des Spielfelds
+     *              false, wenn außerhalb des Spielfelds
+     */
     private boolean isInBounds(int r, int c) {
         return r >= 0 && c >= 0 &&
                r < pCells.length &&
                c < pCells[0].length;
     }
 
-    /*--checks if any adjacent cell (including diagonals) is occupied--*/
+    /**
+     * Überprüft, ob Zelle neben an (auch diagonal) schon belegt ist
+     * 
+     * @param r         x-Koordinate
+     * @param c         y-Koordinate
+     * @param board     Belegte Spielfeldkoordinaten
+     * @return          true, wenn belegt
+     *                  false, wenn nicht belegt
+     */
     private boolean hasAdjacentOccupied(int r, int c, boolean[][] board) {
         for (int dr = -1; dr <= 1; dr++) {
             for (int dc = -1; dc <= 1; dc++) {
@@ -377,6 +438,17 @@ public class gamescreen extends JPanel {
         return false;
     }
     
+    /**
+     * Konvertiert übergebenes Schiffsfeldformat zu Schiffbearbeitungsformat
+        --ships[0] = 2-sized--
+        --ships[1] = 3-sized--
+        --ships[2] = 4-sized--
+        --ships[3] = 5-sized--
+     * Bsp.: {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}  ->  [4, 3, 2, 1]
+     *
+     * @param ships     Übergebenes Schiffsfeldformat {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}
+     * @return          Schiffbearbeitungsformat [4, 3, 2, 1]
+     */
     public int[] convertShipArray(int[] ships) {
         int[] shipCount = new int[4];
 
