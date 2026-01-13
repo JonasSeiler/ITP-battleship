@@ -2,7 +2,7 @@ package src.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import src.coordinate;
+import src.logic.*;
 
 public class gamescreen extends JPanel {
 

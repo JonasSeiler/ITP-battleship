@@ -2,7 +2,7 @@ package src.gui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import src.coordinate;
+import src.logic.*;
 
 public class battlescreen extends JPanel {
 
@@ -18,9 +18,7 @@ public class battlescreen extends JPanel {
     public int status = 0;
     /*--Matthias' Parameter--*/
     public int gridSize;
-    /*--battle state--*/
-    private boolean[][] shots;   // where has been shot
-    private int[] shipHits;      // hits per ship   
+    public game gLogic;  
 
     /*--string combo box ship selector--*/
     // private JComboBox<String> shipSelector;
@@ -71,8 +69,9 @@ public class battlescreen extends JPanel {
         pFieldPanel.setBackground(Color.black);
 
         /*--build start button--*/
-        JButton startButton = new JButton("Start Game");
+        JButton startButton = new JButton("Save Game");
         startButton.setEnabled(false);
+        // startButton.addActionListener(e -> gLogic.save_game());
         pFieldPanel.add(startButton);
 
         /*--add player field panel to player side panel--*/
@@ -90,6 +89,7 @@ public class battlescreen extends JPanel {
         /*--build load/exit button--*/
         JButton loadButton = new JButton("Load Game");
         loadButton.setEnabled(false);
+        // startButton.addActionListener(e -> gLogic.load_game());
         JButton exitButton = new JButton("Exit Game");
         exitButton.setEnabled(false);
 
@@ -202,19 +202,28 @@ public class battlescreen extends JPanel {
 
     private void onEnemyCellClicked(int x, int y) {
         /*--Jonas' Methode kommt hier hin--*/
-        //int status = 0;
-
-        if (status != 4) {
-            colorEnemyShip(x, y, 1);
-        } else {
-            colorEnemyShip(x, y, 2);
-            status = 0;
-        }
-        // colorEnemyShip(x, y, status);
-        status++;
+        int status = gLogic.send_shot(x, y);
+        
+        colorEnemyShip(x, y, status);
 
         eCells[x][y].setEnabled(false);
     }
+
+    public void setGame(game g) {
+        this.gLogic = g;
+    }
 }
 
-/*--JavaDocs irgendwas--*/
+/*  JavaDocs machen
+    Change 'Start Game' to 'Save Game'
+    Save Game
+    -> ist eine Textdatei
+    Load Game implementieren
+    -> explorer(preset file explorer) oder menü (liste), wo man dateien(bezeichnung: "timestamp")
+        --> ich muss Jonas den geladenen Dateinamen als String zurückgeben
+    Exit Game implementieren
+    -> go back to 'titlescreen' and test if game was saved
+        --> if game wasn't saved ask for confirmation if he is sure to quit the game without saving
+    Buttons anpassen
+    3 Strich ausfahrbarer Button -> Dark Mode -> Benutzermanual
+*/
