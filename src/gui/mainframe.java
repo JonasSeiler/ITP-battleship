@@ -1,8 +1,10 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
-
+/**
+ * Fensteroberfläche, die alle Menübildschirme(Panels) enthält
+ * @author Max Steingräber
+ */
 public class mainframe extends JFrame {
     private CardLayout cLayout;
     private JPanel cPanel;
@@ -11,16 +13,16 @@ public class mainframe extends JFrame {
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
     public hostpregamescreen Hostpregamescreen;
-
+    /**
+     * Konstruiert Fensteroberfläche
+     */
     public mainframe() {
         this.setTitle("Tidebreaker"); // title of frame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits program when hitting the close button
         this.setSize(640, 640); // sets x- and y-dimension
-        //this.setLayout(new BorderLayout());
-        //this.setVisible(true); // makes this visible
 
         /*--game logo--*/
-        ImageIcon logo = new ImageIcon("../img/TidebreakerLogo.jpg");
+        ImageIcon logo = new ImageIcon("../../img/TidebreakerLogo.jpg");
         this.setIconImage(logo.getImage());
 
         /*--create card layout (for multiple screens)--*/
@@ -36,7 +38,6 @@ public class mainframe extends JFrame {
         Hostpregamescreen = new hostpregamescreen(this);
         PreGameScreen = new pregamescreen(this);
 
-
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
         cPanel.add(singleplayer, "singleplayer");
@@ -49,7 +50,11 @@ public class mainframe extends JFrame {
         setVisible(true);
         pack();
     }
-    /*--public method to switch screens--*/
+    /**
+     * Zeigt ein bestimmtes Menübildschirm an
+     * 
+     * @param name      Name des Menübildschirms
+     */
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
@@ -64,7 +69,9 @@ public class mainframe extends JFrame {
         cPanel.revalidate();
         cPanel.repaint();
     }
-
+    /**
+     * Startet den Schiffsauswahlbildschirm als Host
+     */
     public void startGamescreen_host() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
@@ -75,7 +82,9 @@ public class mainframe extends JFrame {
         cPanel.revalidate();
         cPanel.repaint();
     }
-
+    /**
+     * Startet ein Spiel und öffnet den Spielbildschirm
+     */
     public void startBattle() {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
