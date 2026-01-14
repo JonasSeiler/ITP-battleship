@@ -28,10 +28,10 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         join_game = new JButton("Join Game");
         host_game = new JButton("Host Game");
         exit = new JButton("   <-   ");
-        title.setFont(new Font("SansSerif", Font.BOLD,40));
-        join_game.setFont(new Font("SansSerif", Font.BOLD,20));
-        host_game.setFont(new Font("SansSerif", Font.BOLD,20));
-        exit.setFont(new Font("SansSerif", Font.BOLD,35));
+        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        join_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        host_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(join_game);

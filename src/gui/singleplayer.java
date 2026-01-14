@@ -28,10 +28,10 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         new_game = new JButton("New Game");
         load_game = new JButton("Load Game");
         exit = new JButton("   <-   ");
-        title.setFont(new Font("SansSerif", Font.BOLD,40));
-        new_game.setFont(new Font("SansSerif", Font.BOLD,20));
-        load_game.setFont(new Font("SansSerif", Font.BOLD,20));
-        exit.setFont(new Font("SansSerif", Font.BOLD,35));
+        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        new_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        load_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(new_game);

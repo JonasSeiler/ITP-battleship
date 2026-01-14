@@ -25,9 +25,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         JLabel joinscreen = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
         exit = new JButton("   <-   ");
-        title.setFont(new Font("SansSerif", Font.BOLD,40));
-        exit.setFont(new Font("SansSerif", Font.BOLD,35));
-        joinscreen.setFont(new Font("SansSerif", Font.BOLD,16));
+        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+        joinscreen.setFont(new Font("Times New Roman", Font.BOLD,16));
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(joinscreen);

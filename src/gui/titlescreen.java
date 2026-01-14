@@ -27,9 +27,9 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         title.setForeground(Color.WHITE);
         singleplayer = new JButton("singleplayer");
         multiplayer = new JButton("multiplayer");
-        title.setFont(new Font("SansSerif", Font.BOLD,40));
-        singleplayer.setFont(new Font("SansSerif", Font.BOLD,20));
-        multiplayer.setFont(new Font("SansSerif", Font.BOLD,20));
+        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
+        multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(singleplayer);

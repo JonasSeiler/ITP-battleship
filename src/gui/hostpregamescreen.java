@@ -36,7 +36,7 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         capacityBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI()); // verbietet dem Betriebssystem sich in das Design einzumischen, man nimmt die Original JProgressBar
         capacityBar.setForeground(new Color(0,191,255)); // Der Fortschrittsbalken ist in einem "Deep Sky Blue". Es wird ein neues Color Objekt mit diesen Werten erstellt, was diese Farbe ist
         capacityBar.setBackground(new Color(20,30,50)); // Der noch zu füllende Bereich ist in einem sehr dunklen Blau
-        capacityBar.setFont(new Font("SansSerif",Font.PLAIN,16));
+        capacityBar.setFont(new Font("Times New Roman",Font.PLAIN,16));
         capacityBar.setBorder(BorderFactory.createLineBorder(new Color(20,30,50),3,true)); // es wird ein Rahmen um die capacityBar gelegt der außen ein ganz bisschen abgerundet ist
         SpinnerNumberModel mapSizeModel = new SpinnerNumberModel(7, 5, 30, 1); // legt die Logik fest also startet bei 10 usw.
         SpinnerNumberModel shipSizeModel5 = new SpinnerNumberModel(1,0,6,1);
@@ -46,12 +46,12 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         start_button = new JButton("Start"); // neuer Button mit Text im Button
         start_button.setBackground(Color.GREEN); // Hintergrund grün
         start_button.setForeground(Color.BLACK); // Schrift weiß
-        start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
+        start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
         start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
         start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
         zurueck_button = new JButton("   <-   ");
         zurueck_button.setForeground(Color.BLACK);
-        zurueck_button.setFont(new Font("SansSerif", Font.BOLD,22));
+        zurueck_button.setFont(new Font("Times New Roman", Font.BOLD,22));
         gridSize1 = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
         ship_size5 = new JSpinner(shipSizeModel5);
         ship_size4 = new JSpinner(shipSizeModel4);
@@ -63,12 +63,12 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         JLabel shipSizeLabel4 = new JLabel("Schlachtschiff (Größe 4)");
         JLabel shipSizeLabel3 = new JLabel("U-Boot (Größe 3)");
         JLabel shipSizeLabel2 = new JLabel("Zerstörer (Größe 2)");
-        BarLabel.setFont(new Font("SansSerif",Font.BOLD,16));
-        sizeLabel.setFont(new Font("SansSerif", Font.BOLD, 16)); // Schriftart-Objekt wird erstellt und in Schriftart Sans..., fett und in größe 16
-        shipSizeLabel5.setFont(new Font("SansSerif", Font.BOLD, 16));
-        shipSizeLabel4.setFont(new Font("SansSerif", Font.BOLD, 16));
-        shipSizeLabel3.setFont(new Font("SansSerif", Font.BOLD, 16));
-        shipSizeLabel2.setFont(new Font("SansSerif", Font.BOLD, 16));
+        BarLabel.setFont(new Font("Times New Roman",Font.BOLD,16));
+        sizeLabel.setFont(new Font("Times New Roman", Font.BOLD, 16)); // Schriftart-Objekt wird erstellt und in Schriftart Times New Roman, fett und in größe 16
+        shipSizeLabel5.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        shipSizeLabel4.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        shipSizeLabel3.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        shipSizeLabel2.setFont(new Font("Times New Roman", Font.BOLD, 16));
         BarLabel.setForeground(Color.WHITE);
         sizeLabel.setForeground(Color.WHITE); // Textfarbe ist weiß
         shipSizeLabel5.setForeground(Color.WHITE);
@@ -200,13 +200,13 @@ public class hostpregamescreen extends JPanel { // JPanel ist ein Standard-Conta
         if (occupied == max) {
             start_button.setBackground(Color.GREEN); // Hintergrund grün
             start_button.setForeground(Color.BLACK); // Schrift weiß
-            start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
+            start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
             start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
             start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
         } else {
             start_button.setBackground(Color.GRAY); // Hintergrund grün
             start_button.setForeground(Color.BLACK); // Schrift weiß
-            start_button.setFont(new Font("SansSerif", Font.PLAIN,16)); // Schriftart
+            start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
             start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
             start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
         }
