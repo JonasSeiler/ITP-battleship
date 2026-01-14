@@ -1,4 +1,4 @@
-package src;
+package src.logic;
 import java.io.*;
 
 import src.gui.battlescreen;
@@ -74,7 +74,7 @@ public class game {
     
     public int send_shot(int x, int y) {
         //server msg here 
-        int response = ; // response = 0,1,2
+        int response = 1; // response = 0,1,2
         
         return response;
     }

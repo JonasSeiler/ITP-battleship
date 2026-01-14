@@ -53,6 +53,8 @@ public class gamescreen extends JPanel {
     private int hoverRow = -1;
     private int hoverCol = -1;
     private JComboBox<String> shipSelector;
+    private boolean gameSaved = false;
+    private mainframe frame;
 
     /**
      * Konstruiert den Schiffplatzierungsscreen ('gamescreen')
@@ -61,10 +63,11 @@ public class gamescreen extends JPanel {
      * @param inShips       Übergebenes Schiffsfeld Bsp. {5, 5, 4, 3, 3, 3, 2} von {@link hostpregamescreen}
      * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
      */
-    public gamescreen(mainframe frame, int[] inShips, int inGridSize) {
+    public gamescreen(mainframe f, int[] inShips, int inGridSize) {
         /*--Speichern der übergebenen Input-Parameter--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;
+        this.frame = f;
 
         COR = new coordinate[totalShips];
         DIR = new boolean[totalShips];
@@ -125,7 +128,7 @@ public class gamescreen extends JPanel {
 
         /*--Start Button--*/
         JButton startButton = new JButton("Start Game");
-        startButton.addActionListener(e -> frame.startBattle());
+        startButton.addActionListener(e -> {if (allShipsPlaced()) frame.startBattle();});
         pFieldPanel.add(startButton);
 
         /*--Fügt Spielerfeld-Panel auf Spielerseite (links) hinzu--*/
@@ -144,7 +147,8 @@ public class gamescreen extends JPanel {
         JButton loadButton = new JButton("Load Game");
         loadButton.setEnabled(false);
         JButton exitButton = new JButton("Exit Game");
-        exitButton.setEnabled(false);
+        exitButton.setEnabled(true);
+        exitButton.addActionListener(e -> handleExitGame());
 
         /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
@@ -460,7 +464,13 @@ public class gamescreen extends JPanel {
         }
         return shipCount;
     }
-
+    /**
+     * Findet nächst verfügbaren
+     * Schiffsgrößenauswahl in der Kombobox
+     * 
+     * @param startIndex    Anfangsindex der Auswahl
+     * @return              Nächster Index
+     */
     private int findNextAvailableIndex(int startIndex) {
         for (int i = startIndex; i < shipsLeft.length; i++) {
             if (shipsLeft[i] > 0) return i;
@@ -469,5 +479,29 @@ public class gamescreen extends JPanel {
             if (shipsLeft[i] > 0) return i;
         }
         return -1;
+    }
+    /**
+    * Handles exiting the game.
+    * If the game is not saved, asks the user for confirmation.
+    */
+    private void handleExitGame() {
+        if (gameSaved) {
+        frame.showScreen("titlescreen");
+        return;
+        } else {
+            int choice = JOptionPane.showConfirmDialog(
+            this,
+            "The game has not been saved.\nDo you really want to quit?",
+            "Unsaved Progress",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+            frame.showScreen("titlescreen");
+            } else if (choice == JOptionPane.NO_OPTION) {
+            frame.showScreen("battlescreen");
+            }
+        }
     }
 }

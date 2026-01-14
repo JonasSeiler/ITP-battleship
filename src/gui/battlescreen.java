@@ -33,6 +33,7 @@ public class battlescreen extends JPanel {
     private JButton[][] eCells;
     private JPanel pField;
     private JPanel eField;
+    private mainframe frame;
     
     public coordinate[] COR;
     public int[] SHIPS;
@@ -40,6 +41,7 @@ public class battlescreen extends JPanel {
     public int status = 0;
     public int gridSize;
     public game gLogic;
+    private boolean gameSaved = false;
     /**
      * Konstruiert den Hauptspielscreen.
      * 
@@ -49,12 +51,13 @@ public class battlescreen extends JPanel {
      * @param d             Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
      * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
      */
-    public battlescreen(mainframe frame, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
+    public battlescreen(mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         /*--Speichern der übergebenen Input-Parameter--*/
         this.COR = c;
         this.SHIPS = s;
         this.DIR = d;
         this.gridSize = inGridSize;
+        this.frame = f;
 
         /*--Layoutmanager 'this'-Panel--*/
         this.setLayout(new BorderLayout());
@@ -107,7 +110,8 @@ public class battlescreen extends JPanel {
         loadButton.setEnabled(false);
         // saveButton.addActionListener(e -> gLogic.load_game());
         JButton exitButton = new JButton("Exit Game");
-        exitButton.setEnabled(false);
+        exitButton.setEnabled(true);
+        exitButton.addActionListener(e -> handleExitGame());
 
         /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
@@ -264,10 +268,33 @@ public class battlescreen extends JPanel {
     public void setGame(game g) {
         this.gLogic = g;
     }
+    /**
+    * Handles exiting the game.
+    * If the game is not saved, asks the user for confirmation.
+    */
+    private void handleExitGame() {
+        if (gameSaved) {
+        frame.showScreen("titlescreen");
+        return;
+        } else {
+            int choice = JOptionPane.showConfirmDialog(
+            this,
+            "The game has not been saved.\nDo you really want to quit?",
+            "Unsaved Progress",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+            frame.showScreen("titlescreen");
+            } else if (choice == JOptionPane.NO_OPTION) {
+            frame.showScreen("battlescreen");
+            }
+        }
+    }
 }
 
-/*  JavaDocs machen
-    Change 'Start Game' to 'Save Game'
+/*  Change 'Start Game' to 'Save Game'
     Save Game
     -> ist eine Textdatei
     Load Game implementieren

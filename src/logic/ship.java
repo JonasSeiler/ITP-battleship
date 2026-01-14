@@ -1,4 +1,4 @@
-package src;
+package src.logic;
 import java.util.Arrays;
 public class ship {
     int length;

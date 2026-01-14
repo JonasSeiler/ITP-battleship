@@ -1,4 +1,4 @@
-package src;
+package src.logic;
 import java.util.*;
 import java.io.*;
 public class board {
