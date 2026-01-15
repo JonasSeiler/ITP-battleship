@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"name": "ITP-battleship",
+			"path": "../.."
+		}
+	],
+	"settings": {}
+}
