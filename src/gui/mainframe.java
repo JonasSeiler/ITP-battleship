@@ -13,6 +13,13 @@ public class mainframe extends JFrame {
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
     public hostpregamescreen Hostpregamescreen;
+    public Color color1 = new Color(20, 30, 50);
+    public Color color2 = new Color(0, 100, 160);
+    /*
+    verschiedene Farben:
+    new Color(20, 30, 50) new Color(220, 200, 190));
+    */
+   
     /**
      * Konstruiert Fensteroberfläche
      */

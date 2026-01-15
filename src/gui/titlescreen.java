@@ -11,6 +11,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
     private mainframe frame; // Referenz auf das Hauptfenster
     private JButton singleplayer;
     private JButton multiplayer;
+    private JButton hamburgermenü;
 
     /**
      * Erstellt den Startbildschirm und erstellt und initialisiert Objekte
@@ -18,7 +19,8 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
      *
      */
     public titlescreen(mainframe frame) { // mainframe ist das Hauptfenster und titlescreen gibt Befehle an den mainframe
-        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den titlescreen gepackt
+        this.frame = frame;
+        this.setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den titlescreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
@@ -27,16 +29,32 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         title.setForeground(Color.WHITE);
         singleplayer = new JButton("singleplayer");
         multiplayer = new JButton("multiplayer");
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
+        gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
+        gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
+        gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
+        hamburgermenü = new JButton("≡");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
+        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,20));
+        hamburgermenü.setForeground(Color.WHITE);
+        hamburgermenü.setContentAreaFilled(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenü.setBorderPainted(false); // Schaltet den Rahmen des Buttons aus
+        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(singleplayer);
         contentPanel.add(multiplayer);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.anchor = GridBagConstraints.NORTH;
+        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         singleplayer.addActionListener(e -> {frame.showScreen("singleplayer");});
         multiplayer.addActionListener(e -> {frame.showScreen("multiplayer");});
-        add(contentPanel); // das contentPanel wird auf das titlescreen-Panel gelegt
     }
 
     /**
@@ -49,7 +67,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
-        GradientPaint oceanGradient = new GradientPaint(0, 0, new Color(20, 30, 50), 0, getHeight(), new Color(0, 100, 160)); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
+        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // der oceanGradient Farbverlauf soll für nachfolgende Füllbefehle verwendet werden
         g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom Titlescreenobjekt
     }
