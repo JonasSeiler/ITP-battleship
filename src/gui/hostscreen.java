@@ -9,9 +9,10 @@ import java.awt.*;
  */
 public class hostscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
-    private JButton new_game;
-    private JButton load_game;
-    private JButton exit;
+    private RoundButton new_game;
+    private RoundButton load_game;
+    private RoundButton exit;
+    private JButton hamburgermenü;
 
     /**
      * Erstellt den Screen um ein Spiel zu hosten und erstellt und initialisiert Objekte
@@ -26,22 +27,44 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE);
-        new_game = new JButton("New Game");
-        load_game = new JButton("Load Game");
-        exit = new JButton("   <-   ");
+        new_game = new RoundButton("New Game");
+        load_game = new RoundButton("Load Game");
+        exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        new_game.setFont(new Font("Times New Roman", Font.BOLD,20));
-        load_game.setFont(new Font("Times New Roman", Font.BOLD,20));
-        exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+        // new_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        // load_game.setFont(new Font("Times New Roman", Font.BOLD,20));
+        // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+
+        hamburgermenü = new JButton("≡");
+        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenü.setForeground(Color.WHITE);
+        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
+        gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
+        gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
+        gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
+        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(new_game);
         contentPanel.add(load_game);
         contentPanel.add(exit);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.anchor = GridBagConstraints.NORTH;
+        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         new_game.addActionListener(e -> {frame.showScreen("hostpregamescreen");});
         load_game.addActionListener(e -> {frame.showScreen("gamescreen");});
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
-        add(contentPanel); // das contentPanel wird auf das hostscreen-Panel gelegt
+        hamburgermenü.addActionListener(e -> {
+                frame.lastscreen = "hostscreen";
+                frame.showScreen("settings");
+        });
     }
 
     /**
@@ -55,7 +78,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
-        g2d.setPaint(oceanGradient); // der oceanGradient Farbverlauf soll für nachfolgende Füllbefehle verwendet werden
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom hostscreenobjekt
+        g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
 }

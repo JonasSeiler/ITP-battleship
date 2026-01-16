@@ -4,41 +4,41 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Screen im Multiplayermodus, indem man entscheiden kann, ob man einem Spiel joined oder ein Spiel hostet
+ * Screen, wodurch der User die Einstellungen verändern kann
  * @author Max, Matthias
  */
-public class multiplayer extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+public class settingsscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
-    private RoundButton join_game;
-    private RoundButton host_game;
-    private RoundButton exit;
     private JButton hamburgermenü;
+    private RoundButton changeColor;
 
     /**
-     * Erstellt den Multiplayerscreen und erstellt und initialisiert Objekte
+     * Erstellt den Startbildschirm und erstellt und initialisiert Objekte
      * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     *
      */
-    public multiplayer(mainframe frame) { // mainframe ist das Hauptfenster und der multiplayerscreen gibt Befehle an den mainframe
+    public settingsscreen(mainframe frame) { // mainframe ist das Hauptfenster und settingsscreen gibt Befehle an den mainframe
         this.frame = frame;
-        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den multiplayerscreen gepackt
+        this.setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den settingsscreen gepackt
+        setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
-        contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
-        JLabel title = new JLabel("Tidebreaker");
-        title.setForeground(Color.WHITE);
-        join_game = new RoundButton("Join Game");
-        host_game = new RoundButton("Host Game");
-        exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        // join_game.setFont(new Font("Times New Roman", Font.BOLD,20));
-        // host_game.setFont(new Font("Times New Roman", Font.BOLD,20));
-        // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+        contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
+        
+        changeColor = new RoundButton("Change background color");
+        // changeColor.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        // changeColor.setForeground(Color.WHITE);
+        // changeColor.setBackground(new Color(255,255,255,50));
+        // changeColor.setBorderPainted(false); //  Entfernt die Hintergrundfläche des Buttons also man sieht nur noch die Schrift
+        // changeColor.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
 
-        hamburgermenü = new JButton("≡");
-        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenü = new JButton("X");
+        hamburgermenü.setFont(new Font("Arial", Font.PLAIN,25));
         hamburgermenü.setForeground(Color.WHITE);
-        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
-        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das X Symbol
+        hamburgermenü.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
+        hamburgermenü.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -48,22 +48,13 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
         add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
-        contentPanel.add(title);
-        contentPanel.add(new JLabel(""));
-        contentPanel.add(join_game);
-        contentPanel.add(host_game);
-        contentPanel.add(exit);
+        contentPanel.add(changeColor);
         gbc.gridy = 1;
         gbc.weighty = 0.9;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        join_game.addActionListener(e -> {frame.showScreen("joinscreen");});
-        host_game.addActionListener(e -> {frame.showScreen("hostscreen");});
-        exit.addActionListener(e -> {frame.showScreen("titlescreen");});
-        hamburgermenü.addActionListener(e -> {
-                frame.lastscreen = "multiplayer";
-                frame.showScreen("settings");
-        });
+
+        hamburgermenü.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
     }
 
     /**

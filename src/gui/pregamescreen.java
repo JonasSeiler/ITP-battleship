@@ -14,8 +14,9 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private JSpinner ship_size4;
     private JSpinner ship_size5;
     private JProgressBar capacityBar; // Balken der Anzeigen soll wie viele Platz man noch mit Schiffen belegen kann
-    private JButton start_button;
-    private JButton zurueck_button;
+    private RoundButton start_button;
+    private RoundButton zurueck_button;
+    private JButton hamburgermenü;
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
@@ -44,15 +45,14 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         SpinnerNumberModel shipSizeModel4 = new SpinnerNumberModel(1,0,7,1);
         SpinnerNumberModel shipSizeModel3 = new SpinnerNumberModel(1,0,10,1);
         SpinnerNumberModel shipSizeModel2 = new SpinnerNumberModel(1,0,15,1); // jeder Button braucht seine eigene Logik sonst springt der Button den man nicht ausgewählt hat auch höher, wenn man die Logik mehreren Button gibt
-        start_button = new JButton("Start"); // neuer Button mit Text im Button
-        start_button.setBackground(Color.GREEN); // Hintergrund grün
-        start_button.setForeground(Color.BLACK); // Schrift weiß
-        start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
-        start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
-        start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
-        zurueck_button = new JButton("   <-   ");
-        zurueck_button.setForeground(Color.BLACK);
-        zurueck_button.setFont(new Font("Times New Roman", Font.BOLD,22));
+        start_button = new RoundButton("Start"); // neuer Button mit Text im Button
+        // start_button.setBackground(Color.GREEN); // Hintergrund grün
+        // start_button.setForeground(Color.BLACK); // Schrift weiß
+        // start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
+        // start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
+        zurueck_button = new RoundButton("Exit");
+        // zurueck_button.setForeground(Color.BLACK);
+        // zurueck_button.setFont(new Font("Times New Roman", Font.BOLD,22));
         gridSize1 = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
         ship_size5 = new JSpinner(shipSizeModel5);
         ship_size4 = new JSpinner(shipSizeModel4);
@@ -76,6 +76,21 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         shipSizeLabel4.setForeground(Color.WHITE);
         shipSizeLabel3.setForeground(Color.WHITE);
         shipSizeLabel2.setForeground(Color.WHITE);
+
+        hamburgermenü = new JButton("≡");
+        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenü.setForeground(Color.WHITE);
+        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
+        gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
+        gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
+        gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
+        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+
         contentPanel.add(BarLabel);
         contentPanel.add(capacityBar);
         contentPanel.add(sizeLabel); // fügt die Objekte auf die innere Leinwand Schritt für Schritt also erst das erste, dann das zweite...
@@ -90,6 +105,10 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         contentPanel.add(ship_size2);
         contentPanel.add(zurueck_button);
         contentPanel.add(start_button);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.anchor = GridBagConstraints.NORTH;
+        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         gridSize1.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
         ship_size5.addChangeListener(e -> {updateCapacity();});
         ship_size4.addChangeListener(e -> {updateCapacity();});
@@ -104,7 +123,10 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
                 start();
                 frame.startGamescreen();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
-        add(contentPanel); // das contentPanel wird auf das pregamescreen-Panel gelegt
+        hamburgermenü.addActionListener(e -> {
+                frame.lastscreen = "pregamescreen";
+                frame.showScreen("settings");
+        });
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
     }
 
@@ -147,8 +169,8 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
-        g2d.setPaint(oceanGradient); // der oceanGradient Farbverlauf soll für nachfolgende Füllbefehle verwendet werden
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom pregamescreenobjekt
+        g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
 
     /**
@@ -198,18 +220,5 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         model4.setMaximum(freeShipSize4);
         model3.setMaximum(freeShipSize3);
         model2.setMaximum(freeShipSize2);
-        if (occupied == max) {
-            start_button.setBackground(Color.GREEN); // Hintergrund grün
-            start_button.setForeground(Color.BLACK); // Schrift weiß
-            start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
-            start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
-            start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
-        } else {
-            start_button.setBackground(Color.GRAY); // Hintergrund grün
-            start_button.setForeground(Color.BLACK); // Schrift weiß
-            start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
-            start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
-            start_button.setBorderPainted(false); // nimmt den 3D-Rahmen weg für ein flaches Design
-        }
     }
 }

@@ -9,7 +9,8 @@ import java.awt.*;
  */
 public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
-    private JButton exit;
+    private RoundButton exit;
+    private JButton hamburgermenü;
 
     /**
      * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
@@ -25,17 +26,39 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         JLabel title = new JLabel("Tidebreaker");
         JLabel joinscreen = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
-        exit = new JButton("   <-   ");
+        exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+        // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         joinscreen.setFont(new Font("Times New Roman", Font.BOLD,16));
+
+        hamburgermenü = new JButton("≡");
+        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenü.setForeground(Color.WHITE);
+        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
+        gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
+        gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
+        gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
+        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(joinscreen);
         contentPanel.add(new JLabel(""));
         contentPanel.add(exit);
+        gbc.gridy = 1;
+        gbc.weighty = 0.9;
+        gbc.anchor = GridBagConstraints.NORTH;
+        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
-        add(contentPanel); // das contentPanel wird auf das joinscreen-Panel gelegt
+        hamburgermenü.addActionListener(e -> {
+                frame.lastscreen = "joinscreen";
+                frame.showScreen("settings");
+        });
     }
 
     /**
@@ -49,7 +72,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
-        g2d.setPaint(oceanGradient); // der oceanGradient Farbverlauf soll für nachfolgende Füllbefehle verwendet werden
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom Joinscreenobjekt
+        g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
 }

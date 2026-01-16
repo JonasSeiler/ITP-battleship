@@ -13,6 +13,7 @@ public class mainframe extends JFrame {
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
     public hostpregamescreen Hostpregamescreen;
+    public String lastscreen;
     public Color color1 = new Color(20, 30, 50);
     public Color color2 = new Color(0, 100, 160);
     /*
@@ -38,6 +39,7 @@ public class mainframe extends JFrame {
 
         /*--create different screens--*/
         titlescreen titlescreen = new titlescreen(this);
+        settingsscreen settingsscreen = new settingsscreen(this);
         singleplayer singleplayer = new singleplayer(this);
         multiplayer multiplayer = new multiplayer(this);
         joinscreen joinscreen = new joinscreen(this);
@@ -47,6 +49,7 @@ public class mainframe extends JFrame {
 
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
+        cPanel.add(settingsscreen, "settings");
         cPanel.add(singleplayer, "singleplayer");
         cPanel.add(multiplayer, "multiplayer");
         cPanel.add(PreGameScreen, "pregamescreen");
