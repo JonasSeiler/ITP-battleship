@@ -12,7 +12,7 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
     private RoundButton join_game;
     private RoundButton host_game;
     private RoundButton exit;
-    private JButton hamburgermenü;
+    private JButton hamburger;
 
     /**
      * Erstellt den Multiplayerscreen und erstellt und initialisiert Objekte
@@ -34,11 +34,11 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         // host_game.setFont(new Font("Times New Roman", Font.BOLD,20));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
 
-        hamburgermenü = new JButton("≡");
-        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
-        hamburgermenü.setForeground(Color.WHITE);
-        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
-        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburger = new JButton("≡");
+        hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburger.setForeground(Color.WHITE);
+        hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -46,7 +46,7 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
@@ -60,7 +60,7 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         join_game.addActionListener(e -> {frame.showScreen("joinscreen");});
         host_game.addActionListener(e -> {frame.showScreen("hostscreen");});
         exit.addActionListener(e -> {frame.showScreen("titlescreen");});
-        hamburgermenü.addActionListener(e -> {
+        hamburger.addActionListener(e -> {
                 frame.lastscreen = "multiplayer";
                 frame.showScreen("settings");
         });
