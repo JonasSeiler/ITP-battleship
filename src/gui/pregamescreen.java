@@ -77,7 +77,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         shipSizeLabel3.setForeground(Color.WHITE);
         shipSizeLabel2.setForeground(Color.WHITE);
 
-        hamburgermenü = new JButton("≡");
+        hamburgermenü = new JButton("\u2261");
         hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburgermenü.setForeground(Color.WHITE);
         hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol

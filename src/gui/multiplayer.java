@@ -34,7 +34,7 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         // host_game.setFont(new Font("Times New Roman", Font.BOLD,20));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
 
-        hamburgermenü = new JButton("≡");
+        hamburgermenü = new JButton("\u2261");
         hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburgermenü.setForeground(Color.WHITE);
         hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol

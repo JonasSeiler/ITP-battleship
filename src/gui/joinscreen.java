@@ -31,7 +31,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         joinscreen.setFont(new Font("Times New Roman", Font.BOLD,16));
 
-        hamburgermenü = new JButton("≡");
+        hamburgermenü = new JButton("\u2261");
         hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburgermenü.setForeground(Color.WHITE);
         hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
