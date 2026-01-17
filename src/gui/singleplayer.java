@@ -12,7 +12,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
     private RoundButton new_game;
     private RoundButton load_game;
     private RoundButton exit;
-    private JButton hamburgermenü;
+    private JButton hamburgermenue;
 
     /**
      * Erstellt den Singleplayerscreen und erstellt und initialisiert Objekte
@@ -31,11 +31,11 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         load_game = new RoundButton("Load Game");
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        hamburgermenü = new JButton("\u2261");
-        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
-        hamburgermenü.setForeground(Color.WHITE);
-        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
-        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburgermenue = new JButton("\u2261");
+        hamburgermenue.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenue.setForeground(Color.WHITE);
+        hamburgermenue.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenue.setFocusPainted(false); // Entfernt den Rand beim Anklicken
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -43,7 +43,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburgermenue, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
 
         contentPanel.add(title);
@@ -58,7 +58,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         new_game.addActionListener(e -> {frame.showScreen("pregamescreen");});
         load_game.addActionListener(e -> {frame.showScreen("gamescreen");});
         exit.addActionListener(e -> {frame.showScreen("titlescreen");});
-        hamburgermenü.addActionListener(e -> {
+        hamburgermenue.addActionListener(e -> {
                 frame.lastscreen = "singleplayer";
                 frame.showScreen("settings");
         });

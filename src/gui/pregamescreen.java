@@ -16,7 +16,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private JProgressBar capacityBar; // Balken der Anzeigen soll wie viele Platz man noch mit Schiffen belegen kann
     private RoundButton start_button;
     private RoundButton zurueck_button;
-    private JButton hamburgermenü;
+    private JButton hamburgermenue;
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
@@ -77,11 +77,11 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         shipSizeLabel3.setForeground(Color.WHITE);
         shipSizeLabel2.setForeground(Color.WHITE);
 
-        hamburgermenü = new JButton("\u2261");
-        hamburgermenü.setFont(new Font("Times New Roman", Font.BOLD,30));
-        hamburgermenü.setForeground(Color.WHITE);
-        hamburgermenü.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
-        hamburgermenü.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburgermenue = new JButton("\u2261");
+        hamburgermenue.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburgermenue.setForeground(Color.WHITE);
+        hamburgermenue.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
+        hamburgermenue.setFocusPainted(false); // Entfernt den Rand beim Anklicken
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -89,7 +89,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburgermenü, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburgermenue, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(BarLabel);
         contentPanel.add(capacityBar);
@@ -123,7 +123,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
                 start();
                 frame.startGamescreen();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
-        hamburgermenü.addActionListener(e -> {
+        hamburgermenue.addActionListener(e -> {
                 frame.lastscreen = "pregamescreen";
                 frame.showScreen("settings");
         });
