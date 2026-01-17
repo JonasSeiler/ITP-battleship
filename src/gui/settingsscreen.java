@@ -9,7 +9,7 @@ import java.awt.*;
  */
 public class settingsscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
-    private JButton hamburgermenue;
+    private JButton hamburger;
     private RoundButton changeColor;
 
     /**
@@ -32,12 +32,12 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         // changeColor.setBorderPainted(false); //  Entfernt die Hintergrundfläche des Buttons also man sieht nur noch die Schrift
         // changeColor.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
 
-        hamburgermenue = new JButton("X");
-        hamburgermenue.setFont(new Font("Arial", Font.PLAIN,25));
-        hamburgermenue.setForeground(Color.WHITE);
-        hamburgermenue.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das X Symbol
-        hamburgermenue.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
-        hamburgermenue.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
+        hamburger = new JButton("X");
+        hamburger.setFont(new Font("Arial", Font.PLAIN,25));
+        hamburger.setForeground(Color.WHITE);
+        hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das X Symbol
+        hamburger.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
+        hamburger.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
@@ -46,7 +46,7 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburgermenue, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(changeColor);
         gbc.gridy = 1;
@@ -54,7 +54,7 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
 
-        hamburgermenue.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
+        hamburger.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
     }
 
     /**
