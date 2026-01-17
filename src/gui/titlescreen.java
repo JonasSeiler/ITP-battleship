@@ -28,10 +28,10 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         title.setForeground(Color.WHITE);
         singleplayer = new RoundButton("singleplayer");
         multiplayer = new RoundButton("multiplayer");
-        hamburger = new JButton("≡");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
+        hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
@@ -39,7 +39,8 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
-        hamburger = new JButton("\u2261");
+        hamburger.setOpaque(false); // damit die Ecken durchsichtig bleiben
+        hamburger.setContentAreaFilled(false); // Damit Java nicht sein Design darein malt
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));

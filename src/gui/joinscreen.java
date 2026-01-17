@@ -36,6 +36,8 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
         hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburger.setOpaque(false); // damit die Ecken durchsichtig bleiben
+        hamburger.setContentAreaFilled(false); // Damit Java nicht sein Design darein malt
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)

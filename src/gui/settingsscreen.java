@@ -38,6 +38,8 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das X Symbol
         hamburger.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
         hamburger.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
+        hamburger.setOpaque(false); // damit die Ecken durchsichtig bleiben
+        hamburger.setContentAreaFilled(false); // Damit Java nicht sein Design darein malt
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
