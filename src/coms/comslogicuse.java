@@ -1,54 +1,48 @@
-// Server-Seite
+// Server verwenden
 Server server = new Server();
 server.start();
 
-// Setup mit Größe und Schiffen
+// Setup
 if (server.sendSize(10)) {
     int[] ships = {5, 4, 4, 3, 2};
     if (server.sendShips(ships)) {
         if (server.sendReady()) {
-            // Spiel beginnt
-            
-            // Server schießt
-            int result = server.sendShot(5, 5);
-            
-            if (result == -1) {
-                // Client hat save gesendet
-                String saveId = client.getLastSaveId();
-                // Speichern durchführen
-            } else if (result == 0) {
-                // Wasser - pass senden
-                server.sendPass();
-            }
-            // Bei Treffer (1) oder Versenkt (2): weiter schießen
+            System.out.println("Spiel gestartet");
         }
     }
 }
 
-// Client-Seite
-Client client = new Client();
-client.connect("127.0.0.1");
-
-Client.GameConfig config = client.receiveSetup();
-
-if (config != null && config.isLoad) {
-    // Geladenes Spiel
-    String loadId = config.loadId;
-}
-
-// Im Spiel: Schuss empfangen
-int[] shot = client.receiveShot();
-if (shot == null) {
-    // Server hat save gesendet
-    String saveId = client.getLastSaveId();
-    // Speichern durchführen
-} else {
-    // Antwort basierend auf Spiel-Logik senden
-    if (isHit(shot[0], shot[1])) {
-        client.sendAnswer(1);  // Treffer
-        // Client wartet auf nächsten Schuss (kein pass nötig)
-    } else {
-        client.sendAnswer(0);  // Wasser
-        client.sendPass();     // Pass senden
+// Gemeinsame Methoden von NetworkPlayer
+int result = server.sendShot(5, 5);
+if (result == 0) {
+    server.sendPass();
+    NetworkPlayer.MessageType msg = server.receiveMessageWithSaveHandling();
+    if (msg.isShot()) {
+        int[] shot = msg.getShotCoords();
+        server.sendAnswer(1);
     }
 }
+
+// Client verwenden
+Client client = new Client();
+client.setServerAddress("127.0.0.1");
+client.start();
+
+// Setup empfangen
+NetworkPlayer.GameConfig config = client.receiveSetup();
+
+// Gemeinsame Methoden von NetworkPlayer
+NetworkPlayer.MessageType msg = client.receiveMessageWithSaveHandling();
+if (msg.isShot()) {
+    int[] shot = msg.getShotCoords();
+    client.sendAnswer(0);
+    client.sendPass();
+}
+
+
+
+// Kann mit NetworkPlayer-Referenz arbeiten
+NetworkPlayer player = isServer ? new Server() : new Client();
+// Gemeinsame Methoden verfügbar
+player.sendShot(1, 1);
+player.sendAnswer(0);
