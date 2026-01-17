@@ -8,7 +8,8 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
 
     public RoundButton(String label) { // Konstruktor
         super(label); // ruft den Konstruktor von JButton auf und der JButton, also die Mutterklasse schreibt den Text rein
-        // setContentAreaFilled(false); // Fläche im inneren wird entfernt (brauch man vielleicht bei Windows)
+        setContentAreaFilled(false); // der JButton wird nicht mehr gemalt (brauch man vielleicht bei Windows)
+        setOpaque(false); // lässt den Hintergrund durchscheinen
         setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons
         setFocusPainted(false);  // Verhindert den hässlichen Fokus-Rahmen
         setForeground(Color.WHITE);
@@ -18,7 +19,7 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
     @Override // signalisiert Java benutzt nicht die Standard-Zeichenmethode, sondern die hier
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann
         Graphics2D g2d = (Graphics2D) g.create(); // Grafik Objekt wird in das modernere Graphics2D Objekt umgewandelt und es wird eine Kopie erstellt also g ist immernoch gleich
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // macht die Kurven glatt
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // macht die Kurven glatt und den Text glatt
 
         // Hover-Effekt: Farbe ändern, wenn Maus drüber ist oder gedrückt wird
         if (getModel().isPressed()) { // wenn der Button gedrückt wird
