@@ -10,10 +10,14 @@ import java.awt.*;
 public class settingsscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
 <<<<<<< HEAD
+<<<<<<< HEAD
     private JButton hamburger;
 =======
     private JButton hamburgermenue;
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+    private JButton hamburger;
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
     private RoundButton changeColor;
 
     /**
@@ -37,12 +41,16 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         // changeColor.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
         hamburger = new JButton("X");
         hamburger.setFont(new Font("Arial", Font.PLAIN,25));
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das X Symbol
         hamburger.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
         hamburger.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
+<<<<<<< HEAD
 =======
         hamburgermenue = new JButton("X");
         hamburgermenue.setFont(new Font("Arial", Font.PLAIN,25));
@@ -51,6 +59,8 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         hamburgermenue.setFocusPainted(false); // Entfernt den blauen Rand beim Anklicken
         hamburgermenue.setCursor(new Cursor(Cursor.HAND_CURSOR)); // wenn man drüber geht wird der Cursor geändert
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
@@ -60,10 +70,14 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 <<<<<<< HEAD
+<<<<<<< HEAD
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 =======
         add(hamburgermenue, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
 
         contentPanel.add(changeColor);
         gbc.gridy = 1;
@@ -72,10 +86,14 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         hamburger.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
 =======
         hamburgermenue.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+        hamburger.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
     }
 
     /**

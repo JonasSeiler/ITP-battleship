@@ -11,10 +11,14 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
     private mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private JButton hamburger;
 =======
     private JButton hamburgermenue;
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+    private JButton hamburger;
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
 
     /**
      * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
@@ -36,11 +40,16 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         joinscreen.setFont(new Font("Times New Roman", Font.BOLD,16));
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         hamburger = new JButton("≡");
+=======
+        hamburger = new JButton("\u2261");
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
         hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+<<<<<<< HEAD
 =======
         hamburgermenue = new JButton("\u2261");
         hamburgermenue.setFont(new Font("Times New Roman", Font.BOLD,30));
@@ -48,6 +57,8 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         hamburgermenue.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
         hamburgermenue.setFocusPainted(false); // Entfernt den Rand beim Anklicken
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -56,10 +67,14 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 <<<<<<< HEAD
+<<<<<<< HEAD
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 =======
         add(hamburgermenue, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
@@ -72,10 +87,14 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 <<<<<<< HEAD
+<<<<<<< HEAD
         hamburger.addActionListener(e -> {
 =======
         hamburgermenue.addActionListener(e -> {
 >>>>>>> 1181386a5c2d547e31228084eece7c5b032709b5
+=======
+        hamburger.addActionListener(e -> {
+>>>>>>> fe907c599d28d4c5776405cca23b870b1862f037
                 frame.lastscreen = "joinscreen";
                 frame.showScreen("settings");
         });
