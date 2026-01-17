@@ -32,7 +32,7 @@ public class Server {
      */
     public boolean sendSize(int size) throws IOException {
         sendMessage("size " + size);
-        return waitForResponse("done");
+        return receiveMessage().equals("done");
     }
     
     /**
@@ -47,7 +47,7 @@ public class Server {
         }
         
         sendMessage(sb.toString());
-        return waitForResponse("done");
+        return receiveMessage().equals("done");
     }
     
     /**
@@ -57,7 +57,7 @@ public class Server {
      */
     public boolean sendLoad(String id) throws IOException {
         sendMessage("load " + id);
-        return waitForResponse("ok");
+        return receiveMessage().equals("ok");
     }
     
     /**
@@ -66,7 +66,7 @@ public class Server {
      */
     public boolean sendReady() throws IOException {
         sendMessage("ready");
-        boolean readyReceived = waitForResponse("ready");
+        boolean readyReceived = receiveMessage().equals("ready");
         if (readyReceived) {
             gameStarted = true;
         }
@@ -77,16 +77,11 @@ public class Server {
      * Sendet Schuss an den Client
      * @param row Zeilenkoordinate (1-basiert)
      * @param col Spaltenkoordinate (1-basiert)
-     * @return Antwortcode (0=Wasser, 1=Treffer, 2=Versenkt) oder -1 wenn Client "save" gesendet hat
+     * @return Antwortcode (0=Wasser, 1=Treffer, 2=Versenkt)
      */
     public int sendShot(int row, int col) throws IOException {
         sendMessage("shot " + row + " " + col);
-        String response = receiveMessageWithSaveCheck();
-        
-        if (response == null) {
-            // Client hat save gesendet
-            return -1;
-        }
+        String response = receiveMessage();
         
         if (response.startsWith("answer")) {
             String[] parts = response.split(" ");
@@ -105,7 +100,7 @@ public class Server {
             throw new IllegalStateException("Save ist nur nach Spielstart erlaubt");
         }
         sendMessage("save " + id);
-        return waitForResponse("ok");
+        return receiveMessage().equals("ok");
     }
     
     /**
@@ -116,72 +111,38 @@ public class Server {
     }
     
     /**
-     * Empfängt Schuss vom Client
-     * @return Array mit [row, col] oder null wenn Client "save" gesendet hat
+     * Empfängt eine Nachricht vom Client mit Save-Handling
+     * Wartet auf: shot, pass oder save
+     * @return MessageType mit Typ und Inhalt
      */
-    public int[] receiveShot() throws IOException {
-        String message = receiveMessageWithSaveCheck();
-        
-        if (message == null) {
-            // Client hat save gesendet
-            return null;
-        }
+    public MessageType receiveMessageWithSaveHandling() throws IOException {
+        String message = receiveMessage();
         
         if (message.startsWith("shot")) {
             String[] parts = message.split(" ");
             int row = Integer.parseInt(parts[1]);
             int col = Integer.parseInt(parts[2]);
-            return new int[]{row, col};
+            return new MessageType(MessageType.Type.SHOT, new int[]{row, col});
+        } 
+        else if (message.startsWith("save")) {
+            String id = message.substring(5).trim();
+            // Sofort mit ok antworten
+            sendMessage("ok");
+            return new MessageType(MessageType.Type.SAVE, id);
         }
+        else if (message.equals("pass")) {
+            return new MessageType(MessageType.Type.PASS, null);
+        }
+        
         throw new IOException("Unerwartete Nachricht: " + message);
     }
     
     /**
      * Sendet Antwort auf Schuss an den Client
      * @param answerCode 0=Wasser, 1=Treffer, 2=Versenkt
-     * @return true wenn Client "pass" gesendet hat, false wenn Client "save" gesendet hat
      */
-    public boolean sendAnswer(int answerCode) throws IOException {
+    public void sendAnswer(int answerCode) throws IOException {
         sendMessage("answer " + answerCode);
-        String response = receiveMessageWithSaveCheck();
-        
-        if (response == null) {
-            // Client hat save gesendet
-            return false;
-        }
-        
-        if (response.equals("pass")) {
-            return true; // Client hat pass gesendet
-        }
-        throw new IOException("Unerwartete Antwort: " + response);
-    }
-    
-    /**
-     * Allgemeine Methode zum Warten auf eine bestimmte Antwort (ohne Save-Check)
-     */
-    private boolean waitForResponse(String expectedResponse) throws IOException {
-        String response = receiveMessage();
-        
-        if (response.equals(expectedResponse)) {
-            return true;
-        }
-        throw new IOException("Unerwartete Antwort: " + response + " (erwartet: " + expectedResponse + ")");
-    }
-    
-    /**
-     * Empfängt eine Nachricht und prüft auf save (nur nach Spielstart)
-     * @return Die Nachricht oder null wenn es ein save war
-     */
-    private String receiveMessageWithSaveCheck() throws IOException {
-        String message = receiveMessage();
-        
-        if (message.startsWith("save")) {
-            // Save während Spiel - mit ok antworten
-            sendMessage("ok");
-            return null; // Signalisiert, dass es ein save war
-        }
-        
-        return message;
     }
     
     /**
@@ -221,4 +182,26 @@ public class Server {
     // Getter-Methoden
     public boolean isConnected() { return isConnected; }
     public boolean isGameStarted() { return gameStarted; }
+    
+    /**
+     * Hilfsklasse für Nachrichtentypen
+     */
+    public static class MessageType {
+        public enum Type { SHOT, SAVE, PASS }
+        
+        public final Type type;
+        public final Object data;
+        
+        public MessageType(Type type, Object data) {
+            this.type = type;
+            this.data = data;
+        }
+        
+        public boolean isShot() { return type == Type.SHOT; }
+        public boolean isSave() { return type == Type.SAVE; }
+        public boolean isPass() { return type == Type.PASS; }
+        
+        public int[] getShotCoords() { return (int[]) data; }
+        public String getSaveId() { return (String) data; }
+    }
 }
