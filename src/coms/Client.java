@@ -1,3 +1,5 @@
+package src.coms;
+
 import java.net.*;
 import java.io.*;
 
@@ -6,6 +8,9 @@ import java.io.*;
  */
 public class Client extends NetworkPlayer {
     private String serverAddress;
+    private Socket socket;
+    private BufferedReader in;
+    private Writer out;
     
     /**
      * Stellt Verbindung zum Server her
@@ -13,9 +18,6 @@ public class Client extends NetworkPlayer {
      */
     @Override
     public void start() throws IOException {
-        if (serverAddress == null) {
-            throw new IllegalArgumentException("Server-Adresse nicht gesetzt");
-        }
         socket = new Socket(serverAddress, PORT);
         isConnected = true;
         
@@ -85,5 +87,30 @@ public class Client extends NetworkPlayer {
         }
         
         throw new IOException("Ungültiges Setup-Protokoll");
+    }
+    
+    @Override
+    protected void sendMessage(String message) throws IOException {
+        out.write(message + "\n");
+        out.flush();
+    }
+    
+    @Override
+    protected String receiveMessage() throws IOException {
+        String line = in.readLine();
+        if (line == null) {
+            throw new IOException("Verbindung verloren");
+        }
+        return line.trim();
+    }
+    
+    @Override
+    public void close() throws IOException {
+        if (socket != null) {
+            socket.shutdownOutput();
+            socket.close();
+        }
+        isConnected = false;
+        gameStarted = false;
     }
 }

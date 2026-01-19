@@ -1,3 +1,5 @@
+package src.coms;
+
 import java.net.*;
 import java.io.*;
 
@@ -6,6 +8,9 @@ import java.io.*;
  */
 public class Server extends NetworkPlayer {
     private ServerSocket serverSocket;
+    private Socket clientSocket;
+    private BufferedReader in;
+    private Writer out;
     
     /**
      * Startet den Server und wartet auf Client-Verbindung
@@ -13,12 +18,12 @@ public class Server extends NetworkPlayer {
     @Override
     public void start() throws IOException {
         serverSocket = new ServerSocket(PORT);
-        socket = serverSocket.accept();
+        clientSocket = serverSocket.accept();
         isConnected = true;
         
         // Streams initialisieren
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new OutputStreamWriter(socket.getOutputStream());
+        in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        out = new OutputStreamWriter(clientSocket.getOutputStream());
     }
     
     /**
@@ -69,14 +74,34 @@ public class Server extends NetworkPlayer {
         return readyReceived;
     }
     
+    @Override
+    protected void sendMessage(String message) throws IOException {
+        out.write(message + "\n");
+        out.flush();
+    }
+    
+    @Override
+    protected String receiveMessage() throws IOException {
+        String line = in.readLine();
+        if (line == null) {
+            throw new IOException("Verbindung verloren");
+        }
+        return line.trim();
+    }
+    
     /**
      * Schließt die Verbindung (erweitert für ServerSocket)
      */
     @Override
     public void close() throws IOException {
-        super.close();
+        if (clientSocket != null) {
+            clientSocket.shutdownOutput();
+            clientSocket.close();
+        }
         if (serverSocket != null) {
             serverSocket.close();
         }
+        isConnected = false;
+        gameStarted = false;
     }
 }

@@ -1,3 +1,7 @@
+package src.coms;
+
+import src.logic.board;
+import src.logic.coordinate;
 import java.io.*;
 import java.util.*;
 
@@ -6,33 +10,32 @@ import java.util.*;
  * Implementiert die gleiche Schnittstelle wie Server/Client aber ohne Netzwerk
  */
 public class Bot extends NetworkPlayer {
-    // Bot-Spezifische Variablen
-    private int[][] ownBoard;       // Eigenes Spielfeld mit Schiffen
-    private int[][] enemyBoard;     // Spielfeld für gegnerische Schüsse
-    private List<int[]> ships;      // Liste der Schiffe
-    private int boardSize;
-    
-    // Shot-Logik
+    // Bot Spiel-Logik
+    private board ownBoard;          // Eigenes Spielfeld mit Schiffen
+    private board enemyBoard;       // Spielfeld für Tracking gegnerischer Schüsse
     private Random random;
-    private List<int[]> possibleShots;
-    private int lastShotRow = -1;
-    private int lastShotCol = -1;
+    private List<coordinate> possibleShots;
+    private coordinate lastShot;
     private boolean lastShotHit = false;
-    private String currentSaveId = null;
     
     // Setup-Information
     private boolean isLoadGame = false;
     private String loadGameId = null;
+    private int boardSize = 0;
+    private int[] shipLengths;
+    
+    // Für die interne Kommunikation (Bot vs Bot-Logik)
+    private Queue<String> incomingMessages = new LinkedList<>();
+    private Queue<String> outgoingMessages = new LinkedList<>();
     
     /**
      * Startet den Bot (keine Netzwerkverbindung nötig)
      */
     @Override
-    public void start() throws IOException {
+    public void start() {
         random = new Random();
         possibleShots = new ArrayList<>();
         isConnected = true;
-        System.out.println("Bot gestartet. Wähle 'size' für neues Spiel oder 'load' für geladenes Spiel.");
     }
     
     /**
@@ -40,10 +43,8 @@ public class Bot extends NetworkPlayer {
      */
     public boolean sendSize(int size) throws IOException {
         this.boardSize = size;
-        ownBoard = new int[size][size];
-        enemyBoard = new int[size][size];
+        // Initialisiere mögliche Schüsse
         initializePossibleShots();
-        System.out.println("Bot: Spielfeldgröße " + size + "x" + size + " gesetzt.");
         return true; // Bot antwortet sich selbst mit "done"
     }
     
@@ -51,14 +52,15 @@ public class Bot extends NetworkPlayer {
      * Sendet Schiffe (Bot als Server)
      */
     public boolean sendShips(int[] shipLengths) throws IOException {
-        this.ships = new ArrayList<>();
-        for (int length : shipLengths) {
-            ships.add(new int[]{length, 0, 0}); // Länge, startRow, startCol
-        }
+        this.shipLengths = shipLengths;
         
-        // Schiffe automatisch platzieren
+        // Eigenes Board initialisieren und Schiffe platzieren
+        ownBoard = new board(boardSize, shipLengths);
         placeShipsAutomatically(shipLengths);
-        System.out.println("Bot: " + shipLengths.length + " Schiffe platziert.");
+        
+        // Gegner-Board initialisieren (ohne Schiffe)
+        enemyBoard = new board(boardSize, shipLengths);
+        
         return true; // Bot antwortet sich selbst mit "done"
     }
     
@@ -68,7 +70,7 @@ public class Bot extends NetworkPlayer {
     public boolean sendLoad(String id) throws IOException {
         isLoadGame = true;
         loadGameId = id;
-        System.out.println("Bot: Lade Spiel mit ID " + id);
+        // Hier würde Spielstand geladen werden
         return true; // Bot antwortet sich selbst mit "ok"
     }
     
@@ -77,31 +79,26 @@ public class Bot extends NetworkPlayer {
      */
     public boolean sendReady() throws IOException {
         gameStarted = true;
-        System.out.println("Bot: Bereit. Spiel beginnt!");
         return true; // Bot antwortet sich selbst mit "ready"
     }
     
     /**
-     * Sendet Schuss (Bot schießt)
+     * Sendet Schuss (Bot schießt auf menschlichen Spieler)
      */
     @Override
     public int sendShot(int row, int col) throws IOException {
-        lastShotRow = row;
-        lastShotCol = col;
+        // Konvertiere zu 0-basierten Koordinaten für interne Logik
+        lastShot = new coordinate(row - 1, col - 1);
         
         // Entferne diesen Schuss aus möglichen Schüssen
-        removeShotFromPossible(row, col);
+        removeShotFromPossible(lastShot);
         
-        // Simuliere Antwort des menschlichen Spielers
-        // In der realen Implementierung würde dies von der Spiellogik kommen
-        System.out.println("Bot schießt auf: " + row + ", " + col);
+        // In einer echten Implementierung würde hier die Antwort des menschlichen Spielers kommen
+        // Für die Demo: Simuliere Antwort basierend auf zufälliger Logik
+        int answer = simulateHumanAnswer(lastShot);
         
-        // Hier würde normalerweise die Antwort vom menschlichen Spieler kommen
-        // Für die Demo geben wir eine zufällige Antwort zurück
-        int answer = simulateHumanAnswer(row, col);
-        
-        // Aktualisiere enemyBoard mit der Antwort
-        enemyBoard[row-1][col-1] = answer + 1; // +1 um 0=leer, 1=Wasser, 2=Treffer, 3=Versenkt
+        // Registriere den Schuss im enemyBoard
+        enemyBoard.register_shot(lastShot, answer);
         
         // Shot-Logik aktualisieren
         lastShotHit = (answer == 1 || answer == 2);
@@ -110,12 +107,12 @@ public class Bot extends NetworkPlayer {
     }
     
     /**
-     * Generiert einen intelligenten Schuss
+     * Generiert einen intelligenten Schuss basierend auf aktueller Spielsituation
      */
-    public int[] generateSmartShot() {
+    public coordinate generateSmartShot() {
         // Wenn letzter Schuss ein Treffer war, schieße in der Nähe
-        if (lastShotHit && lastShotRow != -1 && lastShotCol != -1) {
-            int[] nearbyShot = getNearbyShot(lastShotRow, lastShotCol);
+        if (lastShotHit && lastShot != null) {
+            coordinate nearbyShot = getNearbyShot(lastShot);
             if (nearbyShot != null) {
                 return nearbyShot;
             }
@@ -124,20 +121,19 @@ public class Bot extends NetworkPlayer {
         // Ansonsten zufälligen Schuss aus möglichen Schüssen wählen
         if (!possibleShots.isEmpty()) {
             int index = random.nextInt(possibleShots.size());
-            int[] shot = possibleShots.get(index);
+            coordinate shot = possibleShots.get(index);
             possibleShots.remove(index);
             return shot;
         }
         
-        // Fallback: komplett zufälliger Schuss
-        return new int[]{random.nextInt(boardSize) + 1, random.nextInt(boardSize) + 1};
+        // Fallback: komplett zufälliger Schuss (0-basiert)
+        return new coordinate(random.nextInt(boardSize), random.nextInt(boardSize));
     }
     
     /**
      * Empfängt Setup-Nachrichten (Bot als Client)
      */
     public GameConfig receiveSetup() throws IOException {
-        // Bot kann entweder als Server oder Client fungieren
         // Für Einzelspieler nehmen wir an, Bot ist Server
         throw new IOException("Bot im Einzelspielermodus muss als Server fungieren (sendSize/sendShips verwenden)");
     }
@@ -148,27 +144,13 @@ public class Bot extends NetworkPlayer {
     @Override
     public MessageType receiveMessageWithSaveHandling() throws IOException {
         // Bot wartet auf Schuss des menschlichen Spielers
-        // In einer realen Implementierung würde hier auf Benutzereingabe gewartet
-        System.out.println("Bot: Warte auf Schuss des menschlichen Spielers...");
+        // In einer echten GUI-Implementierung würde hier auf Benutzereingabe gewartet
         
         // Für die Demo: Simuliere einen Schuss des menschlichen Spielers
-        try {
-            Thread.sleep(1000); // Kurze Pause für Realismus
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        
-        // Simulierter Schuss des menschlichen Spielers (in Wirklichkeit von GUI/CLI)
-        int[] humanShot = simulateHumanShot();
+        coordinate humanShot = simulateHumanShot();
         
         // Überprüfe ob der Schuss ein Treffer war
-        int row = humanShot[0];
-        int col = humanShot[1];
-        int result = checkShotOnOwnBoard(row, col);
-        
-        System.out.println("Menschlicher Spieler schießt auf: " + row + ", " + col);
-        System.out.println("Ergebnis: " + 
-            (result == 0 ? "Wasser" : result == 1 ? "Treffer" : "Versenkt"));
+        int result = ownBoard.check_hit(humanShot);
         
         return new MessageType(MessageType.Type.SHOT, humanShot);
     }
@@ -179,14 +161,12 @@ public class Bot extends NetworkPlayer {
     @Override
     public void sendAnswer(int answerCode) throws IOException {
         // Bot antwortet auf Schuss des menschlichen Spielers
-        System.out.println("Bot antwortet mit: " + 
-            (answerCode == 0 ? "Wasser" : answerCode == 1 ? "Treffer" : "Versenkt"));
-        
         // Bei Wasser oder Versenkt: Bot wird am Zug sein
         if (answerCode == 0 || answerCode == 2) {
             // Bot generiert nächsten Schuss
-            int[] nextShot = generateSmartShot();
-            int result = sendShot(nextShot[0], nextShot[1]);
+            coordinate nextShot = generateSmartShot();
+            // Konvertiere zu 1-basiert für sendShot
+            int result = sendShot(nextShot.x + 1, nextShot.y + 1);
             
             if (result == 0) {
                 // Bot hat Wasser geschossen, menschlicher Spieler ist dran
@@ -196,36 +176,58 @@ public class Bot extends NetworkPlayer {
         }
     }
     
-    /**
-     * Sendet Pass (Bot gibt Zug ab)
-     */
     @Override
-    public void sendPass() throws IOException {
-        System.out.println("Bot passt. Menschlicher Spieler ist am Zug.");
+    protected void sendMessage(String message) throws IOException {
+        // Bot sendet Nachricht an sich selbst (interne Verarbeitung)
+        outgoingMessages.add(message);
     }
     
+    @Override
+    protected String receiveMessage() throws IOException {
+        // Bot empfängt Nachricht von sich selbst
+        if (!incomingMessages.isEmpty()) {
+            return incomingMessages.poll();
+        }
+        // In einer echten Implementierung würde hier auf externe Eingabe gewartet
+        throw new IOException("Keine Nachricht verfügbar");
+    }
+    
+    @Override
+    public void close() {
+        isConnected = false;
+        gameStarted = false;
+        incomingMessages.clear();
+        outgoingMessages.clear();
+    }
+    
+    // ===== BOT-SPIEL-LOGIK =====
+    
     /**
-     * Schiffe automatisch platzieren
+     * Schiffe automatisch auf eigenem Board platzieren
      */
     private void placeShipsAutomatically(int[] shipLengths) {
-        for (int length : shipLengths) {
+        for (int i = 0; i < shipLengths.length; i++) {
             boolean placed = false;
             int attempts = 0;
             
             while (!placed && attempts < 100) {
                 attempts++;
                 boolean horizontal = random.nextBoolean();
-                int row = random.nextInt(boardSize);
-                int col = random.nextInt(boardSize);
+                int x = random.nextInt(boardSize);
+                int y = random.nextInt(boardSize);
                 
-                if (canPlaceShip(row, col, length, horizontal)) {
-                    placeShip(row, col, length, horizontal);
+                coordinate start = new coordinate(x, y);
+                
+                // Prüfe ob Schiff platziert werden kann
+                if (canPlaceShip(start, shipLengths[i], horizontal)) {
+                    // Platziere Schiff (0 = horizontal, 1 = vertikal laut board.place_ship)
+                    ownBoard.place_ship(start, horizontal ? 0 : 1, i);
                     placed = true;
                 }
             }
             
             if (!placed) {
-                System.err.println("Konnte Schiff der Länge " + length + " nicht platzieren!");
+                System.err.println("Konnte Schiff der Länge " + shipLengths[i] + " nicht platzieren!");
             }
         }
     }
@@ -233,44 +235,29 @@ public class Bot extends NetworkPlayer {
     /**
      * Prüft ob Schiff platziert werden kann
      */
-    private boolean canPlaceShip(int startRow, int startCol, int length, boolean horizontal) {
+    private boolean canPlaceShip(coordinate start, int length, boolean horizontal) {
         if (horizontal) {
-            if (startCol + length > boardSize) return false;
-            for (int c = startCol; c < startCol + length; c++) {
-                if (ownBoard[startRow][c] != 0) return false;
+            if (start.y + length > boardSize) return false;
+            for (int i = 0; i < length; i++) {
+                if (ownBoard.ship_pos[start.x][start.y + i] != 0) return false;
             }
         } else {
-            if (startRow + length > boardSize) return false;
-            for (int r = startRow; r < startRow + length; r++) {
-                if (ownBoard[r][startCol] != 0) return false;
+            if (start.x + length > boardSize) return false;
+            for (int i = 0; i < length; i++) {
+                if (ownBoard.ship_pos[start.x + i][start.y] != 0) return false;
             }
         }
         return true;
     }
     
     /**
-     * Platziert ein Schiff
-     */
-    private void placeShip(int startRow, int startCol, int length, boolean horizontal) {
-        if (horizontal) {
-            for (int c = startCol; c < startCol + length; c++) {
-                ownBoard[startRow][c] = 1; // 1 = Teil eines Schiffes
-            }
-        } else {
-            for (int r = startRow; r < startRow + length; r++) {
-                ownBoard[r][startCol] = 1;
-            }
-        }
-    }
-    
-    /**
-     * Initialisiert Liste aller möglichen Schüsse
+     * Initialisiert Liste aller möglichen Schüsse (0-basiert)
      */
     private void initializePossibleShots() {
         possibleShots.clear();
-        for (int r = 1; r <= boardSize; r++) {
-            for (int c = 1; c <= boardSize; c++) {
-                possibleShots.add(new int[]{r, c});
+        for (int x = 0; x < boardSize; x++) {
+            for (int y = 0; y < boardSize; y++) {
+                possibleShots.add(new coordinate(x, y));
             }
         }
     }
@@ -278,27 +265,27 @@ public class Bot extends NetworkPlayer {
     /**
      * Entfernt Schuss aus möglichen Schüssen
      */
-    private void removeShotFromPossible(int row, int col) {
-        possibleShots.removeIf(shot -> shot[0] == row && shot[1] == col);
+    private void removeShotFromPossible(coordinate shot) {
+        possibleShots.removeIf(s -> s.x == shot.x && s.y == shot.y);
     }
     
     /**
      * Findet Schuss in der Nähe eines Treffers
      */
-    private int[] getNearbyShot(int row, int col) {
+    private coordinate getNearbyShot(coordinate lastShot) {
         int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-        List<int[]> nearby = new ArrayList<>();
+        List<coordinate> nearby = new ArrayList<>();
         
         for (int[] dir : directions) {
-            int newRow = row + dir[0];
-            int newCol = col + dir[1];
+            int newX = lastShot.x + dir[0];
+            int newY = lastShot.y + dir[1];
             
-            if (newRow >= 1 && newRow <= boardSize && 
-                newCol >= 1 && newCol <= boardSize) {
+            if (newX >= 0 && newX < boardSize && 
+                newY >= 0 && newY < boardSize) {
                 
                 // Prüfe ob dieser Schuss noch möglich ist
-                for (int[] shot : possibleShots) {
-                    if (shot[0] == newRow && shot[1] == newCol) {
+                for (coordinate shot : possibleShots) {
+                    if (shot.x == newX && shot.y == newY) {
                         nearby.add(shot);
                         break;
                     }
@@ -307,7 +294,7 @@ public class Bot extends NetworkPlayer {
         }
         
         if (!nearby.isEmpty()) {
-            int[] shot = nearby.get(random.nextInt(nearby.size()));
+            coordinate shot = nearby.get(random.nextInt(nearby.size()));
             possibleShots.remove(shot);
             return shot;
         }
@@ -316,44 +303,10 @@ public class Bot extends NetworkPlayer {
     }
     
     /**
-     * Überprüft Schuss auf eigenem Board
+     * Simuliert Antwort des menschlichen Spielers auf Bot-Schuss
      */
-    private int checkShotOnOwnBoard(int row, int col) {
-        // Konvertiere zu 0-basierten Indizes
-        int r = row - 1;
-        int c = col - 1;
-        
-        if (r < 0 || r >= boardSize || c < 0 || c >= boardSize) {
-            return 0; // Ungültiger Schuss = Wasser
-        }
-        
-        if (ownBoard[r][c] == 1) { // Treffer auf Schiff
-            ownBoard[r][c] = 2; // Markiere als getroffen
-            
-            // Prüfe ob Schiff versenkt
-            if (isShipSunk(row, col)) {
-                return 2; // Versenkt
-            }
-            return 1; // Treffer
-        }
-        
-        return 0; // Wasser
-    }
-    
-    /**
-     * Prüft ob Schiff versenkt
-     */
-    private boolean isShipSunk(int row, int col) {
-        // Einfache Implementierung: Zähle alle getroffenen Teile
-        // In einer vollständigen Implementierung würde man Schiffe tracken
-        return false; // Vereinfachung für Demo
-    }
-    
-    /**
-     * Simuliert Antwort des menschlichen Spielers
-     */
-    private int simulateHumanAnswer(int row, int col) {
-        // In der realen Implementierung kommt dies von der GUI/Spiel-Logik
+    private int simulateHumanAnswer(coordinate shot) {
+        // In einer echten Implementierung würde dies von der GUI/Spiel-Logik kommen
         // Hier simulieren wir zufällige Antworten
         return random.nextInt(3); // 0, 1 oder 2
     }
@@ -361,43 +314,47 @@ public class Bot extends NetworkPlayer {
     /**
      * Simuliert Schuss des menschlichen Spielers
      */
-    private int[] simulateHumanShot() {
-        // In der realen Implementierung kommt dies von der GUI
-        // Hier: Zufälliger Schuss
-        return new int[]{random.nextInt(boardSize) + 1, random.nextInt(boardSize) + 1};
+    private coordinate simulateHumanShot() {
+        // In einer echten Implementierung würde dies von der GUI kommen
+        // Hier: Zufälliger Schuss (0-basiert)
+        return new coordinate(random.nextInt(boardSize), random.nextInt(boardSize));
+    }
+    
+    // ===== HILFSMETHODEN FÜR DIE GUI =====
+    
+    /**
+     * Gibt eigene Board-Repräsentation zurück
+     */
+    public board getOwnBoard() {
+        return ownBoard;
     }
     
     /**
-     * Gibt Spielfeld-Repräsentation zurück (für Debugging)
+     * Gibt gegnerisches Board-Repräsentation zurück
      */
-    public String getBoardRepresentation() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Eigenes Spielfeld:\n");
-        for (int r = 0; r < boardSize; r++) {
-            for (int c = 0; c < boardSize; c++) {
-                sb.append(ownBoard[r][c] == 0 ? "." : ownBoard[r][c] == 1 ? "S" : "X");
-                sb.append(" ");
-            }
-            sb.append("\n");
-        }
-        
-        sb.append("\nGegnerisches Spielfeld (Schüsse):\n");
-        for (int r = 0; r < boardSize; r++) {
-            for (int c = 0; c < boardSize; c++) {
-                char ch = '.';
-                if (enemyBoard[r][c] == 1) ch = 'O'; // Wasser
-                else if (enemyBoard[r][c] == 2) ch = 'T'; // Treffer
-                else if (enemyBoard[r][c] == 3) ch = 'V'; // Versenkt
-                sb.append(ch).append(" ");
-            }
-            sb.append("\n");
-        }
-        
-        return sb.toString();
+    public board getEnemyBoard() {
+        return enemyBoard;
+    }
+    
+    /**
+     * Verarbeitet menschlichen Schuss (von GUI aufgerufen)
+     */
+    public int processHumanShot(int row, int col) {
+        // Konvertiere zu 0-basiert
+        coordinate shot = new coordinate(row - 1, col - 1);
+        return ownBoard.check_hit(shot);
+    }
+    
+    /**
+     * Gibt nächsten Bot-Schuss zurück (für GUI)
+     */
+    public coordinate getNextBotShot() {
+        return generateSmartShot();
     }
     
     // Getter für Spielinformation
     public int getBoardSize() { return boardSize; }
+    public int[] getShipLengths() { return shipLengths; }
     public boolean isLoadGame() { return isLoadGame; }
     public String getLoadGameId() { return loadGameId; }
 }

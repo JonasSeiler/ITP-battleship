@@ -1,19 +1,13 @@
 package src.coms;
 
-import java.net.*;
 import java.io.*;
-import src.logic.*;
+import java.util.*;
+
 /**
- * Abstrakte Basisklasse für Server und Client
+ * Abstrakte Basisklasse für Server, Client und Bot
  * Enthält gemeinsame Funktionalität für die Netzwerkkommunikation
  */
 public abstract class NetworkPlayer {
-    protected Socket socket;
-    protected BufferedReader in;
-    protected Writer out;
-    protected game logic;
-    
-    // Status-Variabeln
     protected boolean isConnected = false;
     protected boolean gameStarted = false;
     protected final int PORT = 50000;
@@ -21,27 +15,12 @@ public abstract class NetworkPlayer {
     /**
      * Allgemeine Methode zum Senden von Nachrichten
      */
-    protected void sendMessage(String message) throws IOException {
-        if (out == null) {
-            throw new IOException("Verbindung nicht initialisiert");
-        }
-        out.write(message + "\n");
-        out.flush();
-    }
+    protected abstract void sendMessage(String message) throws IOException;
     
     /**
      * Allgemeine Methode zum Empfangen von Nachrichten
      */
-    protected String receiveMessage() throws IOException {
-        if (in == null) {
-            throw new IOException("Verbindung nicht initialisiert");
-        }
-        String line = in.readLine();
-        if (line == null) {
-            throw new IOException("Verbindung verloren");
-        }
-        return line.trim();
-    }
+    protected abstract String receiveMessage() throws IOException;
     
     /**
      * Empfängt eine Nachricht mit Save-Handling
@@ -53,20 +32,18 @@ public abstract class NetworkPlayer {
         
         if (message.startsWith("shot")) {
             String[] parts = message.split(" ");
-            int row = Integer.parseInt(parts[1]);
-            int col = Integer.parseInt(parts[2]);
-            logic.get_hit(new coordinate(row, col));
-            return new MessageType(MessageType.Type.SHOT, new int[]{row, col});
+            int row = Integer.parseInt(parts[1]) - 1; // Konvertiere zu 0-basiert
+            int col = Integer.parseInt(parts[2]) - 1;
+            src.logic.coordinate coord = new src.logic.coordinate(row, col);
+            return new MessageType(MessageType.Type.SHOT, coord);
         } 
         else if (message.startsWith("save")) {
             String id = message.substring(5).trim();
             // Sofort mit ok antworten
             sendMessage("ok");
-            logic.save_opp_game(id);
             return new MessageType(MessageType.Type.SAVE, id);
         }
         else if (message.equals("pass")) {
-            logic.start_local_turn();
             return new MessageType(MessageType.Type.PASS, null);
         }
         
@@ -121,25 +98,14 @@ public abstract class NetworkPlayer {
     /**
      * Schließt die Verbindung
      */
-    public void close() throws IOException {
-        if (socket != null) {
-            socket.shutdownOutput();
-            socket.close();
-        }
-        isConnected = false;
-        gameStarted = false;
-    }
+    public abstract void close() throws IOException;
     
-    // Abstrakte Methoden, die von Unterklassen implementiert werden müssen
+    // Abstrakte Methoden
     public abstract void start() throws IOException;
     
     // Getter-Methoden
     public boolean isConnected() { return isConnected; }
     public boolean isGameStarted() { return gameStarted; }
-
-    public void set_game(game g) {
-        this.logic = g;
-    }
     
     /**
      * Hilfsklasse für Nachrichtentypen
@@ -159,7 +125,7 @@ public abstract class NetworkPlayer {
         public boolean isSave() { return type == Type.SAVE; }
         public boolean isPass() { return type == Type.PASS; }
         
-        public int[] getShotCoords() { return (int[]) data; }
+        public src.logic.coordinate getShotCoords() { return (src.logic.coordinate) data; }
         public String getSaveId() { return (String) data; }
     }
     
