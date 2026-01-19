@@ -4,33 +4,35 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Screen im Singleplayermodus, indem man ein Spiel laden oder ein neues erstellen kann
+ * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
  * @author Max, Matthias
  */
-public class singleplayer extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
-    private RoundButton new_game;
-    private RoundButton load_game;
     private RoundButton exit;
     private JButton hamburger;
 
     /**
-     * Erstellt den Singleplayerscreen und erstellt und initialisiert Objekte
+     * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
      * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
      */
-    public singleplayer(mainframe frame) { // mainframe ist das Hauptfenster und der singleplayerscreen gibt Befehle an den mainframe
+    public waitingscreen(mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
         this.frame = frame;
-        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den singleplayerscreen gepackt
+        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den waitingscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
+        JLabel waitingscreen = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
-        new_game = new RoundButton("New Game");
-        load_game = new RoundButton("Load Game");
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
+        waitingscreen.setFont(new Font("Times New Roman", Font.PLAIN,20));
+        waitingscreen.setForeground(Color.WHITE);
+
+
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburger.setForeground(Color.WHITE);
@@ -45,28 +47,26 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
-        contentPanel.add(new_game);
-        contentPanel.add(load_game);
+        contentPanel.add(waitingscreen);
+        contentPanel.add(new JLabel(""));
         contentPanel.add(exit);
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        new_game.addActionListener(e -> {
-            frame.lastscreen2 = "singleplayer";
-            frame.showScreen("pregamescreen");});
-        load_game.addActionListener(e -> {frame.showScreen("gamescreen");});
-        exit.addActionListener(e -> {frame.showScreen("titlescreen");});
+        exit.addActionListener(e -> {frame.showScreen("multiplayer");});
+
         hamburger.addActionListener(e -> {
-                frame.lastscreen = "singleplayer";
+                frame.lastscreen = "waitingscreen";
                 frame.showScreen("settings");
         });
     }
+
 
     /**
      * Methode für den Farbverlauf des Screens
