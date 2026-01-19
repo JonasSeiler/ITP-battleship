@@ -87,7 +87,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
         gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
-        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
@@ -107,7 +107,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         contentPanel.add(zurueck_button);
         contentPanel.add(start_button);
         gbc.gridy = 1;
-        gbc.weighty = 0.9;
+        gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         gridSize1.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
@@ -116,7 +116,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         ship_size3.addChangeListener(e -> {updateCapacity();});
         ship_size2.addChangeListener(e -> {updateCapacity();});
         start_button.addChangeListener(e -> {updateCapacity();});
-        zurueck_button.addActionListener(e -> {frame.showScreen("singleplayer");});
+        zurueck_button.addActionListener(e -> {frame.showScreen(frame.lastscreen2);});
         start_button.addActionListener(e -> { // Der ActionListener ist ein Objekt der als Zuhörer am Button klebt und eine Methode mit dem Parameter e besitzen muss, um die Klick-Details zu empfangen und daraufhin wird der Code in den {} ausführt
             int occupied = (Integer) capacityBar.getValue();
             int max = (Integer) capacityBar.getMaximum();

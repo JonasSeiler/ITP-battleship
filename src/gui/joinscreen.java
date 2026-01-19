@@ -42,7 +42,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
         gbc.weightx = 1.0; // Diese Zelle soll horizontal den gesamten verfügbaren Platz beanspruchen
-        gbc.weighty = 0.1; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
+        gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 
@@ -54,7 +54,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.add(new JLabel(""));
         contentPanel.add(exit);
         gbc.gridy = 1;
-        gbc.weighty = 0.9;
+        gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
@@ -64,6 +64,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
                 frame.showScreen("settings");
         });
     }
+
 
     /**
      * Methode für den Farbverlauf des Screens
