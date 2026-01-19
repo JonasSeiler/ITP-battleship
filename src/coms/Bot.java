@@ -1,7 +1,6 @@
 package src.coms;
 
-import src.logic.board;
-import src.logic.coordinate;
+import src.logic.*;
 import java.io.*;
 import java.util.*;
 
@@ -17,7 +16,11 @@ public class Bot extends NetworkPlayer {
     private List<coordinate> possibleShots;
     private coordinate lastShot;
     private boolean lastShotHit = false;
+    private coordinate shot;
+    private boolean shotHit = false;
     
+    private game user; 
+
     // Setup-Information
     private boolean isLoadGame = false;
     private String loadGameId = null;
@@ -58,14 +61,11 @@ public class Bot extends NetworkPlayer {
         ownBoard = new board(boardSize, shipLengths);
         placeShipsAutomatically(shipLengths);
         
-        // Gegner-Board initialisieren (ohne Schiffe)
-        enemyBoard = new board(boardSize, shipLengths);
-        
         return true; // Bot antwortet sich selbst mit "done"
     }
     
     /**
-     * Sendet Load-Befehl (Bot als Server)
+     * Sendet Load-Befehl (Bot als Server) own board initilisieren
      */
     public boolean sendLoad(String id) throws IOException {
         isLoadGame = true;
@@ -88,22 +88,9 @@ public class Bot extends NetworkPlayer {
     @Override
     public int sendShot(int row, int col) throws IOException {
         // Konvertiere zu 0-basierten Koordinaten für interne Logik
-        lastShot = new coordinate(row - 1, col - 1);
+        shot = new coordinate(row, col);
         
-        // Entferne diesen Schuss aus möglichen Schüssen
-        removeShotFromPossible(lastShot);
-        
-        // In einer echten Implementierung würde hier die Antwort des menschlichen Spielers kommen
-        // Für die Demo: Simuliere Antwort basierend auf zufälliger Logik
-        int answer = simulateHumanAnswer(lastShot);
-        
-        // Registriere den Schuss im enemyBoard
-        enemyBoard.register_shot(lastShot, answer);
-        
-        // Shot-Logik aktualisieren
-        lastShotHit = (answer == 1 || answer == 2);
-        
-        return answer;
+        return ownboard.check_hit();
     }
     
     /**
@@ -143,15 +130,11 @@ public class Bot extends NetworkPlayer {
      */
     @Override
     public MessageType receiveMessageWithSaveHandling() throws IOException {
-        // Bot wartet auf Schuss des menschlichen Spielers
-        // In einer echten GUI-Implementierung würde hier auf Benutzereingabe gewartet
-        
-        // Für die Demo: Simuliere einen Schuss des menschlichen Spielers
-        coordinate humanShot = simulateHumanShot();
-        
-        // Überprüfe ob der Schuss ein Treffer war
-        int result = ownBoard.check_hit(humanShot);
-        
+                
+        // generate shot from bot
+
+        user.get_hit(botgencoordiante);
+
         return new MessageType(MessageType.Type.SHOT, humanShot);
     }
     
@@ -160,27 +143,17 @@ public class Bot extends NetworkPlayer {
      */
     @Override
     public void sendAnswer(int answerCode) throws IOException {
-        // Bot antwortet auf Schuss des menschlichen Spielers
-        // Bei Wasser oder Versenkt: Bot wird am Zug sein
-        if (answerCode == 0 || answerCode == 2) {
-            // Bot generiert nächsten Schuss
-            coordinate nextShot = generateSmartShot();
-            // Konvertiere zu 1-basiert für sendShot
-            int result = sendShot(nextShot.x + 1, nextShot.y + 1);
-            
-            if (result == 0) {
-                // Bot hat Wasser geschossen, menschlicher Spieler ist dran
-                sendPass();
-            }
-            // Bei Treffer oder Versenkt bleibt Bot am Zug
-        }
+        
+        ownboard.register_shot(botgencoordiante, answerCode);
+
+        // later access the 2d array (opp_hit) and use it to make shot decision in generate smart shot
+
     }
     
     @Override
     protected void sendMessage(String message) throws IOException {
         // Bot sendet Nachricht an sich selbst (interne Verarbeitung)
-        outgoingMessages.add(message);
-    }
+        }
     
     @Override
     protected String receiveMessage() throws IOException {
@@ -322,39 +295,7 @@ public class Bot extends NetworkPlayer {
     
     // ===== HILFSMETHODEN FÜR DIE GUI =====
     
-    /**
-     * Gibt eigene Board-Repräsentation zurück
-     */
-    public board getOwnBoard() {
-        return ownBoard;
+    public void set_user(game u) {
+        this.user = u;
     }
-    
-    /**
-     * Gibt gegnerisches Board-Repräsentation zurück
-     */
-    public board getEnemyBoard() {
-        return enemyBoard;
-    }
-    
-    /**
-     * Verarbeitet menschlichen Schuss (von GUI aufgerufen)
-     */
-    public int processHumanShot(int row, int col) {
-        // Konvertiere zu 0-basiert
-        coordinate shot = new coordinate(row - 1, col - 1);
-        return ownBoard.check_hit(shot);
-    }
-    
-    /**
-     * Gibt nächsten Bot-Schuss zurück (für GUI)
-     */
-    public coordinate getNextBotShot() {
-        return generateSmartShot();
-    }
-    
-    // Getter für Spielinformation
-    public int getBoardSize() { return boardSize; }
-    public int[] getShipLengths() { return shipLengths; }
-    public boolean isLoadGame() { return isLoadGame; }
-    public String getLoadGameId() { return loadGameId; }
 }

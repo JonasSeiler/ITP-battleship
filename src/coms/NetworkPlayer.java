@@ -2,6 +2,7 @@ package src.coms;
 
 import java.io.*;
 import java.util.*;
+import src.logic*;
 
 /**
  * Abstrakte Basisklasse für Server, Client und Bot
@@ -34,7 +35,7 @@ public abstract class NetworkPlayer {
             String[] parts = message.split(" ");
             int row = Integer.parseInt(parts[1]) - 1; // Konvertiere zu 0-basiert
             int col = Integer.parseInt(parts[2]) - 1;
-            src.logic.coordinate coord = new src.logic.coordinate(row, col);
+            coordinate coord = new coordinate(row, col);
             return new MessageType(MessageType.Type.SHOT, coord);
         } 
         else if (message.startsWith("save")) {
@@ -125,7 +126,7 @@ public abstract class NetworkPlayer {
         public boolean isSave() { return type == Type.SAVE; }
         public boolean isPass() { return type == Type.PASS; }
         
-        public src.logic.coordinate getShotCoords() { return (src.logic.coordinate) data; }
+        public coordinate getShotCoords() { return (coordinate) data; }
         public String getSaveId() { return (String) data; }
     }
     
