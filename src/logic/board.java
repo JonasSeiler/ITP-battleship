@@ -30,37 +30,22 @@ public class board {
     public void place_ship(coordinate head, int dir, int s_index) {
         // dir: 0 = x,     1 =  y
         fleet[s_index].set_dir_head(head, dir);
-        if(dir % 2 == 0) {
-            if(dir == 0) {
+        if(dir == 0) {
                 for (int i = 0; i < fleet[s_index].length; i++) {
                     head.x += i;
                     ship_pos[head.x][head.y] = 1;
                     fleet[s_index].set_pos(head, i);
                 }
-            } else {
-                for (int i = 0; i < fleet[s_index].length; i++) {
-                    head.x -= i;
-                    ship_pos[head.x][head.y] = 1;
-                    fleet[s_index].set_pos(head, i);
-                }
-            }
         }
         else {
-            if(dir == 1) {
-                for (int i = 0; i < fleet[s_index].length; i++) {
-                    head.y += i;
-                    ship_pos[head.x][head.y] = 1;
-                    fleet[s_index].set_pos(head, i);
-                }
-            } else {
-                 for (int i = 0; i < fleet[s_index].length; i++) {
-                    head.y -= i;
-                    ship_pos[head.x][head.y] = 1;
-                    fleet[s_index].set_pos(head, i);
-                }              
+            for (int i = 0; i < fleet[s_index].length; i++) {
+                head.y += i;
+                ship_pos[head.x][head.y] = 1;
+                fleet[s_index].set_pos(head, i);
             }
         }
     }
+
     public void register_shot(coordinate shot, int response) {
         opp_hit[shot.x][shot.y] = response;
         if(response == 2) {

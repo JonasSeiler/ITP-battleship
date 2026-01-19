@@ -1,6 +1,8 @@
+package src.coms;
+
 import java.net.*;
 import java.io.*;
-
+import src.logic.*;
 /**
  * Abstrakte Basisklasse für Server und Client
  * Enthält gemeinsame Funktionalität für die Netzwerkkommunikation
@@ -9,6 +11,7 @@ public abstract class NetworkPlayer {
     protected Socket socket;
     protected BufferedReader in;
     protected Writer out;
+    protected game logic;
     
     // Status-Variabeln
     protected boolean isConnected = false;
@@ -52,15 +55,18 @@ public abstract class NetworkPlayer {
             String[] parts = message.split(" ");
             int row = Integer.parseInt(parts[1]);
             int col = Integer.parseInt(parts[2]);
+            logic.get_hit(new coordinate(row, col));
             return new MessageType(MessageType.Type.SHOT, new int[]{row, col});
         } 
         else if (message.startsWith("save")) {
             String id = message.substring(5).trim();
             // Sofort mit ok antworten
             sendMessage("ok");
+            logic.save_opp_game(id);
             return new MessageType(MessageType.Type.SAVE, id);
         }
         else if (message.equals("pass")) {
+            logic.start_local_turn();
             return new MessageType(MessageType.Type.PASS, null);
         }
         
@@ -130,6 +136,10 @@ public abstract class NetworkPlayer {
     // Getter-Methoden
     public boolean isConnected() { return isConnected; }
     public boolean isGameStarted() { return gameStarted; }
+
+    public void set_game(game g) {
+        this.logic = g;
+    }
     
     /**
      * Hilfsklasse für Nachrichtentypen

@@ -1,17 +1,25 @@
 package src.logic;
 import java.io.*;
 
-import src.gui.battlescreen;
-import src.coms.Server;
+import src.gui.*;
+import src.coms.*;
 
 public class game {
     private board board1;
     private battlescreen gui;
-    private Server coms;
+    private NetworkPlayer coms;
     private boolean user_t;
+    private int[] s_dir;
     // add gui and coms classes
-    public game(int size, int[] ship_set) {
+    public game(int size, int[] ship_set, battlescreen g, NetworkPlayer n) {
         board1 = new board(size, ship_set);
+        this.gui = g;
+        this.coms = n;
+        for (int i = 0; i < gui.DIR.length; i++) {
+            if(gui.DIR[i]) s_dir[i] = 0;
+            else s_dir[i] = 1;
+        }
+ 
     }
 
     public void load_game(String filepath) {
@@ -76,6 +84,11 @@ public class game {
         }
     }
     
+    public void setup_board() {
+        for (int i = 0; i < gui.SHIPS.length; i++) {
+            board1.place_ship(gui.COR[i], s_dir[i], i);
+        }        
+    }
     public int send_shot(int x, int y) {
         // turn user turn ui off
         try {
@@ -120,29 +133,32 @@ public class game {
 
     public int get_hit(coordinate p) {
         int answer = board1.check_hit(p); 
-        coms.sendAnswer(answer);
-        switch(answer) {
-            case 0:
+        try {
+            coms.sendAnswer(answer);
+            switch(answer) {
+                case 0:
                 gui.colorPlayerShip(p.x, p.y, answer);
                 start_local_turn();
                 break;
-            case 1:
+                case 1:
                 gui.colorPlayerShip(p.x, p.y, answer);
                 start_opp_turn();
                 break;
-            case 2:
+                case 2:
                 gui.colorPlayerShip(p.x, p.y, answer);
                 start_opp_turn();
                 if(board1.lost()) {
-                // add losing sequence here
+                    // add losing sequence here
                 }
                 break;
-            case -1:
+                case -1:
 
                 break;
+            }
+            return answer; 
+        } catch (Exception e) {
+            return get_hit(p);
         }
-        return answer; 
-        
     }
 
     public void start_local_turn() {
@@ -154,9 +170,12 @@ public class game {
     
     public void start_opp_turn() {
         if(board1.game_over()) {
-            // disable user turn ui    
-            // wait for network shot from opp
-            // ask for a generallized recieveMsg function senShotWithSaveCheck but instead of just checking for a save check for a save or shot, to handle both
+            // disable user turn ui   
+            try {
+                coms.receiveMessageWithSaveHandling();
+            } catch (Exception e) {
+                
+            }
         }
     }
 } 
