@@ -17,8 +17,8 @@ public class mainframe extends JFrame {
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
     public String lastscreen;
-    public game logic;
-    public NetworkPlayer coms;
+    //public game logic;
+    //public NetworkPlayer coms;
 
     public String lastscreen2;
     public Color color1 = new Color(20, 30, 50);
@@ -75,7 +75,7 @@ public class mainframe extends JFrame {
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
-
+    /*
     public boolean setupServer() {
         Server host = (Server) coms;
         try {
@@ -108,12 +108,13 @@ public class mainframe extends JFrame {
         // setup for the AI opponent
     }
 
+    */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
         GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
 
-        if (coms instanceof Server) {
+        /*if (coms instanceof Server) {
             try {
             setupServer();
             } catch(Exception e) {
@@ -131,7 +132,7 @@ public class mainframe extends JFrame {
             } catch(Exception e) {
                 System.err.println(e);
             }
-        }
+        }*/
 
         cPanel.add(GameScreen, "gamescreen");
         cLayout.show(cPanel, "gamescreen");
@@ -146,13 +147,13 @@ public class mainframe extends JFrame {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
         BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
-        
+        /*
         if (logic != null) logic = null;
         logic = new game(BattleScreen.gridSize, BattleScreen.SHIPS, BattleScreen, coms);
         BattleScreen.setGame(logic);
         coms.set_game(logic);
         logic.setup_board();
-
+        */
         cPanel.add(BattleScreen, "battlescreen");
         cLayout.show(cPanel, "battlescreen");
         cPanel.revalidate();
