@@ -24,12 +24,10 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
-        JLabel joinscreen = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
-        joinscreen.setFont(new Font("Times New Roman", Font.BOLD,16));
 
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
@@ -50,7 +48,6 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
-        contentPanel.add(joinscreen);
         contentPanel.add(new JLabel(""));
         contentPanel.add(exit);
         gbc.gridy = 1;
