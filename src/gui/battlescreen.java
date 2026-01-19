@@ -1,6 +1,8 @@
 package src.gui;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.*;
 import src.logic.*;
 /**
@@ -48,7 +50,7 @@ public class battlescreen extends JPanel {
      * @param frame         Hauptfensterscreen, der alle Screens enthält und verwaltet
      * @param c             Koordinaten (x, y) des jeweiligen Schiffs
      * @param s             Schiffslänge des jeweilgen Schiffs
-     * @param d             Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
+     * @param d             Richtung (false -> vertikal, true -> horizontal) des jeweiligen Schiffs
      * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
      */
     public battlescreen(mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
@@ -89,7 +91,16 @@ public class battlescreen extends JPanel {
 
         /*--saveButton--*/
         JButton saveButton = new JButton("Save Game");
-        saveButton.setEnabled(false);
+        saveButton.setEnabled(true);
+        saveButton.addActionListener(e -> {
+            gameSaved = true;
+            JOptionPane.showMessageDialog(
+                this,
+                "The game has been successfully saved",
+                "Save Game",
+                JOptionPane.INFORMATION_MESSAGE
+            );
+        });
         // saveButton.addActionListener(e -> gLogic.save_game());
         pFieldPanel.add(saveButton);
 
@@ -106,9 +117,10 @@ public class battlescreen extends JPanel {
         eSide.add(eField, BorderLayout.CENTER);
 
         /*--Load/Exit button--*/
-        JButton loadButton = new JButton("Load Game");
-        loadButton.setEnabled(false);
-        // saveButton.addActionListener(e -> gLogic.load_game());
+        JButton loadButton = new JButton("Confirm Shot");
+        loadButton.setEnabled(true);
+        loadButton.addActionListener(e -> handleLoadGame());
+        // saveButton.addActionListener(e -> gLogic.load_game("data-name.txt"));
         JButton exitButton = new JButton("Exit Game");
         exitButton.setEnabled(true);
         exitButton.addActionListener(e -> handleExitGame());
@@ -292,17 +304,43 @@ public class battlescreen extends JPanel {
             }
         }
     }
+    /**
+    * Handles loading the game.
+    */
+    private void handleLoadGame() {
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Optional: restrict to text files
+        fileChooser.setFileFilter(
+            new javax.swing.filechooser.FileNameExtensionFilter(
+                "Save Files (*.txt)", "txt"
+            )
+        );
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+
+        // Pass filename or path to game logic
+        gLogic.load_game(selectedFile.getAbsolutePath());
+
+        gameSaved = true; // or false, depending on your logic
+        }
+    }
 }
 
-/*  Change 'Start Game' to 'Save Game'
-    Save Game
-    -> ist eine Textdatei
-    Load Game implementieren
-    -> explorer(preset file explorer) oder menü (liste), wo man dateien(bezeichnung: "timestamp")
-        --> ich muss Jonas den geladenen Dateinamen als String zurückgeben
-    Exit Game implementieren
-    -> go back to 'titlescreen' and test if game was saved
-        --> if game wasn't saved ask for confirmation if he is sure to quit the game without saving
-    Buttons anpassen
-    3 Strich ausfahrbarer Button -> Dark Mode -> Benutzermanual
+/*  
+    Grid left side abstand/rahmen
+    Cells should always be quadratic
+    --Macht Matthias alles----
+    Load Game implementieren -> when explorer button 'open' is pressed call Jonas' load_game("data-name.txt") function
+    -> remove load game
+    --------------------------
+    confirm shot button and save game button -> 1 method to disable the button -> 1 method to enable the button
+    during game 'battlescreen' load game button -> false and save game button -> true
+    during 'gamescreen' load game button -> true and save game button -> false
+
+    when somebody wins/loses user msg
+    change background colors for each specific color theme (beige, dark, blue)
 */

@@ -27,7 +27,7 @@ public class gamescreen extends JPanel {
      * Gemeinsame Daten
      * @param COR       Koordinaten (x, y) des jeweiligen Schiffs
      * @param SHIPS     Schiffslänge des jeweilgen Schiffs
-     * @param DIR       Richtung (0 -> horizontal, 1 -> vertikal) des jeweiligen Schiffs
+     * @param DIR       Richtung (false -> vertikal, true -> horizontal) des jeweiligen Schiffs
      * @param status    Speichert Rückgabewert von 'send_shot' Methode
      *                  (0 -> Daneben   1 -> Getroffen  2 -> Versunken)
      * @param gridSize  Speichert die übergebene Spielfeldgröße
@@ -89,6 +89,7 @@ public class gamescreen extends JPanel {
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Sans Serif", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
 
         /*--Erstellung des Spielboards--*/
@@ -102,7 +103,36 @@ public class gamescreen extends JPanel {
         /*--Spielerfelderstellung (linke Zellen)--*/
         pCells = new JButton[gridSize][gridSize];
         pField = createField(gridSize, gridSize, pCells);
-        pSide.add(pField, BorderLayout.CENTER);
+
+        // ---- Player title ----
+        JLabel playerTitle = new JLabel("Your side");
+        playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        playerTitle.setForeground(Color.WHITE);
+        playerTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
+
+        // ---- Grid holder (keeps square grid centered) ----
+        JPanel pCenter = new JPanel(new GridBagLayout());
+        pCenter.setBackground(Color.black);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 40, 0, 20);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        pCenter.add(pField, gbc);
+
+        // ---- Wrapper with title + grid ----
+        JPanel pCenterWrapper = new JPanel(new BorderLayout());
+        pCenterWrapper.setBackground(Color.black);
+        pCenterWrapper.add(playerTitle, BorderLayout.NORTH);
+        pCenterWrapper.add(pCenter, BorderLayout.CENTER);
+
+        pSide.add(pCenterWrapper, BorderLayout.CENTER);
 
         /*--Feld, das Schiffskoordinaten speichert--*/
         occupied = new boolean[gridSize][gridSize];
@@ -113,6 +143,7 @@ public class gamescreen extends JPanel {
         /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
+        pFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         /*--Kombobox Textfeld--*/
         String[] shipNames = new String[ships.length];
@@ -141,7 +172,36 @@ public class gamescreen extends JPanel {
         /*--Gegnerfelderstellung (rechte Zellen)--*/
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells);
-        eSide.add(eField, BorderLayout.CENTER);
+
+        // ---- Enemy title ----
+        JLabel enemyTitle = new JLabel("Enemy side");
+        enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        enemyTitle.setForeground(Color.WHITE);
+        enemyTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
+
+        // ---- Grid holder ----
+        JPanel eCenter = new JPanel(new GridBagLayout());
+        eCenter.setBackground(Color.black);
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridx = 0;
+        gbc2.gridy = 0;
+        gbc2.weightx = 1.0;
+        gbc2.weighty = 1.0;
+        gbc2.insets = new Insets(0, 20, 0, 40);
+        gbc2.fill = GridBagConstraints.BOTH;
+        gbc2.anchor = GridBagConstraints.CENTER;
+
+        eCenter.add(eField, gbc2);
+
+        // ---- Wrapper ----
+        JPanel eCenterWrapper = new JPanel(new BorderLayout());
+        eCenterWrapper.setBackground(Color.black);
+        eCenterWrapper.add(enemyTitle, BorderLayout.NORTH);
+        eCenterWrapper.add(eCenter, BorderLayout.CENTER);
+
+        eSide.add(eCenterWrapper, BorderLayout.CENTER);
 
         /*--Load/Exit button--*/
         JButton loadButton = new JButton("Load Game");
@@ -153,6 +213,7 @@ public class gamescreen extends JPanel {
         /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
+        eFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
         eFieldPanel.add(loadButton);
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
@@ -178,13 +239,14 @@ public class gamescreen extends JPanel {
      * @return          Generiertes Spielfeld
      */
     private JPanel createField(int x, int y, JButton[][] array) {
-        JPanel field = new JPanel(new GridLayout(x, y));
-        field.setBackground(Color.black);
+        JPanel field = new SquareGridPanel(x, y);
 
         for (int r = 0; r < x; r++) {
             for (int c = 0; c < y; c++) {
                 JButton cell = new JButton();
                 cell.setBackground(Color.DARK_GRAY);
+                cell.setMargin(new Insets(0, 0, 0, 0));
+                cell.setFocusPainted(false);
                 array[r][c] = cell;
                 field.add(cell);
             }
@@ -503,5 +565,50 @@ public class gamescreen extends JPanel {
             frame.showScreen("battlescreen");
             }
         }
+    }   
+
+    public class SquareGridPanel extends JPanel {
+
+        private final int rows;
+        private final int cols;
+        private final int gap = 2;
+
+        public SquareGridPanel(int rows, int cols) {
+            this.rows = rows;
+            this.cols = cols;
+            setLayout(null); // ⬅ we do layout manually
+            setBackground(Color.black);
+        }
+
+        @Override
+        public void doLayout() {
+            int width = getWidth();
+            int height = getHeight();
+
+            // size of one square cell
+            int cellSize = Math.min(
+                (width - (cols - 1) * gap) / cols,
+                (height - (rows - 1) * gap) / rows
+            );
+
+            int gridWidth = cols * cellSize + (cols - 1) * gap;
+            int gridHeight = rows * cellSize + (rows - 1) * gap;
+
+            int startX = (width - gridWidth) / 2;
+            int startY = (height - gridHeight) / 2;
+
+            int i = 0;
+            for (Component c : getComponents()) {
+                int r = i / cols;
+                int col = i % cols;
+
+                int x = startX + col * (cellSize + gap);
+                int y = startY + r * (cellSize + gap);
+
+                c.setBounds(x, y, cellSize, cellSize);
+                i++;
+            }
+        }
     }
+
 }
