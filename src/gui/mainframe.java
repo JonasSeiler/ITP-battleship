@@ -12,8 +12,8 @@ public class mainframe extends JFrame {
     public gamescreen GameScreen;
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
-    public hostpregamescreen Hostpregamescreen;
     public String lastscreen;
+    public String lastscreen2;
     public Color color1 = new Color(20, 30, 50);
     public Color color2 = new Color(0, 100, 160);
     /*
@@ -44,7 +44,7 @@ public class mainframe extends JFrame {
         multiplayer multiplayer = new multiplayer(this);
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
-        Hostpregamescreen = new hostpregamescreen(this);
+        waitingscreen waitingscreen = new waitingscreen(this);
         PreGameScreen = new pregamescreen(this);
 
         /*--add to cPanel--*/
@@ -52,10 +52,10 @@ public class mainframe extends JFrame {
         cPanel.add(settingsscreen, "settings");
         cPanel.add(singleplayer, "singleplayer");
         cPanel.add(multiplayer, "multiplayer");
+        cPanel.add(waitingscreen, "waitingscreen");
         cPanel.add(PreGameScreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
-        cPanel.add(Hostpregamescreen,"hostpregamescreen");
         add(cPanel);
         setVisible(true);
         pack();
@@ -79,19 +79,7 @@ public class mainframe extends JFrame {
         cPanel.revalidate();
         cPanel.repaint();
     }
-    /**
-     * Startet den Schiffsauswahlbildschirm als Host
-     */
-    public void startGamescreen_host() {
-        if (GameScreen != null) cPanel.remove(GameScreen);
-
-        GameScreen = new gamescreen(this, Hostpregamescreen.ships, Hostpregamescreen.gridSize);
-
-        cPanel.add(GameScreen, "gamescreen");
-        cLayout.show(cPanel, "gamescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
-    }
+    
     /**
      * Startet ein Spiel und öffnet den Spielbildschirm
      */
