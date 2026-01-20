@@ -3,7 +3,12 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import src.logic.*;
-
+/**
+ * Spielfeldscreen, wo die bereits ausgewählten Schiffe
+ * auf das Spielfeld platziert werden und schließlich
+ * das Spiel gestartet wird.
+ * @author Max Steingräber
+ */
 public class gamescreen extends JPanel {
     /**
      * Spielattribute
@@ -104,14 +109,14 @@ public class gamescreen extends JPanel {
         pCells = new JButton[gridSize][gridSize];
         pField = createField(gridSize, gridSize, pCells);
 
-        // ---- Player title ----
+        /*--Spielertitel--*/
         JLabel playerTitle = new JLabel("Your side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
         playerTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
-        // ---- Grid holder (keeps square grid centered) ----
+        /*--Netzhalter (Spieler)--*/
         JPanel pCenter = new JPanel(new GridBagLayout());
         pCenter.setBackground(Color.black);
 
@@ -126,7 +131,7 @@ public class gamescreen extends JPanel {
 
         pCenter.add(pField, gbc);
 
-        // ---- Wrapper with title + grid ----
+        /*--Titel-Netz-Kombination (Spieler)--*/
         JPanel pCenterWrapper = new JPanel(new BorderLayout());
         pCenterWrapper.setBackground(Color.black);
         pCenterWrapper.add(playerTitle, BorderLayout.NORTH);
@@ -153,12 +158,19 @@ public class gamescreen extends JPanel {
 
         /*--Erstellung 'shipSelector' Kombobox--*/
         shipSelector = new JComboBox<>(shipNames);
-        shipSelector.setSelectedIndex(0);
-        currentShipSize = shipSelector.getSelectedIndex() + 2;
+
+        int firstAvailable = findNextAvailableIndex(0);
+        if (firstAvailable != -1) {
+            shipSelector.setSelectedIndex(firstAvailable);
+            currentShipSize = firstAvailable + 2; // ship sizes = index + 2
+        } else {
+            shipSelector.setEnabled(false); // no ships left at all
+        }
+
         pFieldPanel.add(shipSelector);
 
         /*--Start Button--*/
-        JButton startButton = new JButton("Start Game");
+        JButton startButton = new RoundButton("Start Game");
         startButton.addActionListener(e -> {if (allShipsPlaced()) frame.startBattle();});
         pFieldPanel.add(startButton);
 
@@ -173,14 +185,14 @@ public class gamescreen extends JPanel {
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells);
 
-        // ---- Enemy title ----
+        /*--Gegnertitel--*/
         JLabel enemyTitle = new JLabel("Enemy side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
         enemyTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
-        // ---- Grid holder ----
+        /*--Netzhalter (Gegner)--*/
         JPanel eCenter = new JPanel(new GridBagLayout());
         eCenter.setBackground(Color.black);
 
@@ -195,7 +207,7 @@ public class gamescreen extends JPanel {
 
         eCenter.add(eField, gbc2);
 
-        // ---- Wrapper ----
+        /*--Titel-Netz-Kombination (Gegner)--*/
         JPanel eCenterWrapper = new JPanel(new BorderLayout());
         eCenterWrapper.setBackground(Color.black);
         eCenterWrapper.add(enemyTitle, BorderLayout.NORTH);
@@ -203,10 +215,8 @@ public class gamescreen extends JPanel {
 
         eSide.add(eCenterWrapper, BorderLayout.CENTER);
 
-        /*--Load/Exit button--*/
-        JButton loadButton = new JButton("Load Game");
-        loadButton.setEnabled(false);
-        JButton exitButton = new JButton("Exit Game");
+        /*--Exit button--*/
+        JButton exitButton = new RoundButton("Exit Game");
         exitButton.setEnabled(true);
         exitButton.addActionListener(e -> handleExitGame());
 
@@ -214,7 +224,6 @@ public class gamescreen extends JPanel {
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
         eFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        eFieldPanel.add(loadButton);
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
 
@@ -565,50 +574,5 @@ public class gamescreen extends JPanel {
             frame.showScreen("battlescreen");
             }
         }
-    }   
-
-    public class SquareGridPanel extends JPanel {
-
-        private final int rows;
-        private final int cols;
-        private final int gap = 2;
-
-        public SquareGridPanel(int rows, int cols) {
-            this.rows = rows;
-            this.cols = cols;
-            setLayout(null); // ⬅ we do layout manually
-            setBackground(Color.black);
-        }
-
-        @Override
-        public void doLayout() {
-            int width = getWidth();
-            int height = getHeight();
-
-            // size of one square cell
-            int cellSize = Math.min(
-                (width - (cols - 1) * gap) / cols,
-                (height - (rows - 1) * gap) / rows
-            );
-
-            int gridWidth = cols * cellSize + (cols - 1) * gap;
-            int gridHeight = rows * cellSize + (rows - 1) * gap;
-
-            int startX = (width - gridWidth) / 2;
-            int startY = (height - gridHeight) / 2;
-
-            int i = 0;
-            for (Component c : getComponents()) {
-                int r = i / cols;
-                int col = i % cols;
-
-                int x = startX + col * (cellSize + gap);
-                int y = startY + r * (cellSize + gap);
-
-                c.setBounds(x, y, cellSize, cellSize);
-                i++;
-            }
-        }
     }
-
 }

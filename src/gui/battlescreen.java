@@ -1,8 +1,6 @@
 package src.gui;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.File;
-
 import javax.swing.*;
 import src.logic.*;
 /**
@@ -10,7 +8,6 @@ import src.logic.*;
  * Gegnerfeld schießt.
  * @author Max Steingräber
  */
-
 public class battlescreen extends JPanel {
     /**
      * Spielattribute
@@ -44,6 +41,11 @@ public class battlescreen extends JPanel {
     public int gridSize;
     public game gLogic;
     private boolean gameSaved = false;
+    private JButton saveButton;
+    private JButton confirmShotButton;
+    private int selectedX = -1;
+    private int selectedY = -1;
+    private JButton selectedEnemyCell = null;
     /**
      * Konstruiert den Hauptspielscreen.
      * 
@@ -70,6 +72,7 @@ public class battlescreen extends JPanel {
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Sans Serif", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
+        title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
 
         /*--Erstellung des Spielboards--*/
@@ -85,12 +88,43 @@ public class battlescreen extends JPanel {
         pField = createField(gridSize, gridSize, pCells, false);
         pSide.add(pField, BorderLayout.CENTER);
 
+        /*--Spielertitel--*/
+        JLabel playerTitle = new JLabel("Your side");
+        playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        playerTitle.setForeground(Color.WHITE);
+        playerTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
+
+        /*--Netzhalter (Spieler)--*/
+        JPanel pCenter = new JPanel(new GridBagLayout());
+        pCenter.setBackground(Color.black);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        gbc.insets = new Insets(0, 40, 0, 20);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.anchor = GridBagConstraints.CENTER;
+
+        pCenter.add(pField, gbc);
+
+        /*--Titel-Netz-Kombination (Spieler)--*/
+        JPanel pCenterWrapper = new JPanel(new BorderLayout());
+        pCenterWrapper.setBackground(Color.black);
+        pCenterWrapper.add(playerTitle, BorderLayout.NORTH);
+        pCenterWrapper.add(pCenter, BorderLayout.CENTER);
+
+        pSide.add(pCenterWrapper, BorderLayout.CENTER);
+
         /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
+        pFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         /*--saveButton--*/
-        JButton saveButton = new JButton("Save Game");
+        saveButton = new RoundButton("Save Game");
         saveButton.setEnabled(true);
         saveButton.addActionListener(e -> {
             gameSaved = true;
@@ -116,19 +150,50 @@ public class battlescreen extends JPanel {
         eField = createField(gridSize, gridSize, eCells, true);
         eSide.add(eField, BorderLayout.CENTER);
 
+        /*--Gegnertitel--*/
+        JLabel enemyTitle = new JLabel("Enemy side");
+        enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        enemyTitle.setForeground(Color.WHITE);
+        enemyTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
+
+        /*--Netzhalter (Gegner)--*/
+        JPanel eCenter = new JPanel(new GridBagLayout());
+        eCenter.setBackground(Color.black);
+
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.gridx = 0;
+        gbc2.gridy = 0;
+        gbc2.weightx = 1.0;
+        gbc2.weighty = 1.0;
+        gbc2.insets = new Insets(0, 20, 0, 40);
+        gbc2.fill = GridBagConstraints.BOTH;
+        gbc2.anchor = GridBagConstraints.CENTER;
+
+        eCenter.add(eField, gbc2);
+
+        /*--Titel-Netz-Kombination (Gegner)--*/
+        JPanel eCenterWrapper = new JPanel(new BorderLayout());
+        eCenterWrapper.setBackground(Color.black);
+        eCenterWrapper.add(enemyTitle, BorderLayout.NORTH);
+        eCenterWrapper.add(eCenter, BorderLayout.CENTER);
+
+        eSide.add(eCenterWrapper, BorderLayout.CENTER);
+
         /*--Load/Exit button--*/
-        JButton loadButton = new JButton("Confirm Shot");
-        loadButton.setEnabled(true);
-        loadButton.addActionListener(e -> handleLoadGame());
+        confirmShotButton = new RoundButton("Confirm Shot");
+        confirmShotButton.setEnabled(true);
+        confirmShotButton.addActionListener(e -> confirmShot());
         // saveButton.addActionListener(e -> gLogic.load_game("data-name.txt"));
-        JButton exitButton = new JButton("Exit Game");
+        JButton exitButton = new RoundButton("Exit Game");
         exitButton.setEnabled(true);
         exitButton.addActionListener(e -> handleExitGame());
 
         /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
-        eFieldPanel.add(loadButton);
+        eFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        eFieldPanel.add(confirmShotButton);
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
 
@@ -150,13 +215,15 @@ public class battlescreen extends JPanel {
      * @return              Generiertes Spielfeld
      */
     private JPanel createField(int row, int col, JButton[][] array, boolean clickable) {
-        JPanel field = new JPanel(new GridLayout(row, col));
+        JPanel field = new SquareGridPanel(row, col);
         field.setBackground(Color.black);
 
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 JButton cell = new JButton();
                 cell.setBackground(Color.DARK_GRAY);
+                cell.setMargin(new Insets(0, 0, 0, 0));
+                cell.setFocusPainted(false);
                 array[r][c] = cell;
 
                 int x = r;
@@ -260,15 +327,26 @@ public class battlescreen extends JPanel {
         }
     }
     /**
-     * Checkt Clicks auf die Gegenerzellen des Gegnerspielfelds
+     * Checkt Klicks auf die Gegenerzellen des Gegnerspielfelds
      * 
      * @param x     x-Koordinate
      * @param y     y-Koordinate
      */
     private void onEnemyCellClicked(int x, int y) {
-        int status = gLogic.send_shot(x, y);
+        if (selectedEnemyCell != null) {
+            selectedEnemyCell.setBorder(UIManager.getBorder("Button.border"));
+        }
 
-        colorEnemyShip(x, y, status);
+        // Store new selection
+        selectedX = x;
+        selectedY = y;
+        selectedEnemyCell = eCells[x][y];
+
+        // Visual feedback (selection)
+        selectedEnemyCell.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
+
+        // Enable confirm button
+        confirmShotButton.setEnabled(true);
 
         eCells[x][y].setEnabled(false);
     }
@@ -305,28 +383,35 @@ public class battlescreen extends JPanel {
         }
     }
     /**
-    * Handles loading the game.
-    */
-    private void handleLoadGame() {
-        JFileChooser fileChooser = new JFileChooser();
-
-        // Optional: restrict to text files
-        fileChooser.setFileFilter(
-            new javax.swing.filechooser.FileNameExtensionFilter(
-                "Save Files (*.txt)", "txt"
-            )
-        );
-
-        int result = fileChooser.showOpenDialog(this);
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-
-        // Pass filename or path to game logic
-        gLogic.load_game(selectedFile.getAbsolutePath());
-
-        gameSaved = true; // or false, depending on your logic
+     * Deaktiviert Benutzeroberfläche (saveButton und confirmShotButton)
+     */
+    public void disableUI() {
+        saveButton.setEnabled(false);
+        confirmShotButton.setEnabled(false);
+    }
+    /**
+     * Aktiviert Benutzeroberfläche (saveButton und confirmShotButton)
+     */
+    public void enableUI() {
+        saveButton.setEnabled(true);
+        confirmShotButton.setEnabled(true);
+    }
+    /**
+     * Überprüft Treffervalidierung und färbt dementsprechend die Gegnerzelle
+     */
+    private void confirmShot() {
+        if (selectedEnemyCell == null) {
+            return;
         }
+
+        int result = gLogic.send_shot(selectedX, selectedY);
+
+        colorEnemyShip(selectedX, selectedY, result);
+
+        // Reset selection
+        selectedEnemyCell = null;
+        selectedX = -1;
+        selectedY = -1;
     }
 }
 
@@ -338,6 +423,7 @@ public class battlescreen extends JPanel {
     -> remove load game
     --------------------------
     confirm shot button and save game button -> 1 method to disable the button -> 1 method to enable the button
+    confirm shot button -> cell has to be selected and then shot button
     during game 'battlescreen' load game button -> false and save game button -> true
     during 'gamescreen' load game button -> true and save game button -> false
 
