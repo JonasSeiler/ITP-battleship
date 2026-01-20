@@ -73,9 +73,15 @@ public class game {
                 for (int i = 0; i < s.length; i++) {
                     s.lifes[i] = Integer.parseInt(parts[i]);
                 }
-
+                // read and copy opp_hit
+                for (int i = 0; i < s_set.length; i++) {
+                    String row = reader.readLine();
+                    String[] segments = row.trim().split("\\s+");
+                    for (int j = 0; j < s_set.length; j++) {
+                        new_b.opp_hit[i][j] = Integer.parseInt(segments[j]);
+                    }
+                }
             } 
-            // load opp_hit here
             board1 = new_b;
             // load a new battlescreen with the correct ships and hits 
         } catch (Exception e) {
@@ -100,7 +106,11 @@ public class game {
             }
             if(response == 0) {
                 coms.sendPass();
-                start_opp_turn();
+                start_opp_turn(); 
+                // start_opp_turn() here interferes with the gui since the gui relies on the return from send_shot() 
+                // but start_opp_turn() calls to wait for a shot/save message from the other opponent meaning right now 
+                // when a player shoots and misses his shot will only be revealed after all the shots from the opponent
+                // replace the return with a method call to the gui that visuallizes the hit
             } else {
                 start_local_turn();
             }

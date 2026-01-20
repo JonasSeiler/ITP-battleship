@@ -7,7 +7,7 @@ public class board {
     public ship[] fleet;
     private int size;
     private int opp_hp;
-    private int[][] opp_hit;
+    public int[][] opp_hit;
 
     public board(int s, int[] ship_set) {
         size = s;
@@ -155,7 +155,15 @@ public class board {
                 }
                 writer.newLine();
             }
-            // save opp_hit here
+             // write opp_hit into file
+            for (int i = 0; i < size; i++) {
+                StringBuilder row = new StringBuilder();
+                for (int j = 0; j < size; j++) {
+                    row.append(opp_hit[i][j]);
+                }
+                writer.write(row.toString());
+                writer.newLine();
+            }
         } catch (IOException e) {
             System.err.println("Failed saving: " + e.getMessage());
         }
