@@ -4,6 +4,11 @@ import java.io.*;
 import src.gui.*;
 import src.coms.*;
 
+/**
+ * the game class uses a board object to implement the games logic, controls the turn order
+ * of the player and is used to process the communication with the opponent
+ *
+ */
 public class game {
     private board board1;
     private battlescreen gui;
@@ -22,6 +27,13 @@ public class game {
  
     }
 
+    /**
+     * load_game() reads data from a file that saved the previous game session 
+     * to initialize a board object to the same position as before and start 
+     * the battlescreen in the same state as the board
+     *
+     * @param filepath the name of a file that stores game data from a previous game session
+     */
     public void load_game(String filepath) {
         try(BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
            
@@ -90,11 +102,24 @@ public class game {
         }
     }
     
+    /**
+     * setup_board() syncs the board with the battlescreen after the user 
+     * placed all his ships
+     */
     public void setup_board() {
         for (int i = 0; i < gui.SHIPS.length; i++) {
             board1.place_ship(gui.COR[i], s_dir[i], i);
         }        
     }
+    /**
+     * forwards the coordinate the user is shooting at to the network 
+     * after the opponent answers register the shot for potential saving
+     * and properly choose whos turn it is or if the user won
+     *
+     * @param x horizontal position of the shot fired by the user
+     * @param y vertical position of the shot fired by the user
+     * @return response from the network prob. will be deleted soon
+     */
     public int send_shot(int x, int y) {
         // turn user turn ui off
         try {
@@ -120,6 +145,11 @@ public class game {
         }
     }
 
+    /**
+     * saves the game by calling the board objects save_game() method 
+     * and sends save id to the network so the enemy also saves its 
+     * own game state
+     */
     public void save_game() {
         long u_time = java.time.Instant.now().toEpochMilli();
         String file = "TB_" + u_time;
@@ -131,6 +161,12 @@ public class game {
         }
     }
     
+    /**
+     * identical to save_game, but this time the enemy wants to 
+     * save the game instead of the user 
+     *
+     * @param file 
+     */
     public void save_opp_game(String file) {
         board1.save_game(file);
         try {
@@ -141,6 +177,13 @@ public class game {
 
     }
 
+    /**
+     * the opponent is shooting at the players board the game automatically
+     * answers forwards the coordinate and answer to the gui
+     *
+     * @param p coordinate of the position the opponent is shooting at
+     * @return response from the logic prob. will be deleted soon
+     */
     public int get_hit(coordinate p) {
         int answer = board1.check_hit(p); 
         try {
@@ -170,7 +213,11 @@ public class game {
             return get_hit(p);
         }
     }
-
+ 
+    /**
+     * checks if the game is over, if not allows the user to play
+     * by activating the users ui
+     */
     public void start_local_turn() {
         if(board1.game_over()) {
             // activate turn ui for user
@@ -178,6 +225,10 @@ public class game {
         }
     }
     
+    /**
+     * checks if the game is over, if not allows the enemy to play its turn 
+     * by listening for a shot, save or pass
+     */
     public void start_opp_turn() {
         if(board1.game_over()) {
             // disable user turn ui   

@@ -1,12 +1,40 @@
 package src.logic;
 import java.util.*;
 import java.io.*;
+/**
+ * implements a game board for battleships
+ * this includes, a field that stores the position of the users ships, 
+ * a field that signifies where the opponent has already shot  and 
+ * a field that signifies where the user has already shot at
+ *
+ */
 public class board {
+    /**
+     * field for the position of the user's ships 
+     * (0 = water | 1 = ship)
+     */
     public int[][] ship_pos;
+    /**
+     * field for the position of the shots the opponent has fired at the user 
+     * (0 = not yet shot at | 1 = shot at)
+     */
     public int[][] hit_pos;
+    /**
+     * array of the user's ships
+     */
     public ship[] fleet;
+    /**
+     * size of the board
+     */
     private int size;
+    /**
+     * hit points of the opponent
+     */
     private int opp_hp;
+    /**
+     * field for the positions the user has already shot at 
+     * (-1 = no information | 0 = water | 1 = ship | 2 = ship and sunken)
+     */
     public int[][] opp_hit;
 
     public board(int s, int[] ship_set) {
@@ -27,6 +55,13 @@ public class board {
 
     }
 
+    /**
+     * places a ship 
+     * 
+     * @param head the field a ship is in with the lowest (x&y position) for the specific ship
+     * @param dir direction the ship is facing, 0 = horizontal | 1 = vertical
+     * @param s_index 
+     */
     public void place_ship(coordinate head, int dir, int s_index) {
         // dir: 0 = x,     1 =  y
         fleet[s_index].set_dir_head(head, dir);
@@ -46,8 +81,15 @@ public class board {
         }
     }
 
+    /**
+     * registers a shot the user shot at the opponent by saving it in opp_hit
+     * and lowers the opponents hp by 1 if a ship was hit
+     * @param shot coordinte where the user has shot at
+     * @param response the answer the opponent gave for the shot at that position
+     */
     public void register_shot(coordinate shot, int response) {
         opp_hit[shot.x][shot.y] = response;
+        opp_hp = (response > 0) ? opp_hp-- : opp_hp;
         if(response == 2) {
             if(opp_hit[shot.x+1][shot.y] == 1) {
                 coordinate surrounding = new coordinate(shot.x+1, shot.y);
@@ -71,6 +113,12 @@ public class board {
         }
     }
 
+    /**
+     * checks the own Board what an opponent's shot hit
+     *
+     * @param att position the opponent is attacking
+     * @return what the opponent hit (0 = water, 1 = ship, 2 = ship, also the entire ship was sunk)
+     */
     public int check_hit(coordinate att) {
         // registers hit
         hit_pos[att.x][att.y] = 1;
@@ -89,6 +137,11 @@ public class board {
         return -1;      // would mean a major error in the op. should never be reached
     }
 
+    /**
+     * checks if the user lost the game because all of his ships were destroyed
+     *
+     * @return 
+     */
     public boolean lost() {
         for(ship s : fleet) {
             if(!s.destroyed()) {
@@ -98,10 +151,16 @@ public class board {
         return true;
     }
 
+    /**
+     * checks if user won because he sunk all his opponents ships
+     */
     public boolean won() {
         if(opp_hp == 0) return false;
         else return true;
     }
+    /**
+     * checks if someone won
+     */
     public boolean game_over() {
         if(won() || lost()) {
             return true;
@@ -109,7 +168,12 @@ public class board {
             return false;
         }
     }
-
+    /**
+     * saves the game by writing the data of the board object into a file that
+     * can later be used to restore the game state
+     *
+     * @param file 
+     */
     public void save_game(String file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
             // write size into file
