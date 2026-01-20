@@ -37,7 +37,7 @@ public class mainframe extends JFrame {
         this.setSize(640, 640); // sets x- and y-dimension
 
         /*--game logo--*/
-        ImageIcon logo = new ImageIcon("../../img/TidebreakerLogo.jpg");
+        ImageIcon logo = new ImageIcon(System.getProperty("user.dir") + "/img/TidebreakerLogo.jpg");
         this.setIconImage(logo.getImage());
 
         /*--create card layout (for multiple screens)--*/
