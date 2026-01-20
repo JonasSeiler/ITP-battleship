@@ -12,7 +12,7 @@ public abstract class NetworkPlayer {
     protected boolean isConnected = false;
     protected boolean gameStarted = false;
     protected final int PORT = 50000;
-    
+    protected game logic; 
     /**
      * Allgemeine Methode zum Senden von Nachrichten
      */
@@ -26,9 +26,8 @@ public abstract class NetworkPlayer {
     /**
      * Empfängt eine Nachricht mit Save-Handling
      * Wartet auf: shot, pass oder save
-     * @return MessageType mit Typ und Inhalt
      */
-    public MessageType receiveMessageWithSaveHandling() throws IOException {
+    public void receiveMessageWithSaveHandling() throws IOException {
         String message = receiveMessage();
         
         if (message.startsWith("shot")) {
@@ -36,16 +35,16 @@ public abstract class NetworkPlayer {
             int row = Integer.parseInt(parts[1]) - 1; // Konvertiere zu 0-basiert
             int col = Integer.parseInt(parts[2]) - 1;
             coordinate coord = new coordinate(row, col);
-            return new MessageType(MessageType.Type.SHOT, coord);
+            logic.get_hit(coord);
         } 
         else if (message.startsWith("save")) {
             String id = message.substring(5).trim();
             // Sofort mit ok antworten
+            logic.save_opp_game(id);
             sendMessage("ok");
-            return new MessageType(MessageType.Type.SAVE, id);
         }
         else if (message.equals("pass")) {
-            return new MessageType(MessageType.Type.PASS, null);
+            logic.start_local_turn();
         }
         
         throw new IOException("Unerwartete Nachricht: " + message);
@@ -96,6 +95,9 @@ public abstract class NetworkPlayer {
         sendMessage("pass");
     }
     
+    public void set_game(game g) {
+        this.logic = g;
+    }
     /**
      * Schließt die Verbindung
      */
