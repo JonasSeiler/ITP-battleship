@@ -108,27 +108,6 @@ public abstract class NetworkPlayer {
     public boolean isConnected() { return isConnected; }
     public boolean isGameStarted() { return gameStarted; }
     
-    /**
-     * Hilfsklasse für Nachrichtentypen
-     */
-    public static class MessageType {
-        public enum Type { SHOT, SAVE, PASS }
-        
-        public final Type type;
-        public final Object data;
-        
-        public MessageType(Type type, Object data) {
-            this.type = type;
-            this.data = data;
-        }
-        
-        public boolean isShot() { return type == Type.SHOT; }
-        public boolean isSave() { return type == Type.SAVE; }
-        public boolean isPass() { return type == Type.PASS; }
-        
-        public coordinate getShotCoords() { return (coordinate) data; }
-        public String getSaveId() { return (String) data; }
-    }
     
     /**
      * Datenklasse für Spielkonfiguration

@@ -19,7 +19,6 @@ public class Bot extends NetworkPlayer {
     private coordinate shot;
     private boolean shotHit = false;
     private coordinate botgencoordiante;
-    private coordinate humanShot;
     private game user; 
 
     // Setup-Information
@@ -130,13 +129,11 @@ public class Bot extends NetworkPlayer {
      * Empfängt Nachricht mit Save-Handling (wartet auf menschlichen Spieler)
      */
     @Override
-    public MessageType receiveMessageWithSaveHandling() throws IOException {
-                
+    void receiveMessageWithSaveHandling() throws IOException {
         // generate shot from bot
 
         user.get_hit(botgencoordiante);
 
-        return new MessageType(MessageType.Type.SHOT, humanShot);
     }
     
     /**
@@ -164,6 +161,7 @@ public class Bot extends NetworkPlayer {
         }
         // In einer echten Implementierung würde hier auf externe Eingabe gewartet
         throw new IOException("Keine Nachricht verfügbar");
+        return ""
     }
     
     @Override
@@ -294,7 +292,7 @@ public class Bot extends NetworkPlayer {
         return new coordinate(random.nextInt(boardSize), random.nextInt(boardSize));
     }
     
-    // ===== HILFSMETHODEN FÜR DIE GUI =====
+    // ===== HILFSMETHODEN =====
     
     public void set_user(game u) {
         this.user = u;
