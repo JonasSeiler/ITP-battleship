@@ -18,7 +18,8 @@ public class Bot extends NetworkPlayer {
     private boolean lastShotHit = false;
     private coordinate shot;
     private boolean shotHit = false;
-    
+    private coordinate botgencoordiante;
+    private coordinate humanShot;
     private game user; 
 
     // Setup-Information
@@ -90,7 +91,7 @@ public class Bot extends NetworkPlayer {
         // Konvertiere zu 0-basierten Koordinaten für interne Logik
         shot = new coordinate(row, col);
         
-        return ownboard.check_hit();
+        return ownBoard.check_hit(shot);
     }
     
     /**
@@ -144,7 +145,7 @@ public class Bot extends NetworkPlayer {
     @Override
     public void sendAnswer(int answerCode) throws IOException {
         
-        ownboard.register_shot(botgencoordiante, answerCode);
+        ownBoard.register_shot(botgencoordiante, answerCode);
 
         // later access the 2d array (opp_hit) and use it to make shot decision in generate smart shot
 

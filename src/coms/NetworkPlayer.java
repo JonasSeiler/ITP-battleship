@@ -2,7 +2,7 @@ package src.coms;
 
 import java.io.*;
 import java.util.*;
-import src.logic*;
+import src.logic.*;
 
 /**
  * Abstrakte Basisklasse für Server, Client und Bot
