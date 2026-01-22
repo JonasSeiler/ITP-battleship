@@ -247,8 +247,6 @@ public class gamescreen extends JPanel {
         setupKeyBindings();
         setFocusable(true);
     }
-
-
     /**
      * Erstellt ein Spielfeld
      * 
@@ -273,7 +271,6 @@ public class gamescreen extends JPanel {
         }
         return field;
     }
-
     /**
      * Fügt interaktive Maussteuerung (hover, exit, click) hinzu
      */
@@ -317,10 +314,10 @@ public class gamescreen extends JPanel {
             }
         }
     }
-
     /**
      * Fügt interaktives Tastatursteuerung hinzu, um Schiffe
-     * mit 'r' oder 'R' drehen zu können
+     * mit 'r' oder 'R' drehen zu können, mit 'z' oder 'Z' das
+     * zuletzt platzierte Schiff zu entfernen und mit 'strg' + 'z'
      */
     private void setupKeyBindings() {
         /*--build input/action map to use key-bindings--*/
@@ -343,8 +340,27 @@ public class gamescreen extends JPanel {
                 }
             }
         });
-    }
 
+        im.put(KeyStroke.getKeyStroke('z'), "undoLast");
+        im.put(KeyStroke.getKeyStroke('Z'), "undoLast");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK), "undoAll");
+
+        am.put("undoLast", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            undoLastShip();
+            clearPreview();
+            }
+        });
+
+        am.put("undoAll", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                undoAllShips();
+                clearPreview();
+            }
+        });
+    }
     /**
      * Schiffsvorschau
      * 
@@ -379,7 +395,6 @@ public class gamescreen extends JPanel {
             }
         }
     }
-
     /**
      * Platziert Spielerschiffe
      * 
@@ -434,7 +449,6 @@ public class gamescreen extends JPanel {
 
         clearPreview();
     }
-
     /**
      * Wechselt automatisch die Schiffsauswahl zur nächsten Schiffsgröße
      * in der Kombobox, nachdem ein Schiffstyp 'leer' ist
@@ -458,8 +472,6 @@ public class gamescreen extends JPanel {
         shipSelector.setEnabled(false);
         }
     }
-
-
     /**
      * Setzt Schiffsvorschau zurück
      */
@@ -472,7 +484,6 @@ public class gamescreen extends JPanel {
             }
         }
     }
-
     /**
      * Überprüft, ob alle Schiffe platziert wurden
      * 
@@ -485,7 +496,6 @@ public class gamescreen extends JPanel {
         }
         return true;
     }
-
     /**
      * Überprüft, ob Koordinaten sich innerhalb des Spielfelds befinden
      * 
@@ -499,7 +509,6 @@ public class gamescreen extends JPanel {
                r < pCells.length &&
                c < pCells[0].length;
     }
-
     /**
      * Überprüft, ob Zelle neben an (auch diagonal) schon belegt ist
      * 
@@ -523,7 +532,6 @@ public class gamescreen extends JPanel {
         }
         return false;
     }
-    
     /**
      * Konvertiert übergebenes Schiffsfeldformat zu Schiffbearbeitungsformat
         --ships[0] = 2-sized--
@@ -563,8 +571,9 @@ public class gamescreen extends JPanel {
         return -1;
     }
     /**
-    * Handles exiting the game.
-    * If the game is not saved, asks the user for confirmation.
+    * Beendet das Spiel.
+    * Falls das Spiel nicht gespeichert wurde, wird
+    * der Nutzer zur Bestätigung aufgefordert
     */
     private void handleExitGame() {
         if (gameSaved) {
@@ -587,6 +596,45 @@ public class gamescreen extends JPanel {
         }
     }
     /**
+     * Entfernt alle bereits platzierten Schiffe
+     */
+    private void undoAllShips() {
+        while (placedShipCount > 0) {
+            undoLastShip();
+        }
+    }
+    /**
+     * Entfernt das zuletzt platzierte Schiff
+     */
+    private void undoLastShip() {
+        if (placedShipCount == 0) return;
+
+        int lastIndex = placedShipCount - 1;
+
+        int r = COR[lastIndex].x;
+        int c = COR[lastIndex].y;
+        int size = SHIPS[lastIndex];
+        boolean dir = DIR[lastIndex];
+
+        // remove ship from board
+        for (int i = 0; i < size; i++) {
+            int rr = r + (dir ? i : 0);
+            int cc = c + (dir ? 0 : i);
+
+            occupied[rr][cc] = false;
+            pCells[rr][cc].setBackground(Color.DARK_GRAY);
+        }
+
+        shipsLeft[size - 2]++;
+
+        COR[lastIndex] = null;
+
+        placedShipCount--;
+
+        shipSelector.setEnabled(true);
+        updateComboBoxDisplayAutoSkip();
+    }
+    /**
      * Methode für den Farbverlauf des Screens
      * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
      * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
@@ -596,7 +644,7 @@ public class gamescreen extends JPanel {
         super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
-        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
+        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
