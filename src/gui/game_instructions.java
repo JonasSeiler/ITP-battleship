@@ -24,7 +24,7 @@ public class game_instructions extends JPanel { // JPanel ist ein Standard-Conta
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
-        game_instructions_label = new JLabel("Game instructions");
+        game_instructions_label = new JLabel("Game Instructions");
         game_instructions_label.setFont(new Font("Times New Roman", Font.BOLD, 30));
         game_instructions_label.setForeground(Color.WHITE);
         game_instructions = new JTextArea();

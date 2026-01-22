@@ -16,6 +16,7 @@ public class mainframe extends JFrame {
     public gamescreen GameScreen;
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
+    public pregamescreen2 PreGameScreen2;
     public String lastscreen;
     //public game logic;
     //public NetworkPlayer coms;
@@ -30,6 +31,8 @@ public class mainframe extends JFrame {
     verschiedene Farben:
     new Color(20, 30, 50) new Color(220, 200, 190));
     */
+
+   public int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
    
     /**
      * Konstruiert Fensteroberfläche
@@ -60,6 +63,7 @@ public class mainframe extends JFrame {
         hostscreen hostscreen = new hostscreen(this);
         waitingscreen waitingscreen = new waitingscreen(this);
         PreGameScreen = new pregamescreen(this);
+        PreGameScreen2 = new pregamescreen2(this);
 
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
@@ -69,6 +73,7 @@ public class mainframe extends JFrame {
         cPanel.add(multiplayer, "multiplayer");
         cPanel.add(waitingscreen, "waitingscreen");
         cPanel.add(PreGameScreen, "pregamescreen");
+        cPanel.add(PreGameScreen2, "pregamescreen2");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
         add(cPanel);
@@ -206,6 +211,8 @@ public class mainframe extends JFrame {
         if (result == JFileChooser.APPROVE_OPTION) { // prüft ob der Nutzer eine Datei ausgewählt hat
             File selectedFile = fileChooser.getSelectedFile(); // es wird sich das Datei Objekt geholt, welches der Nutzer angeklickt hat. Es enthält Informationen wie Dateiname, Größe und Pfad, aber nicht über den Inhalt
 
+        String path = selectedFile.getAbsolutePath();
+
         // Pass filename or path to game logic
         gLogic.load_game(selectedFile.getAbsolutePath()); // Pfad zur Datei wird in die gLogic Methode gegeben
 
@@ -215,7 +222,7 @@ public class mainframe extends JFrame {
         }
     }
     */
-   
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }
