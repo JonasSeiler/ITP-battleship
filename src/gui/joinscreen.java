@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
- * @author Max, Matthias
+ * @author Max Steingräber, Matthias Wiese
  */
 public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
@@ -70,6 +70,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         });
     }
 
+    /**
+     * String des JTextFields wird gespeichert
+     */
     void connection() {
         String ipAdress = ip.getText();
     }

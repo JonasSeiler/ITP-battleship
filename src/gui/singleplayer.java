@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Screen im Singleplayermodus, indem man ein Spiel laden oder ein neues erstellen kann
- * @author Max, Matthias
+ * @author Max Steingräber, Matthias Wiese
  */
 public class singleplayer extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster

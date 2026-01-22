@@ -7,7 +7,7 @@ import src.logic.game;
 import java.awt.*;
 /**
  * Fensteroberfläche, die alle Menübildschirme(Panels) enthält
- * @author Max Steingräber
+ * @author Max Steingräber, Matthias Wiese
  */
 public class mainframe extends JFrame {
     private CardLayout cLayout;
@@ -23,11 +23,9 @@ public class mainframe extends JFrame {
     private String color = "navy";
     public String lastscreen2;
     public colorpair navy = new colorpair(new Color(20,30,50), new Color(0,100,160));
-    public colorpair beige = new colorpair(new Color(20,30,50), new Color(220,200,190));
-    public colorpair deep_ocean = new colorpair(new Color(15,32,39), new Color(32,58,67)); // von fast Schwarz-Blau bis dunkles Petrol
+    public colorpair beige = new colorpair(new Color(235, 220, 180), new Color(40, 30, 20));
+    public colorpair deep_ocean = new colorpair(new Color(15,32,39), new Color(32,58,67));
     public colorpair colorsheme = new colorpair(navy.color1, navy.color2);
-    public Color color1 = new Color(20, 30, 50);
-    public Color color2 = new Color(0, 100, 160);
     /*
     verschiedene Farben:
     new Color(20, 30, 50) new Color(220, 200, 190));
@@ -170,6 +168,9 @@ public class mainframe extends JFrame {
         cPanel.repaint();
     }
 
+    /**
+     * ändert die aktuellen Hintergrundfarben auf zwei neue
+     */
     public void changeColor() {
         if (color == "navy") {
             colorsheme.color1 = beige.color1;

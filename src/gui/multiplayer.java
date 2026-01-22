@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Screen im Multiplayermodus, indem man entscheiden kann, ob man einem Spiel joined oder ein Spiel hostet
- * @author Max, Matthias
+ * @author Max Steingräber, Matthias Wiese
  */
 public class multiplayer extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster

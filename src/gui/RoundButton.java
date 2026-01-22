@@ -2,24 +2,40 @@ package src.gui;
 import javax.swing.*; // Werkzeuge für den Button
 import java.awt.*; // Werkzeuge für Farben, Schriften und die Grafik-Power
 
+/**
+ * Eine angepasste Version des JButtons mit
+ * Glas Design und abgerundeten Ecken
+ * @author Matthias Wiese
+ */
 public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ein JButton
     private Color baseColor = new Color(255, 255, 255, 40); // Halbtransparentes Weiß
     private int cornerRadius = 30; // Wie rund der Button sein soll
 
+    /**
+     * Initialisiert den RoundButton
+     * Deaktiviert das Standard-Design von Swing, um den benutzerdefinierten 
+     * Glas-Look und die abgerundeten Ecken zu ermöglichen.
+     * @param label Der Text der auf dem Button angezeigt werden soll
+     */
     public RoundButton(String label) { // Konstruktor
-        super(label); // ruft den Konstruktor von JButton auf und der JButton, also die Mutterklasse schreibt den Text rein
-        setContentAreaFilled(false); // der JButton wird nicht mehr gemalt (brauch man vielleicht bei Windows)
+        super(label); // ruft den Konstruktor von JButton auf und der JButton, also die Mutterklasse schreibt den Text rein, aber es wird erstmal nur gespeichert
+        setContentAreaFilled(false); // es wird das Standarddesigns des Buttons nicht mehr gemalt
         setOpaque(false); // lässt den Hintergrund durchscheinen
-        setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons
+        setBorderPainted(false); // Entfernt den äußeren Rahmen des Buttons
         setFocusPainted(false);  // Verhindert den hässlichen Fokus-Rahmen
         setForeground(Color.WHITE);
         setCursor(new Cursor(Cursor.HAND_CURSOR)); // Zeiger-Hand beim Hovern
     }
 
+    /**
+     * Methode, welche den Button malt
+     * überschreibt die Standard Methode um abgerundete Ecken und den Glas Effekt zu ermöglichen
+     * @param g ein Grafik-Objekt, das vom System zur Verfügung gestellt wird, um die Komponente auf dem Bildschirm darzustellen
+     */
     @Override // signalisiert Java benutzt nicht die Standard-Zeichenmethode, sondern die hier
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann
         Graphics2D g2d = (Graphics2D) g.create(); // Grafik Objekt wird in das modernere Graphics2D Objekt umgewandelt und es wird eine Kopie erstellt also g ist immernoch gleich
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // macht die Kurven glatt und den Text glatt
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // macht die Kurven glatt
 
         // Hover-Effekt: Farbe ändern, wenn Maus drüber ist oder gedrückt wird
         if (getModel().isPressed()) { // wenn der Button gedrückt wird

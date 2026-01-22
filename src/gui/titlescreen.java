@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Erster Screen den der Spieler sieht. Auswahl zwischen Singleplayer und Multiplayer
- * @author Max, Matthias
+ * @author Max Steingräber, Matthias Wiese
  */
 public class titlescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
@@ -63,7 +63,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
     /**
      * Methode für den Farbverlauf des Screens
      * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     * @param g ein Grafik-Objekt, das vom System zur Verfügung gestellt wird, um die Komponente auf dem Bildschirm darzustellen
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen

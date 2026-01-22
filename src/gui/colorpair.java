@@ -1,6 +1,10 @@
 package src.gui;
 import java.awt.Color;
 
+/**
+ * Klasse zum verwalten von zwei Farbobjekten
+ * @author Matthias
+ */
 class colorpair {
     public Color color1;
     public Color color2;

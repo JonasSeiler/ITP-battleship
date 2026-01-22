@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * Screen um die Spieleinstellungen im Singleplayermodus zu treffen
  * Festlegung der Anzahl der Schiffe und der Spielfeldgröße
- * @author Matthias
+ * @author Matthias Wiese
  */
 public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe

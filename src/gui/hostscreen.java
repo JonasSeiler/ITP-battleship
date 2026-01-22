@@ -5,7 +5,7 @@ import java.awt.*;
 
 /**
  * Screen im Multiplayermodus, bei dem man ein Spiel hosten kann
- * @author Max, Matthias
+ * @author Max Steingräber, Matthias Wiese
  */
 public class hostscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
