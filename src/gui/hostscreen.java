@@ -27,8 +27,8 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE);
-        new_game = new RoundButton("New Game");
-        load_game = new RoundButton("Load Game");
+        new_game = new RoundButton("New game");
+        load_game = new RoundButton("Load game");
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // new_game.setFont(new Font("Times New Roman", Font.BOLD,20));
@@ -61,7 +61,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         new_game.addActionListener(e -> {frame.showScreen("pregamescreen");});
-        load_game.addActionListener(e -> {frame.handleLoadGame();});
+        load_game.addActionListener(e -> {}); // frame.handleLoadGame();
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "hostscreen";

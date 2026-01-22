@@ -58,12 +58,12 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         ship_size4 = new JSpinner(shipSizeModel4);
         ship_size3 = new JSpinner(shipSizeModel3);
         ship_size2 = new JSpinner(shipSizeModel2);
-        JLabel BarLabel = new JLabel("verfügbarer Platz");
-        JLabel sizeLabel = new JLabel("Spielfeldgröße"); // Textfeld
-        JLabel shipSizeLabel5 = new JLabel("Flugzeugträger (Größe 5)");
-        JLabel shipSizeLabel4 = new JLabel("Schlachtschiff (Größe 4)");
-        JLabel shipSizeLabel3 = new JLabel("U-Boot (Größe 3)");
-        JLabel shipSizeLabel2 = new JLabel("Zerstörer (Größe 2)");
+        JLabel BarLabel = new JLabel("available space");
+        JLabel sizeLabel = new JLabel("field size"); // Textfeld
+        JLabel shipSizeLabel5 = new JLabel("aircraft carrier (size 5)");
+        JLabel shipSizeLabel4 = new JLabel("battleship (size 4)");
+        JLabel shipSizeLabel3 = new JLabel("submarine (size 3)");
+        JLabel shipSizeLabel2 = new JLabel("destroyer (size 2)");
         BarLabel.setFont(new Font("Times New Roman",Font.BOLD,16));
         sizeLabel.setFont(new Font("Times New Roman", Font.BOLD, 16)); // Schriftart-Objekt wird erstellt und in Schriftart Times New Roman fett und in größe 16
         shipSizeLabel5.setFont(new Font("Times New Roman", Font.BOLD, 16));
@@ -214,7 +214,7 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         if (occupied < max) {
             capacityBar.setString(occupied + "/" + max);
         } else {
-            capacityBar.setString("Alle Felder belegt");
+            capacityBar.setString("all fields occupied");
         }
         capacityBar.setStringPainted(true); // der Text wird in die Bar geschrieben, der in setString gespeichert ist
         model5.setMaximum(freeShipSize5);

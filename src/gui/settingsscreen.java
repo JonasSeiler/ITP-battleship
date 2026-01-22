@@ -26,8 +26,8 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
         
-        changeColor = new RoundButton("change background color");
-        game_instructions = new RoundButton("game instructions");
+        changeColor = new RoundButton("Change background color");
+        game_instructions = new RoundButton("Game instructions");
 
         hamburger = new JButton("X");
         hamburger.setFont(new Font("Arial", Font.PLAIN,25));

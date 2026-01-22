@@ -26,8 +26,8 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE);
-        join_game = new RoundButton("Join Game");
-        host_game = new RoundButton("Host Game");
+        join_game = new RoundButton("Join game");
+        host_game = new RoundButton("Host game");
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // join_game.setFont(new Font("Times New Roman", Font.BOLD,20));

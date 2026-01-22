@@ -190,7 +190,7 @@ public class mainframe extends JFrame {
     /**  
     Handles loading the game.
     */
-   
+   /*
     public void handleLoadGame() {
       JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
 
@@ -214,7 +214,8 @@ public class mainframe extends JFrame {
             gameSaved = false;
         }
     }
-    
+    */
+   
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }

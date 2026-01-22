@@ -26,8 +26,8 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE);
-        singleplayer = new RoundButton("singleplayer");
-        multiplayer = new RoundButton("multiplayer");
+        singleplayer = new RoundButton("Singleplayer");
+        multiplayer = new RoundButton("Multiplayer");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         hamburger = new JButton("\u2261");
         hamburger.setForeground(Color.WHITE);

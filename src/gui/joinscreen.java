@@ -33,7 +33,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         exit = new RoundButton("Exit");
         ip = new RoundTextField();
-        connect = new RoundButton("connect");
+        connect = new RoundButton("Connect");
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
         hamburger.setForeground(Color.WHITE);
