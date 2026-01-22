@@ -45,7 +45,7 @@ public class mainframe extends JFrame {
         colorsheme.color2 = navy.color2;
 
         /*--game logo--*/
-        ImageIcon logo = new ImageIcon("../../img/TidebreakerLogo.jpg");
+        ImageIcon logo = new ImageIcon(System.getProperty("user.dir") + "/img/TidebreakerLogo.jpg");
         this.setIconImage(logo.getImage());
 
         /*--create card layout (for multiple screens)--*/

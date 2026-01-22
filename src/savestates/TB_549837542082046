@@ -1,0 +1,37 @@
+# Spielfeldgroesse
+5
+# Schiffsarray
+3 2 2
+# Position der Schiffe vom Spieler 0 = Wasser | 1 = Schiff
+1 0 0 0 0
+1 0 0 0 1
+1 0 0 0 1
+0 0 0 0 0
+0 1 1 0 0
+# Felder die schon angegriffen wurden, auf der Seite vom Spieler
+0 0 0 0 1
+1 0 1 0 0
+0 1 0 0 0
+0 0 0 1 0
+0 1 0 0 1
+# Daten der individuellen Schiffe, x pos, y pos, lifes
+# Schiff 0 
+0 0 0
+0 1 2
+1 0 1
+# Schiff 1
+4 4
+1 2
+1 1
+# Schiff 2
+1 2
+4 4
+0 1
+# Feld der Antworten auf die der Spieler bereits geschossen hat -1 = keine Info | 0 = Wasser | 1 = Schiff | 2 = Schiff versenkt
+-1 0 -1 -1 -1 
+-1 -1 2 2 2 
+0 -1 -1 -1 -1 
+1 -1 -1 -1 -1 
+-1 -1 -1 0 -1 
+-1 0 -1 -1 -1 
+# alle Zeilen die mit '#' anfangen sind nur für Verständnis gedacht und wären in einer richtigen Datei nicht vorhanden
