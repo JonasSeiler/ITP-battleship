@@ -29,25 +29,13 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         singleplayer = new RoundButton("singleplayer");
         multiplayer = new RoundButton("multiplayer");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
-        // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         hamburger = new JButton("\u2261");
-        hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
         hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
-        // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
         hamburger.setOpaque(false); // damit die Ecken durchsichtig bleiben
         hamburger.setContentAreaFilled(false); // Damit Java nicht sein Design darein malt
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        // singleplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
-        // multiplayer.setFont(new Font("Times New Roman", Font.BOLD,20));
-        hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
-        hamburger.setForeground(Color.WHITE);
-        hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
-        hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
+        hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; // Reservierung der allerersten Zelle oben links (Spalte 0)
         gbc.gridy = 0; // Reservierung der allerersten Zelle oben links (Zeile 0)
@@ -82,7 +70,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
-        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
+        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // // Dadurch wird gesagt womit gezeichnet wird
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }

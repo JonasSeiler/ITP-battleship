@@ -1,4 +1,4 @@
-package src.gui;
+package src.gui; // Datei gehört in das Verzeichnis src.gui
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,6 +11,8 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
     private mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
+    private JTextField ip;
+    private RoundButton connect;
 
     /**
      * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
@@ -24,13 +26,16 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
-        title.setForeground(Color.WHITE);
-        exit = new RoundButton("Exit");
+        title.setForeground(Color.WHITE); // Farbe der Schrift
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
-
+        JLabel ip_adress = new JLabel("             IP adress");
+        ip_adress.setForeground(Color.WHITE);
+        ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        exit = new RoundButton("Exit");
+        ip = new RoundTextField();
+        connect = new RoundButton("connect");
         hamburger = new JButton("\u2261");
-        hamburger.setFont(new Font("Times New Roman", Font.BOLD,30));
+        hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
         hamburger.setFocusPainted(false); // Entfernt den Rand beim Anklicken
@@ -47,8 +52,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
-        contentPanel.add(new JLabel(""));
-        contentPanel.add(new JLabel(""));
+        contentPanel.add(ip_adress);
+        contentPanel.add(ip);
+        contentPanel.add(connect);
         contentPanel.add(exit);
         gbc.gridy = 1;
         gbc.weighty = 0.999;
@@ -56,10 +62,16 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 
+        connect.addActionListener(e -> {connection();});
+
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";
                 frame.showScreen("settings");
         });
+    }
+
+    void connection() {
+        String ipAdress = ip.getText();
     }
 
 
@@ -70,10 +82,10 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
-        super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
+        super.paintComponent(g); // löschen des alten Inhalts
         Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
-        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
+        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }

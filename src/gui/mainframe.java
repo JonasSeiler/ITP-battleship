@@ -20,7 +20,12 @@ public class mainframe extends JFrame {
     //public game logic;
     //public NetworkPlayer coms;
 
+    private String color = "navy";
     public String lastscreen2;
+    public colorpair navy = new colorpair(new Color(20,30,50), new Color(0,100,160));
+    public colorpair beige = new colorpair(new Color(20,30,50), new Color(220,200,190));
+    public colorpair deep_ocean = new colorpair(new Color(15,32,39), new Color(32,58,67)); // von fast Schwarz-Blau bis dunkles Petrol
+    public colorpair colorsheme = new colorpair(navy.color1, navy.color2);
     public Color color1 = new Color(20, 30, 50);
     public Color color2 = new Color(0, 100, 160);
     /*
@@ -36,6 +41,9 @@ public class mainframe extends JFrame {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits program when hitting the close button
         this.setSize(640, 640); // sets x- and y-dimension
 
+        colorsheme.color1 = navy.color1;
+        colorsheme.color2 = navy.color2;
+
         /*--game logo--*/
         ImageIcon logo = new ImageIcon("../../img/TidebreakerLogo.jpg");
         this.setIconImage(logo.getImage());
@@ -47,6 +55,7 @@ public class mainframe extends JFrame {
         /*--create different screens--*/
         titlescreen titlescreen = new titlescreen(this);
         settingsscreen settingsscreen = new settingsscreen(this);
+        game_instructions game_instructions = new game_instructions(this);
         singleplayer singleplayer = new singleplayer(this);
         multiplayer multiplayer = new multiplayer(this);
         joinscreen joinscreen = new joinscreen(this);
@@ -57,6 +66,7 @@ public class mainframe extends JFrame {
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
         cPanel.add(settingsscreen, "settings");
+        cPanel.add(game_instructions, "game_instructions");
         cPanel.add(singleplayer, "singleplayer");
         cPanel.add(multiplayer, "multiplayer");
         cPanel.add(waitingscreen, "waitingscreen");
@@ -159,6 +169,50 @@ public class mainframe extends JFrame {
         cPanel.revalidate();
         cPanel.repaint();
     }
+
+    public void changeColor() {
+        if (color == "navy") {
+            colorsheme.color1 = beige.color1;
+            colorsheme.color2 = beige.color2;
+            color = "beige";
+        } else if (color == "beige") {
+            colorsheme.color1 = deep_ocean.color1;
+            colorsheme.color2 = deep_ocean.color2;
+            color = "deep ocean";
+        } else if (color == "deep ocean") {
+            colorsheme.color1 = navy.color1;
+            colorsheme.color2 = navy.color2;
+            color = "navy";
+        }
+    }
+
+    /**  
+    Handles loading the game.
+    */
+   /*
+    private void handleLoadGame() {
+      JFileChooser fileChooser = new JFileChooser();
+
+        // Optional: restrict to text files
+        fileChooser.setFileFilter(
+            new javax.swing.filechooser.FileNameExtensionFilter(
+                "Save Files (*.txt)", "txt"
+            )
+        );
+
+        int result = fileChooser.showOpenDialog(this);
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile();
+
+        // Pass filename or path to game logic
+        gLogic.load_game(selectedFile.getAbsolutePath());
+
+        gameSaved = true; // or false, depending on your logic
+        }
+    }
+    */
+    
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }
