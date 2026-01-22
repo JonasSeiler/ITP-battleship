@@ -190,29 +190,30 @@ public class mainframe extends JFrame {
     /**  
     Handles loading the game.
     */
-   /*
-    private void handleLoadGame() {
-      JFileChooser fileChooser = new JFileChooser();
+   
+    public void handleLoadGame() {
+      JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
 
         // Optional: restrict to text files
-        fileChooser.setFileFilter(
+        fileChooser.setFileFilter( // es werden nur txt Dateien angezeigt
             new javax.swing.filechooser.FileNameExtensionFilter(
                 "Save Files (*.txt)", "txt"
             )
         );
 
-        int result = fileChooser.showOpenDialog(this);
+        int result = fileChooser.showOpenDialog(this); // Das Programm pausiert bis der Nutzer etwas ausgewählt hat
 
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
+        if (result == JFileChooser.APPROVE_OPTION) { // prüft ob der Nutzer eine Datei ausgewählt hat
+            File selectedFile = fileChooser.getSelectedFile(); // es wird sich das Datei Objekt geholt, welches der Nutzer angeklickt hat. Es enthält Informationen wie Dateiname, Größe und Pfad, aber nicht über den Inhalt
 
         // Pass filename or path to game logic
-        gLogic.load_game(selectedFile.getAbsolutePath());
+        gLogic.load_game(selectedFile.getAbsolutePath()); // Pfad zur Datei wird in die gLogic Methode gegeben
 
         gameSaved = true; // or false, depending on your logic
+        } else {
+            gameSaved = false;
         }
     }
-    */
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);

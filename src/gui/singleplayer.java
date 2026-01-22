@@ -60,7 +60,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         new_game.addActionListener(e -> {
             frame.lastscreen2 = "singleplayer";
             frame.showScreen("pregamescreen");});
-        load_game.addActionListener(e -> {frame.showScreen("gamescreen");});
+        load_game.addActionListener(e -> {frame.handleLoadGame();});
         exit.addActionListener(e -> {frame.showScreen("titlescreen");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "singleplayer";
