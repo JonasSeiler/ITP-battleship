@@ -24,11 +24,11 @@ public class game {
             if(gui.DIR[i]) s_dir[i] = 0;
             else s_dir[i] = 1;
         }
- 
+ // make first turn distinct between Server and Client
     }
 
     /**
-     * load_game() reads data from a file that saved the previous game session 
+     * reads data from a file that saved the previous game session 
      * to initialize a board object to the same position as before and start 
      * the battlescreen in the same state as the board
      *
@@ -131,16 +131,18 @@ public class game {
             }
             if(response == 0) {
                 coms.sendPass();
-                start_opp_turn(); 
                 // start_opp_turn() here interferes with the gui since the gui relies on the return from send_shot() 
                 // but start_opp_turn() calls to wait for a shot/save message from the other opponent meaning right now 
                 // when a player shoots and misses his shot will only be revealed after all the shots from the opponent
                 // replace the return with a method call to the gui that visuallizes the hit
+                // (just do everything battlescreen.confirm_shot() does after the send_shot() call)
+                start_opp_turn(); 
             } else {
                 start_local_turn();
             }
         return response;
         } catch (Exception e) {
+            System.err.println("Network error caught in send_shot: " + e);
             return send_shot(x, y);
         }
     }
@@ -151,13 +153,15 @@ public class game {
      * own game state
      */
     public void save_game() {
+        // consider moving the filename that gets generated to the start of the program so the file gets overridden if you save multiple times during a session
         long u_time = java.time.Instant.now().toEpochMilli();
         String file = "TB_" + u_time;
         board1.save_game(file);
         try {
         coms.sendSave(file);
         } catch(Exception e) {
-            
+
+            System.err.println("Network error caught in save_game: " + e);
         }
     }
     
@@ -173,6 +177,7 @@ public class game {
         coms.sendSave(file);
         } catch(Exception e) {
             
+            System.err.println("Network error caught in save_opp_game: " + e);
         }
 
     }
@@ -210,6 +215,7 @@ public class game {
             }
             return answer; 
         } catch (Exception e) {
+            System.err.println("Network error caught in get_hit: " + e);
             return get_hit(p);
         }
     }
@@ -235,7 +241,7 @@ public class game {
             try {
                 coms.receiveMessageWithSaveHandling();
             } catch (Exception e) {
-                
+                System.err.println("Network error caught in start_opp_turn(): " + e);
             }
         }
     }
