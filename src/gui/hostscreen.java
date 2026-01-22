@@ -61,7 +61,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         new_game.addActionListener(e -> {frame.showScreen("pregamescreen");});
-        load_game.addActionListener(e -> {}); // frame.handleLoadGame();
+        load_game.addActionListener(e -> {frame.handleLoadGame();});
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "hostscreen";
