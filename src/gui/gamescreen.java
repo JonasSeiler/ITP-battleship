@@ -88,6 +88,7 @@ public class gamescreen extends JPanel {
         /*--Layoutmanager 'this'-Panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
+        this.setOpaque(false);
 
         /*--Titel--*/
         JLabel title = new JLabel("Tidebreaker");
@@ -100,10 +101,12 @@ public class gamescreen extends JPanel {
         /*--Erstellung des Spielboards--*/
         JPanel board = new JPanel(new GridLayout(1, 2, 20, 0));
         board.setBackground(Color.black);
+        board.setOpaque(false);
 
         /*--Spielerseite (links) Panel--*/
         JPanel pSide = new JPanel(new BorderLayout());
         pSide.setBackground(Color.black);
+        pSide.setOpaque(false);
 
         /*--Spielerfelderstellung (linke Zellen)--*/
         pCells = new JButton[gridSize][gridSize];
@@ -119,6 +122,7 @@ public class gamescreen extends JPanel {
         /*--Netzhalter (Spieler)--*/
         JPanel pCenter = new JPanel(new GridBagLayout());
         pCenter.setBackground(Color.black);
+        pCenter.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -136,6 +140,7 @@ public class gamescreen extends JPanel {
         pCenterWrapper.setBackground(Color.black);
         pCenterWrapper.add(playerTitle, BorderLayout.NORTH);
         pCenterWrapper.add(pCenter, BorderLayout.CENTER);
+        pCenterWrapper.setOpaque(false);
 
         pSide.add(pCenterWrapper, BorderLayout.CENTER);
 
@@ -148,6 +153,7 @@ public class gamescreen extends JPanel {
         /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
+        pFieldPanel.setOpaque(false);
         pFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         /*--Kombobox Textfeld--*/
@@ -180,6 +186,7 @@ public class gamescreen extends JPanel {
         /*--Gegnerseite (rechts) Panel--*/
         JPanel eSide = new JPanel(new BorderLayout());
         eSide.setBackground(Color.black);
+        eSide.setOpaque(false);
 
         /*--Gegnerfelderstellung (rechte Zellen)--*/
         eCells = new JButton[gridSize][gridSize];
@@ -195,6 +202,7 @@ public class gamescreen extends JPanel {
         /*--Netzhalter (Gegner)--*/
         JPanel eCenter = new JPanel(new GridBagLayout());
         eCenter.setBackground(Color.black);
+        eCenter.setOpaque(false);
 
         GridBagConstraints gbc2 = new GridBagConstraints();
         gbc2.gridx = 0;
@@ -210,6 +218,7 @@ public class gamescreen extends JPanel {
         /*--Titel-Netz-Kombination (Gegner)--*/
         JPanel eCenterWrapper = new JPanel(new BorderLayout());
         eCenterWrapper.setBackground(Color.black);
+        eCenterWrapper.setOpaque(false);
         eCenterWrapper.add(enemyTitle, BorderLayout.NORTH);
         eCenterWrapper.add(eCenter, BorderLayout.CENTER);
 
@@ -223,6 +232,7 @@ public class gamescreen extends JPanel {
         /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
+        eFieldPanel.setOpaque(false);
         eFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
@@ -249,6 +259,7 @@ public class gamescreen extends JPanel {
      */
     private JPanel createField(int x, int y, JButton[][] array) {
         JPanel field = new SquareGridPanel(x, y);
+        field.setOpaque(false);
 
         for (int r = 0; r < x; r++) {
             for (int c = 0; c < y; c++) {
@@ -574,5 +585,19 @@ public class gamescreen extends JPanel {
             frame.showScreen("battlescreen");
             }
         }
+    }
+    /**
+     * Methode für den Farbverlauf des Screens
+     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
+     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     */
+    @Override
+    protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
+        super.paintComponent(g); // ruft die Basis-Zeichenfunktion auf, also die Logik der Mutterklasse, um einen sauberen Grafik-Kontext für das eigene Zeichnen zu schaffen
+        Graphics2D g2d = (Graphics2D) g; // g wird umgewandelt in das Graphics2D Objekt
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
+        GradientPaint oceanGradient = new GradientPaint(0, 0, frame.color1, 0, getHeight(), frame.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
+        g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
 }
