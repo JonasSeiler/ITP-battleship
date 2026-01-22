@@ -62,7 +62,10 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 
-        connect.addActionListener(e -> {connection();});
+        connect.addActionListener(e -> {
+            connection(); 
+            frame.lastscreen2 = "joinscreen"; 
+            frame.showScreen("pregamescreen");});
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";
