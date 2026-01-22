@@ -143,7 +143,7 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
             if (max == occupied) {
                 start();
                 start2();
-                frame.startGamescreen();
+                frame.startGamescreen2();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "pregamescreen2";

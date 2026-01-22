@@ -122,10 +122,48 @@ public class mainframe extends JFrame {
     }
 
     */
+
+   /**
+    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
+    */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
         GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
+
+        /*if (coms instanceof Server) {
+            try {
+            setupServer();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        } else if (coms instanceof Client) {
+            try {
+                setupClient();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        } else {
+            try {
+                setupCPU();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        }*/
+
+        cPanel.add(GameScreen, "gamescreen");
+        cLayout.show(cPanel, "gamescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
+    }
+
+    /**
+    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
+    */
+    public void startGamescreen2() {
+        if (GameScreen != null) cPanel.remove(GameScreen);
+
+        GameScreen = new gamescreen(this, PreGameScreen2.ships, PreGameScreen2.gridSize);
 
         /*if (coms instanceof Server) {
             try {
