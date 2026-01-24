@@ -2,6 +2,7 @@ package src.gui; // Datei gehört in das Verzeichnis src.gui
 
 import javax.swing.*;
 import java.awt.*;
+import src.coms.*;
 
 /**
  * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
@@ -75,6 +76,26 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      */
     void connection() {
         String ipAdress = ip.getText();
+        if(frame.coms != null) {
+            frame.coms = null;
+        }
+        frame.coms = new Client();
+        Client c = (Client) frame.coms;
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                c.setServerAddress(ipAdress);
+                try {
+                    c.start();
+                } catch (Exception e) {
+                    System.err.println("Couldnt connect to server: " + e);
+                }
+
+                return null;
+            }
+        }.execute();
+
+        frame.showScreen("joinwaitscreen");
+        //frame.startGamescreen();
     }
 
 

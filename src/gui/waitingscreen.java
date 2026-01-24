@@ -1,6 +1,8 @@
 package src.gui;
-
 import javax.swing.*;
+
+import src.coms.Server;
+
 import java.awt.*;
 
 /**
@@ -11,6 +13,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
     private mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
+    JLabel waitMsg;
 
     /**
      * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
@@ -24,13 +27,13 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
-        JLabel waitingscreen = new JLabel("waiting for connection...");
+        JLabel waitMsg = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
-        waitingscreen.setFont(new Font("Times New Roman", Font.PLAIN,20));
-        waitingscreen.setForeground(Color.WHITE);
+        waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
+        waitMsg.setForeground(Color.WHITE);
 
 
         hamburger = new JButton("\u2261");
@@ -52,13 +55,14 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
-        contentPanel.add(waitingscreen);
+        contentPanel.add(waitMsg);
         contentPanel.add(new JLabel(""));
         contentPanel.add(exit);
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 
         hamburger.addActionListener(e -> {

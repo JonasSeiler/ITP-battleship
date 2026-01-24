@@ -2,6 +2,7 @@ package src.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import src.coms.*;
 
 /**
  * Screen im Multiplayermodus, indem man entscheiden kann, ob man einem Spiel joined oder ein Spiel hostet
@@ -13,7 +14,6 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
     private RoundButton host_game;
     private RoundButton exit;
     private JButton hamburger;
-
     /**
      * Erstellt den Multiplayerscreen und erstellt und initialisiert Objekte
      * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
@@ -62,7 +62,25 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         join_game.addActionListener(e -> {frame.showScreen("joinscreen");});
         host_game.addActionListener(e -> {
             frame.lastscreen2 = "multiplayer";
-            frame.showScreen("waitingscreen");});
+            frame.showScreen("waitingscreen");
+            if (frame.coms != null) {
+                frame.coms = null;
+            }
+
+            frame.coms = new Server();
+            new SwingWorker<Void, Void>() {
+                protected Void doInBackground() throws Exception {
+                    try {
+                        frame.coms.start();
+                        frame.showScreen("pregamescreen");
+                    } catch(Exception ex) {
+                        System.err.println("Error starting to host: " + ex);
+                    }
+                    return null;
+                }
+            }.execute();
+        });
+
         exit.addActionListener(e -> {frame.showScreen("titlescreen");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "multiplayer";

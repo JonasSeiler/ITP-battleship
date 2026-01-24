@@ -13,7 +13,6 @@ public class game {
     private board board1;
     private battlescreen gui;
     private NetworkPlayer coms;
-    private boolean user_t;
     private int[] s_dir;
     // add gui and coms classes
     public game(int size, int[] ship_set, battlescreen g, NetworkPlayer n) {
@@ -24,7 +23,9 @@ public class game {
             if(gui.DIR[i]) s_dir[i] = 0;
             else s_dir[i] = 1;
         }
- // make first turn distinct between Server and Client
+        if (coms instanceof Client) {
+            start_opp_turn();
+        }
     }
 
     /**
@@ -121,7 +122,7 @@ public class game {
      * @return response from the network prob. will be deleted soon
      */
     public int send_shot(int x, int y) {
-        // turn user turn ui off
+        gui.disableUI();
         try {
         int response = coms.sendShot(x, y); // response = 0,1,2
             // add enemy field to board for save/load and for shot validation
@@ -226,7 +227,7 @@ public class game {
      */
     public void start_local_turn() {
         if(board1.game_over()) {
-            // activate turn ui for user
+            gui.enableUI();
             // wait for shot from user
         }
     }
@@ -237,7 +238,7 @@ public class game {
      */
     public void start_opp_turn() {
         if(board1.game_over()) {
-            // disable user turn ui   
+            gui.disableUI();
             try {
                 coms.receiveMessageWithSaveHandling();
             } catch (Exception e) {

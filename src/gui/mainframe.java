@@ -17,8 +17,10 @@ public class mainframe extends JFrame {
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
     public String lastscreen;
-    //public game logic;
-    //public NetworkPlayer coms;
+    public game logic;
+    public NetworkPlayer coms;
+    int[] ships = null;
+    int size = 0;
 
     private String color = "navy";
     public String lastscreen2;
@@ -59,6 +61,7 @@ public class mainframe extends JFrame {
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
         waitingscreen waitingscreen = new waitingscreen(this);
+        joinwaitscreen joinwaitscreen = new joinwaitscreen(this);
         PreGameScreen = new pregamescreen(this);
 
         /*--add to cPanel--*/
@@ -71,6 +74,7 @@ public class mainframe extends JFrame {
         cPanel.add(PreGameScreen, "pregamescreen");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
+        cPanel.add(joinwaitscreen, "joinwaitscreen");
         add(cPanel);
         setVisible(true);
         pack();
@@ -83,69 +87,59 @@ public class mainframe extends JFrame {
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
-    /*
-    public boolean setupServer() {
-        Server host = (Server) coms;
-        try {
-            if(host.sendSize(PreGameScreen.gridSize)) {
-                if(host.sendShips(PreGameScreen.ships)) {
-                    if(host.sendReady()) {
-                        return true; 
-                    }
-                }
-            } 
-            return false;
-            
+
+    public void setupComs() {
+
+        if (!(coms instanceof Client)) {
+            ships = PreGameScreen.ships;
+            size = PreGameScreen.gridSize;
+        }
+        if (coms instanceof Server) {
+            try {
+                Server host = (Server) coms;
+                host.sendSize(size);
+                host.sendShips(ships);
         } catch (Exception e) {
             System.err.println("failed transmitting the setup variables: " + e);
-            return false;
         }
-    }
+        } else if (coms instanceof Client) {
+            Client joinee = (Client) coms;
+            try {
+                joinee.receiveSetup();
+            } catch (Exception e) {
+                System.err.println("Failed to recieve Setup variables: " + e);
+            }
+            //ships = ;
+            //size = 5;
+        } else {
+            try {
 
-    public void setupClient() {
-        Client joinee = (Client) coms;
-        try {
-            joinee.receiveSetup();
-        } catch (Exception e) {
-            System.err.println("Failed to recieve Setup variables: " + e);
+            } catch(Exception e) {
+                System.err.println(e);
+            }
         }
 
+
     }
 
-    public void setupCPU() {
-        // setup for the AI opponent
-    }
-
-    */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
-        GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                setupComs();
+                return null;
+            }
+        }.execute();
 
-        /*if (coms instanceof Server) {
-            try {
-            setupServer();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else if (coms instanceof Client) {
-            try {
-                setupClient();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else {
-            try {
-                setupCPU();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        }*/
+        GameScreen = new gamescreen(this, ships, size);
 
         cPanel.add(GameScreen, "gamescreen");
         cLayout.show(cPanel, "gamescreen");
         cPanel.revalidate();
         cPanel.repaint();
+
+
     }
     
     /**
@@ -155,13 +149,29 @@ public class mainframe extends JFrame {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
         BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
-        /*
+
         if (logic != null) logic = null;
         logic = new game(BattleScreen.gridSize, BattleScreen.SHIPS, BattleScreen, coms);
         BattleScreen.setGame(logic);
+        
         coms.set_game(logic);
+
+         new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                if(coms instanceof Server) {
+                    try {
+                        Server s = (Server) coms;
+                        s.sendReady();
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+                }
+                return null;
+            }
+        }.execute();
+       
+
         logic.setup_board();
-        */
         cPanel.add(BattleScreen, "battlescreen");
         cLayout.show(cPanel, "battlescreen");
         cPanel.revalidate();
