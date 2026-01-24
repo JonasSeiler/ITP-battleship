@@ -29,7 +29,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE); // Farbe der Schrift
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        JLabel ip_adress = new JLabel("             IP adress");
+        JLabel ip_adress = new JLabel("             IP Adress");
         ip_adress.setForeground(Color.WHITE);
         ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         exit = new RoundButton("Exit");
@@ -63,7 +63,10 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 
-        connect.addActionListener(e -> {connection();});
+        connect.addActionListener(e -> {
+            connection(); 
+            frame.lastscreen2 = "joinscreen"; 
+            frame.showScreen("pregamescreen");});
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";

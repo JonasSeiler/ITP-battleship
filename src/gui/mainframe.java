@@ -16,6 +16,7 @@ public class mainframe extends JFrame {
     public gamescreen GameScreen;
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
+    public pregamescreen2 PreGameScreen2;
     public String lastscreen;
     public game logic;
     public NetworkPlayer coms;
@@ -32,6 +33,8 @@ public class mainframe extends JFrame {
     verschiedene Farben:
     new Color(20, 30, 50) new Color(220, 200, 190));
     */
+
+   public int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
    
     /**
      * Konstruiert Fensteroberfläche
@@ -63,6 +66,7 @@ public class mainframe extends JFrame {
         waitingscreen waitingscreen = new waitingscreen(this);
         joinwaitscreen joinwaitscreen = new joinwaitscreen(this);
         PreGameScreen = new pregamescreen(this);
+        PreGameScreen2 = new pregamescreen2(this);
 
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
@@ -72,6 +76,7 @@ public class mainframe extends JFrame {
         cPanel.add(multiplayer, "multiplayer");
         cPanel.add(waitingscreen, "waitingscreen");
         cPanel.add(PreGameScreen, "pregamescreen");
+        cPanel.add(PreGameScreen2, "pregamescreen2");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
         cPanel.add(joinwaitscreen, "joinwaitscreen");
@@ -140,6 +145,40 @@ public class mainframe extends JFrame {
         cPanel.repaint();
 
 
+    }
+
+    /**
+    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
+    */
+    public void startGamescreen2() {
+        if (GameScreen != null) cPanel.remove(GameScreen);
+
+        GameScreen = new gamescreen(this, PreGameScreen2.ships, PreGameScreen2.gridSize);
+
+        /*if (coms instanceof Server) {
+            try {
+            setupServer();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        } else if (coms instanceof Client) {
+            try {
+                setupClient();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        } else {
+            try {
+                setupCPU();
+            } catch(Exception e) {
+                System.err.println(e);
+            }
+        }*/
+
+        cPanel.add(GameScreen, "gamescreen");
+        cLayout.show(cPanel, "gamescreen");
+        cPanel.revalidate();
+        cPanel.repaint();
     }
     
     /**
@@ -216,6 +255,8 @@ public class mainframe extends JFrame {
         if (result == JFileChooser.APPROVE_OPTION) { // prüft ob der Nutzer eine Datei ausgewählt hat
             File selectedFile = fileChooser.getSelectedFile(); // es wird sich das Datei Objekt geholt, welches der Nutzer angeklickt hat. Es enthält Informationen wie Dateiname, Größe und Pfad, aber nicht über den Inhalt
 
+        String path = selectedFile.getAbsolutePath();
+
         // Pass filename or path to game logic
         gLogic.load_game(selectedFile.getAbsolutePath()); // Pfad zur Datei wird in die gLogic Methode gegeben
 
@@ -225,7 +266,7 @@ public class mainframe extends JFrame {
         }
     }
     */
-   
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }

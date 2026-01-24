@@ -4,52 +4,66 @@ import java.net.*;
 import java.io.*;
 
 /**
- * Client-Implementierung
+ * 
  */
 public class Client extends NetworkPlayer {
+    /**
+     * 
+     */
     private String serverAddress;
+    /**
+     * 
+     */
     private Socket socket;
+    /**
+     * 
+     */
     private BufferedReader in;
+    /**
+     * 
+     */
     private Writer out;
     
     /**
-     * Stellt Verbindung zum Server her
-     * @param address Server-IP-Adresse
+     * 
+     * @param address
+     * @throws IOException
      */
     @Override
     public void start() throws IOException {
         socket = new Socket(serverAddress, PORT);
         isConnected = true;
         
-        // Streams initialisieren
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         out = new OutputStreamWriter(socket.getOutputStream());
     }
     
     /**
-     * Setzt die Server-Adresse (muss vor start() aufgerufen werden)
+     * 
+     * @param address
      */
     public void setServerAddress(String address) {
         this.serverAddress = address;
     }
     
     /**
-     * Empfängt und verarbeitet Setup-Nachrichten vom Server
-     * @return GameConfig mit Spielkonfiguration
+     * 
+     * @throws IOException
      */
-    public GameConfig receiveSetup() throws IOException {
-        String message = receiveMessage();
+    public void receiveSetup() throws IOException {
+        if (logic == null) {
+            throw new IOException("Game-Objekt nicht gesetzt. set_game() muss vor receiveSetup() aufgerufen werden");
+        }
+        
+        String message = receivemessage();
         
         if (message.startsWith("size")) {
-            // Größe empfangen
             String[] parts = message.split(" ");
             int size = Integer.parseInt(parts[1]);
             
-            // done senden
-            sendMessage("done");
+            sendmessage("done");
             
-            // Schiffe empfangen
-            message = receiveMessage();
+            message = receivemessage();
             if (message.startsWith("ships")) {
                 String[] shipParts = message.split(" ");
                 int[] ships = new int[shipParts.length - 1];
@@ -57,46 +71,57 @@ public class Client extends NetworkPlayer {
                     ships[i-1] = Integer.parseInt(shipParts[i]);
                 }
                 
-                // done senden
-                sendMessage("done");
+                sendmessage("done");
                 
-                // ready empfangen und antworten
-                message = receiveMessage();
+                message = receivemessage();
                 if (message.equals("ready")) {
-                    sendMessage("ready");
+                    sendmessage("ready");
                     gameStarted = true;
-                    return new GameConfig(size, ships, false);
+                } else {
+                    throw new IOException("Erwartete 'ready', bekam: " + message);
                 }
+            } else {
+                throw new IOException("Erwartete 'ships', bekam: " + message);
             }
             
         } else if (message.startsWith("load")) {
-            // Load empfangen
             String[] parts = message.split(" ");
             String loadId = parts.length > 1 ? parts[1] : "";
             
-            // ok senden
-            sendMessage("ok");
+            logic.load_game(loadId);
             
-            // ready empfangen und antworten
-            message = receiveMessage();
+            sendmessage("ok");
+            
+            message = receivemessage();
             if (message.equals("ready")) {
-                sendMessage("ready");
+                sendmessage("ready");
                 gameStarted = true;
-                return new GameConfig(0, null, true, loadId);
+            } else {
+                throw new IOException("Erwartete 'ready', bekam: " + message);
             }
+        } else {
+            throw new IOException("Ungültiges Setup-Protokoll: " + message);
         }
-        
-        throw new IOException("Ungültiges Setup-Protokoll");
     }
     
+    /**
+     * 
+     * @param message
+     * @throws IOException
+     */
     @Override
-    protected void sendMessage(String message) throws IOException {
+    protected void sendmessage(String message) throws IOException {
         out.write(message + "\n");
         out.flush();
     }
     
+    /**
+     * 
+     * @return
+     * @throws IOException
+     */
     @Override
-    protected String receiveMessage() throws IOException {
+    protected String receivemessage() throws IOException {
         String line = in.readLine();
         if (line == null) {
             throw new IOException("Verbindung verloren");
@@ -104,6 +129,10 @@ public class Client extends NetworkPlayer {
         return line.trim();
     }
     
+    /**
+     * 
+     * @throws IOException
+     */
     @Override
     public void close() throws IOException {
         if (socket != null) {
