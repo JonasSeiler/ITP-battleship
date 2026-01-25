@@ -23,6 +23,10 @@ public class Client extends NetworkPlayer {
      * 
      */
     private Writer out;
+
+
+    public int size;
+    public int[] ships;
     
     /**
      * 
@@ -51,35 +55,29 @@ public class Client extends NetworkPlayer {
      * @throws IOException
      */
     public void receiveSetup() throws IOException {
-        if (logic == null) {
-            throw new IOException("Game-Objekt nicht gesetzt. set_game() muss vor receiveSetup() aufgerufen werden");
-        }
-        
+        if(in == null) 
+            throw new IOException("in not inited");
+
+
         String message = receivemessage();
         
         if (message.startsWith("size")) {
             String[] parts = message.split(" ");
-            int size = Integer.parseInt(parts[1]);
+            size = Integer.parseInt(parts[1]);
             
             sendmessage("done");
-            
+
             message = receivemessage();
+
             if (message.startsWith("ships")) {
                 String[] shipParts = message.split(" ");
-                int[] ships = new int[shipParts.length - 1];
+                ships = new int[shipParts.length - 1];
                 for (int i = 1; i < shipParts.length; i++) {
                     ships[i-1] = Integer.parseInt(shipParts[i]);
                 }
                 
                 sendmessage("done");
                 
-                message = receivemessage();
-                if (message.equals("ready")) {
-                    sendmessage("ready");
-                    gameStarted = true;
-                } else {
-                    throw new IOException("Erwartete 'ready', bekam: " + message);
-                }
             } else {
                 throw new IOException("Erwartete 'ships', bekam: " + message);
             }
@@ -92,17 +90,27 @@ public class Client extends NetworkPlayer {
             
             sendmessage("ok");
             
-            message = receivemessage();
+
+        } else {
+            throw new IOException("Ungültiges Setup-Protokoll: " + message);
+        }
+
+    }
+    @Override    
+    public boolean sendReady() {
+        try {
+            String message = receivemessage();
             if (message.equals("ready")) {
                 sendmessage("ready");
                 gameStarted = true;
             } else {
                 throw new IOException("Erwartete 'ready', bekam: " + message);
             }
-        } else {
-            throw new IOException("Ungültiges Setup-Protokoll: " + message);
+        } catch(Exception e) {
+            System.err.println(e);
         }
-    }
+        return gameStarted;
+    }   
     
     /**
      * 
@@ -113,6 +121,7 @@ public class Client extends NetworkPlayer {
     protected void sendmessage(String message) throws IOException {
         out.write(message + "\n");
         out.flush();
+        System.out.println(message);
     }
     
     /**
@@ -126,6 +135,7 @@ public class Client extends NetworkPlayer {
         if (line == null) {
             throw new IOException("Verbindung verloren");
         }
+        System.out.println(line);
         return line.trim();
     }
     

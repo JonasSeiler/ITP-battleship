@@ -42,9 +42,11 @@ public class board {
         ship_pos = new int[size][size];
         hit_pos = new int[size][size];
         opp_hit = new int[size][size];
-        Arrays.fill(ship_pos, 0);
-        Arrays.fill(hit_pos, 0);
-        Arrays.fill(opp_hit, -1);
+        for (int i = 0; i < size; i++) {
+            Arrays.fill(ship_pos[i], 0);
+            Arrays.fill(hit_pos[i], 0);
+            Arrays.fill(opp_hit[i], -1);
+        }
         fleet = new ship[ship_set.length];
         
 
@@ -66,17 +68,19 @@ public class board {
         // dir: 0 = x,     1 =  y
         fleet[s_index].set_dir_head(head, dir);
         if(dir == 0) {
-                for (int i = 0; i < fleet[s_index].length; i++) {
-                    head.x += i;
-                    ship_pos[head.x][head.y] = 1;
-                    fleet[s_index].set_pos(head, i);
-                }
+            for (int i = 0; i < fleet[s_index].length; i++) {
+                System.out.println(head.x + " " + head.y);
+                ship_pos[head.x][head.y] = 1;
+                fleet[s_index].set_pos(new coordinate(head.x, head.y), i);
+                head.x += 1;
+            }
         }
         else {
             for (int i = 0; i < fleet[s_index].length; i++) {
-                head.y += i;
+                System.out.println(head.x + " " + head.y);
                 ship_pos[head.x][head.y] = 1;
                 fleet[s_index].set_pos(head, i);
+                head.y += 1;
             }
         }
     }
@@ -91,21 +95,21 @@ public class board {
         opp_hit[shot.x][shot.y] = response;
         opp_hp = (response > 0) ? opp_hp-- : opp_hp;
         if(response == 2) {
-            if(opp_hit[shot.x+1][shot.y] == 1) {
+            if((shot.x+1 <= size) && opp_hit[shot.x+1][shot.y] == 1) {
                 coordinate surrounding = new coordinate(shot.x+1, shot.y);
                 register_shot(surrounding, response);
             }
-            if(opp_hit[shot.x-1][shot.y] == 1) {
+            if((shot.x-1 >= 0) && opp_hit[shot.x-1][shot.y] == 1) {
                 coordinate surrounding = new coordinate(shot.x-1, shot.y);
                 register_shot(surrounding, response);
 
             }
-            if(opp_hit[shot.x][shot.y+1] == 1) {
+            if((shot.y+1 <= size) && opp_hit[shot.x][shot.y+1] == 1) {
                 coordinate surrounding = new coordinate(shot.x, shot.y+1);
                 register_shot(surrounding, response);
 
             }
-            if(opp_hit[shot.x][shot.y-1] == 1) {
+            if((shot.y-1 >= 0) && opp_hit[shot.x][shot.y-1] == 1) {
                 coordinate surrounding = new coordinate(shot.x, shot.y-1);
                 register_shot(surrounding, response);
             }
@@ -125,16 +129,16 @@ public class board {
         if(ship_pos[att.x][att.y] == 0) { 
             return 0;
         }
+        int dmg = 1;
         for (ship ship : fleet) {
             for(int i = 0; i < ship.length; i++) {
-                if(att.equals(ship.pos[i])) {
+                if(ship.pos[i].x == att.x && ship.pos[i].y == att.y) {
                     ship.lifes[i] = 0;
-                    if(ship.destroyed()) return 2;
-                    return 1;
+                    if(ship.destroyed()) dmg = 2;
                 }
             }
         }
-        return -1;      // would mean a major error in the op. should never be reached
+        return dmg;
     }
 
     /**
@@ -168,6 +172,7 @@ public class board {
             return false;
         }
     }
+
     /**
      * saves the game by writing the data of the board object into a file that
      * can later be used to restore the game state

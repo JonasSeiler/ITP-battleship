@@ -38,17 +38,17 @@ public abstract class NetworkPlayer {
      */
     protected abstract String receivemessage() throws IOException;
     
+    public abstract boolean sendReady() throws IOException;
     /**
      * 
      * @throws IOException
      */
     public void receivemessagewsave() throws IOException {
         String message = receivemessage();
-        
         if (message.startsWith("shot")) {
             String[] parts = message.split(" ");
-            int row = Integer.parseInt(parts[1]) - 1;
-            int col = Integer.parseInt(parts[2]) - 1;
+            int row = Integer.parseInt(parts[1]);
+            int col = Integer.parseInt(parts[2]);
             coordinate coord = new coordinate(row, col);
             logic.get_hit(coord);
         } 
@@ -60,8 +60,8 @@ public abstract class NetworkPlayer {
         else if (message.equals("pass")) {
             logic.start_local_turn();
         }
-        
-        throw new IOException("Unerwartete Nachricht: " + message);
+        else 
+            throw new IOException("Unerwartete Nachricht: " + message);
     }
     
     /**
@@ -71,8 +71,17 @@ public abstract class NetworkPlayer {
      */
     public void sendAnswer(int answerCode) throws IOException {
         sendmessage("answer " + answerCode);
+        if(answerCode == 0)
+            readPass();
     }
     
+    public boolean readPass() throws IOException {
+        String message = receivemessage();
+        if(message.startsWith("pass")) {
+            return true;
+        }
+        return false;
+    }
     /**
      * 
      * @param row
@@ -111,7 +120,7 @@ public abstract class NetworkPlayer {
      * @throws IOException
      */
     public void sendPass() throws IOException {
-        sendmessage("pass");
+            sendmessage("pass");
     }
     
     /**

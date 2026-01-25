@@ -22,6 +22,7 @@ public class mainframe extends JFrame {
     public NetworkPlayer coms;
     int[] ships = null;
     int size = 0;
+    public mainframe frame = this;
 
     private String color = "navy";
     public String lastscreen2;
@@ -95,11 +96,9 @@ public class mainframe extends JFrame {
 
     public void setupComs() {
 
-        if (!(coms instanceof Client)) {
+        if (coms instanceof Server) {
             ships = PreGameScreen.ships;
             size = PreGameScreen.gridSize;
-        }
-        if (coms instanceof Server) {
             try {
                 Server host = (Server) coms;
                 host.sendSize(size);
@@ -114,16 +113,20 @@ public class mainframe extends JFrame {
             } catch (Exception e) {
                 System.err.println("Failed to recieve Setup variables: " + e);
             }
-            //ships = ;
-            //size = 5;
+            ships = joinee.ships;
+            size = joinee.size;
         } else {
             try {
-
+                ships = PreGameScreen2.ships;
+                size = PreGameScreen2.gridSize;
+                Bot b = (Bot) coms;
+                b.setdifficulty(1);
+                b.sendSize(size);
+                b.sendShips(ships);
             } catch(Exception e) {
-                System.err.println(e);
+                System.err.println("Bot couldnt receive parameters: " + e);
             }
         }
-
 
     }
 
@@ -135,14 +138,17 @@ public class mainframe extends JFrame {
                 setupComs();
                 return null;
             }
+            protected void done() {
+
+                GameScreen = new gamescreen(frame, ships, size);
+
+                cPanel.add(GameScreen, "gamescreen");
+                cLayout.show(cPanel, "gamescreen");
+                cPanel.revalidate();
+                cPanel.repaint();
+
+            }
         }.execute();
-
-        GameScreen = new gamescreen(this, ships, size);
-
-        cPanel.add(GameScreen, "gamescreen");
-        cLayout.show(cPanel, "gamescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
 
 
     }
@@ -192,29 +198,30 @@ public class mainframe extends JFrame {
         if (logic != null) logic = null;
         logic = new game(BattleScreen.gridSize, BattleScreen.SHIPS, BattleScreen, coms);
         BattleScreen.setGame(logic);
-        
         coms.set_game(logic);
 
          new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
-                if(coms instanceof Server) {
                     try {
-                        Server s = (Server) coms;
-                        s.sendReady();
+                        coms.sendReady();
                     } catch (Exception e) {
                         System.err.println(e);
                     }
-                }
                 return null;
+            }
+            protected void done() {
+                logic.setup_board();
+                if(coms instanceof Client) {
+                    logic.u_turn = 0;
+                    logic.start_opp_turn();
+                }
+                cPanel.add(BattleScreen, "battlescreen");
+                cLayout.show(cPanel, "battlescreen");
+                cPanel.revalidate();
+                cPanel.repaint();
             }
         }.execute();
        
-
-        logic.setup_board();
-        cPanel.add(BattleScreen, "battlescreen");
-        cLayout.show(cPanel, "battlescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
     }
 
     /**
@@ -239,9 +246,9 @@ public class mainframe extends JFrame {
     /**  
     Handles loading the game.
     */
-   /*
+   
     public void handleLoadGame() {
-      JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
+    /*  JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
 
         // Optional: restrict to text files
         fileChooser.setFileFilter( // es werden nur txt Dateien angezeigt
@@ -264,8 +271,7 @@ public class mainframe extends JFrame {
         } else {
             gameSaved = false;
         }
-    }
-    */
+    */}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);

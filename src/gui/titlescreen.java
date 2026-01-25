@@ -55,16 +55,16 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         singleplayer.addActionListener(e -> {
             frame.showScreen("singleplayer");
-/*            if(frame.coms != null) {
+            if(frame.coms != null) {
                 frame.coms = null;
             }
             frame.coms = new Bot();
             try {
-            frame.coms.start();
+                frame.coms.start();
             } catch(Exception ex) {
                 System.err.println("Error initing Bot: " + ex);
-            }*/
-            });
+            }
+        });
         multiplayer.addActionListener(e -> {frame.showScreen("multiplayer");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "titlescreen";

@@ -81,6 +81,7 @@ public class Server extends NetworkPlayer {
      * @return
      * @throws IOException
      */
+    @Override
     public boolean sendReady() throws IOException {
         sendmessage("ready");
         boolean readyReceived = receivemessage().equals("ready");
@@ -99,6 +100,7 @@ public class Server extends NetworkPlayer {
     protected void sendmessage(String message) throws IOException {
         out.write(message + "\n");
         out.flush();
+        System.out.println(message);
     }
     
     /**
@@ -112,6 +114,7 @@ public class Server extends NetworkPlayer {
         if (line == null) {
             throw new IOException("Verbindung verloren");
         }
+        System.out.println(line);
         return line.trim();
     }
     

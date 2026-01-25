@@ -66,7 +66,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         connect.addActionListener(e -> {
             connection(); 
             frame.lastscreen2 = "joinscreen"; 
-            frame.showScreen("pregamescreen");});
+        });
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";
@@ -95,10 +95,11 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
 
                 return null;
             }
+            protected void done() {
+                frame.showScreen("joinwaitscreen");
+                frame.startGamescreen();
+            }
         }.execute();
-
-        frame.showScreen("joinwaitscreen");
-        //frame.startGamescreen();
     }
 
 

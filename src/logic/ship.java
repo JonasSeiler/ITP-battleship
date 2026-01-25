@@ -17,6 +17,7 @@ public class ship {
         this.lifes = new int[length];
         this.pos = new coordinate[length];
         Arrays.fill(lifes, 1);
+        Arrays.fill(pos, new coordinate(-1, -1));
     }
     /**
      * sets the position for a single segment of a ship

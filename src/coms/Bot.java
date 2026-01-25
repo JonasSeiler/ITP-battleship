@@ -195,7 +195,7 @@ public class Bot extends NetworkPlayer {
     @Override
     public int sendShot(int row, int col) throws IOException {
     
-        if (row < 1 || row > boardSize || col < 1 || col > boardSize) {
+        if (row < 0 || row > boardSize || col < 0 || col > boardSize) {
             throw new IOException("Ungueltige Koordinaten: (" + row + ", " + col + ")");
         }
         
@@ -209,7 +209,7 @@ public class Bot extends NetworkPlayer {
      * @throws IOException
      */
     @Override
-    void receivemessagewsave() throws IOException {
+    public void receivemessagewsave() throws IOException {
         generatedshot = genshot();
     
         if (generatedshot == null) {
@@ -248,7 +248,7 @@ public class Bot extends NetworkPlayer {
      * @throws IOException
      */
     @Override
-    protected void sendMessage(String message) throws IOException {
+    protected void sendmessage(String message) throws IOException {
     }
     
     /**
@@ -589,12 +589,17 @@ public class Bot extends NetworkPlayer {
      * @return
      */
     private coordinate genshot() {
+        try {
         switch(difficulty) {
             case 1: return genshoteasy();
             case 2: return genshotmedium();
             case 3: return genshothard();
             default: return genshotmedium();
-        }
+            }
+        } catch (Exception e) {
+            System.err.println("couldnt generate shot: " + e);
+            return new coordinate(0, 0);
+        } 
     }
 
     /**
@@ -939,7 +944,7 @@ public class Bot extends NetworkPlayer {
      * 
      * @param u
      */
-    public void set_user(game u) {
+    public void set_game(game u) {
         this.user = u;
     }
 }
