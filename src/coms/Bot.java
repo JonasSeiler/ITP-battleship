@@ -556,7 +556,7 @@ public class Bot extends NetworkPlayer {
             endX = Math.min(boardSize - 1, start.x + spacing);
             endY = Math.min(boardSize - 1, start.y + length - 1 + spacing);
         
-            // Zus„tzlich pruefen ob Spacing am Anfang moeglich ist
+            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
             if (start.y - spacing < 0) {
                 return false;
             }
