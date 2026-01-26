@@ -538,50 +538,44 @@ public class Bot extends NetworkPlayer {
         }
     
         // Pruefe ob Startpunkt im Feld ist
-        if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
-            return false;
-        }
+       if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
+           return false;
+       }
     
         int startX = Math.max(0, start.x - spacing);
         int startY = Math.max(0, start.y - spacing);
         int endX, endY;
     
         if (horizontal) {
-            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
-            if (start.y + length - 1 >= boardSize) { // WICHTIG: Ohne spacing am Ende pruefen
+            // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
+            if (start.y + length > boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
-            // Endkoordinaten inklusive Spacing
             endX = Math.min(boardSize - 1, start.x + spacing);
             endY = Math.min(boardSize - 1, start.y + length - 1 + spacing);
-        
-            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
-            if (start.y - spacing < 0) {
-                return false;
-            }
         } else {
-            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
-            if (start.x + length - 1 >= boardSize) {
+            // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
+            if (start.x + length > boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
-            // Endkoordinaten inklusive Spacing
             endX = Math.min(boardSize - 1, start.x + length - 1 + spacing);
             endY = Math.min(boardSize - 1, start.y + spacing);
-        
-            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
-            if (start.x - spacing < 0) {
-                return false;
-            }
         }
+    
+        // Debug-Ausgabe (kann spaeter entfernt werden)
+        // System.out.println("startX=" + startX + ", startY=" + startY + 
+        //                   ", endX=" + endX + ", endY=" + endY + 
+        //                   ", boardSize=" + boardSize);
     
         // Pruefe alle Felder im erweiterten Bereich
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 // Sicherstellen, dass x und y innerhalb des Arrays liegen
                 if (x < 0 || x >= boardSize || y < 0 || y >= boardSize) {
-                    return false;
+                    // Dies sollte nicht passieren, aber zur Sicherheit
+                    continue;  // oder return false je nach Logik
                 }
                 if (ownBoard.ship_pos[x][y] != 0) {
                     return false;
