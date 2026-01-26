@@ -552,22 +552,22 @@ public class Bot extends NetworkPlayer {
                 return false;
             }
         
-            endX = Math.min(boardSize, start.x + spacing);
-            endY = Math.min(boardSize, start.y + length - 1 + spacing);
+            endX = Math.min(boardSize - 1, start.x + spacing);
+            endY = Math.min(boardSize - 1, start.y + length - 1 + spacing);
         } else {
             // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
             if (start.x + length >= boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
-            endX = Math.min(boardSize, start.x + length - 1 + spacing);
-            endY = Math.min(boardSize, start.y + spacing);
+            endX = Math.min(boardSize -1 , start.x + length - 1 + spacing);
+            endY = Math.min(boardSize -1, start.y + spacing);
         }
     
         // Debug-Ausgabe (kann spaeter entfernt werden)
-        // System.out.println("startX=" + startX + ", startY=" + startY + 
-        //                   ", endX=" + endX + ", endY=" + endY + 
-        //                   ", boardSize=" + boardSize);
+         System.out.println("startX=" + startX + ", startY=" + startY + 
+                           ", endX=" + endX + ", endY=" + endY + 
+                           ", boardSize=" + boardSize);
     
         // Pruefe alle Felder im erweiterten Bereich
         for (int x = startX; x <= endX; x++) {
