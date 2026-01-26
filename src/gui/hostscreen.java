@@ -62,7 +62,15 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         new_game.addActionListener(e -> {frame.showScreen("pregamescreen");});
         load_game.addActionListener(e -> {frame.handleLoadGame();});
-        exit.addActionListener(e -> {frame.showScreen("multiplayer");});
+        exit.addActionListener(e -> {
+            frame.showScreen("multiplayer");
+            try {
+            frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+        });
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "hostscreen";
                 frame.showScreen("settings");
