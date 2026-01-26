@@ -548,7 +548,7 @@ public class Bot extends NetworkPlayer {
     
         if (horizontal) {
             // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
-            if (start.y + length > boardSize) {  // WICHTIG: > statt >=
+            if (start.y + length >= boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
@@ -556,7 +556,7 @@ public class Bot extends NetworkPlayer {
             endY = Math.min(boardSize, start.y + length - 1 + spacing);
         } else {
             // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
-            if (start.x + length > boardSize) {  // WICHTIG: > statt >=
+            if (start.x + length >= boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
