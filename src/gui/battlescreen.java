@@ -391,8 +391,6 @@ public class battlescreen extends JPanel {
             }
             frame.coms = null;
             return;
-        } else {
-            new QuitConfirmDialog(frame);
         }
     }
     /**
@@ -427,7 +425,6 @@ public class battlescreen extends JPanel {
         selectedEnemyCell = null;
         selectedX = -1;
         selectedY = -1;
-
     }
     /**
      * Methode für den Farbverlauf des Screens
@@ -446,12 +443,9 @@ public class battlescreen extends JPanel {
 }
 
 /*  
-    -> undo ship with mouseclick on ship X
-    -> exit and save msg not ugly X
-    -> change text font to 'Times New Roman' titles X
-    -> when game is over -> end screen pop up --> exit button leads to titlescreen X
     -> enter uses confirm shot button
     -> esc uses exit button
+    -> selection bug after ship hit
 
     -> battlescreen Reihenfolge von Schiffen passt nicht so wie gamescreen (COR[], SHIPS[], DIR[])
 
