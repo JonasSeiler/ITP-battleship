@@ -26,7 +26,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
-        JLabel title = new JLabel("Tidebreaker");
+        JLabel title = new JLabel("Battleship");
         JLabel waitMsg = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
         exit = new RoundButton("Exit");

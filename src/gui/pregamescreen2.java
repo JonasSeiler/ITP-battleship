@@ -55,6 +55,12 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         easy = new JRadioButton("Easy");
         medium = new JRadioButton("Medium", true); // der Punkt wird mit true gesetzt
         hard = new JRadioButton("Hard");
+        easy.setContentAreaFilled(false);
+        medium.setContentAreaFilled(false);
+        hard.setContentAreaFilled(false);
+        easy.setOpaque(false);
+        medium.setOpaque(false);
+        hard.setOpaque(false);
         ButtonGroup difficulty_group = new ButtonGroup(); // dadurch kann immer nur ein JRadioButton gleichzeitig ausgewählt sein
         difficulty_group.add(easy);
         difficulty_group.add(medium);

@@ -25,7 +25,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
-        JLabel title = new JLabel("Tidebreaker");
+        JLabel title = new JLabel("Battleship");
         title.setForeground(Color.WHITE);
         singleplayer = new RoundButton("Singleplayer");
         multiplayer = new RoundButton("Multiplayer");
