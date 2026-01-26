@@ -537,30 +537,52 @@ public class Bot extends NetworkPlayer {
             return false;
         }
     
+        // Pruefe ob Startpunkt im Feld ist
+        if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
+            return false;
+        }
+    
         int startX = Math.max(0, start.x - spacing);
         int startY = Math.max(0, start.y - spacing);
         int endX, endY;
     
         if (horizontal) {
-            if (start.y + length - 1 + spacing >= boardSize) {
+            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
+            if (start.y + length - 1 >= boardSize) { // WICHTIG: Ohne spacing am Ende pruefen
                 return false;
             }
-
+        
+            // Endkoordinaten inklusive Spacing
             endX = Math.min(boardSize - 1, start.x + spacing);
             endY = Math.min(boardSize - 1, start.y + length - 1 + spacing);
-
-        } else {
-            if (start.x + length - 1 + spacing >= boardSize) {
+        
+            // Zus„tzlich pruefen ob Spacing am Anfang moeglich ist
+            if (start.y - spacing < 0) {
                 return false;
             }
-
-            endX = Math.min(boardSize - 1, start.x + length - 1 + spacing);
+        } else {
+            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
+            if (start.x + length - 1 >= boardSize) {
+                return false;
+            }
         
+            // Endkoordinaten inklusive Spacing
+            endX = Math.min(boardSize - 1, start.x + length - 1 + spacing);
             endY = Math.min(boardSize - 1, start.y + spacing);
+        
+            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
+            if (start.x - spacing < 0) {
+                return false;
+            }
         }
     
+        // Pruefe alle Felder im erweiterten Bereich
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
+                // Sicherstellen, dass x und y innerhalb des Arrays liegen
+                if (x < 0 || x >= boardSize || y < 0 || y >= boardSize) {
+                    return false;
+                }
                 if (ownBoard.ship_pos[x][y] != 0) {
                     return false;
                 }
