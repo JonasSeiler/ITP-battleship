@@ -297,6 +297,18 @@ public class battlescreen extends JPanel {
                 break;
             case 2:
                 pCells[x][y].setBackground(Color.green);
+                if (isInBounds(x-1, y) && pCells[x-1][y].getBackground() == Color.yellow) {
+                    colorPlayerShip(x-1, y, i);
+                }
+                if (isInBounds(x+1, y) && pCells[x+1][y].getBackground() == Color.yellow) {
+                    colorPlayerShip(x+1, y, i);
+                }
+                if (isInBounds(x, y-1) && pCells[x][y-1].getBackground() == Color.yellow) {
+                    colorPlayerShip(x, y-1, i);
+                }
+                if (isInBounds(x, y+1) && pCells[x][y+1].getBackground() == Color.yellow) {
+                    colorPlayerShip(x, y+1, i);
+                }
                 break;
         }
     }
@@ -374,6 +386,33 @@ public class battlescreen extends JPanel {
             frame.showScreen("titlescreen");
         } else {
             new QuitConfirmDialog(frame);
+            try {
+                frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+            return;
+        } else {
+            int choice = JOptionPane.showConfirmDialog(
+                this,
+                "The game has not been saved.\nDo you really want to quit?",
+                "Unsaved Progress",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE
+            );
+
+            if (choice == JOptionPane.YES_OPTION) {
+                frame.showScreen("titlescreen");
+                try {
+                    frame.coms.close();
+                } catch(Exception ex) {
+                    System.err.println("Failed closing connection: " + ex);
+                }
+                frame.coms = null;
+            } else if (choice == JOptionPane.NO_OPTION) {
+                frame.showScreen("battlescreen");
+            }
         }
     }
     /**

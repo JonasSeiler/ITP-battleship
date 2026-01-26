@@ -63,7 +63,15 @@ public class joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
 
-        exit.addActionListener(e -> {frame.showScreen("joinscreen");});
+        exit.addActionListener(e -> {
+            frame.showScreen("joinscreen");
+            try {
+            frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+        });
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinwaitscreen";

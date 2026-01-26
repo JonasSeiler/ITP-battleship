@@ -63,7 +63,15 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
 
-        exit.addActionListener(e -> {frame.showScreen("multiplayer");});
+        exit.addActionListener(e -> {
+            frame.showScreen("multiplayer");
+            try {
+            frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+        });
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "waitingscreen";

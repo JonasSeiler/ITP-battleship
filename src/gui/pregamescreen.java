@@ -116,7 +116,15 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         ship_size3.addChangeListener(e -> {updateCapacity();});
         ship_size2.addChangeListener(e -> {updateCapacity();});
         start_button.addChangeListener(e -> {updateCapacity();});
-        zurueck_button.addActionListener(e -> {frame.showScreen(frame.lastscreen2);});
+        zurueck_button.addActionListener(e -> {
+            frame.showScreen(frame.lastscreen2);
+            try {
+                frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+        });
         start_button.addActionListener(e -> { // Der ActionListener ist ein Objekt der als Zuhörer am Button klebt und eine Methode mit dem Parameter e besitzen muss, um die Klick-Details zu empfangen und daraufhin wird der Code in den {} ausführt
             int occupied = (Integer) capacityBar.getValue();
             int max = (Integer) capacityBar.getMaximum();

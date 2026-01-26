@@ -79,7 +79,7 @@ public class board {
             for (int i = 0; i < fleet[s_index].length; i++) {
                 System.out.println(head.x + " " + head.y);
                 ship_pos[head.x][head.y] = 1;
-                fleet[s_index].set_pos(head, i);
+                fleet[s_index].set_pos(new coordinate(head.x, head.y), i);
                 head.y += 1;
             }
         }
@@ -93,28 +93,34 @@ public class board {
      */
     public void register_shot(coordinate shot, int response) {
         opp_hit[shot.x][shot.y] = response;
-        opp_hp = (response > 0) ? opp_hp-- : opp_hp;
         if(response == 2) {
-            if((shot.x+1 <= size) && opp_hit[shot.x+1][shot.y] == 1) {
+            if((inBounds(shot.x+1, shot.y)) && opp_hit[shot.x+1][shot.y] == 1) {
                 coordinate surrounding = new coordinate(shot.x+1, shot.y);
                 register_shot(surrounding, response);
             }
-            if((shot.x-1 >= 0) && opp_hit[shot.x-1][shot.y] == 1) {
+            if((inBounds(shot.x-1, shot.y)) && opp_hit[shot.x-1][shot.y] == 1) {
                 coordinate surrounding = new coordinate(shot.x-1, shot.y);
                 register_shot(surrounding, response);
-
             }
-            if((shot.y+1 <= size) && opp_hit[shot.x][shot.y+1] == 1) {
+            if((inBounds(shot.x, shot.y+1)) && opp_hit[shot.x][shot.y+1] == 1) {
                 coordinate surrounding = new coordinate(shot.x, shot.y+1);
                 register_shot(surrounding, response);
-
             }
-            if((shot.y-1 >= 0) && opp_hit[shot.x][shot.y-1] == 1) {
+            if((inBounds(shot.x, shot.y-1)) && opp_hit[shot.x][shot.y-1] == 1) {
                 coordinate surrounding = new coordinate(shot.x, shot.y-1);
                 register_shot(surrounding, response);
             }
-
         }
+    }
+    public void dec_hp(int i) {
+        if(i > 0)
+        opp_hp -= 1;
+    }
+
+    public boolean inBounds(int x, int y) {
+        return x >= 0 && y >= 0 &&
+               x < size &&
+               y < size;
     }
 
     /**
@@ -132,9 +138,12 @@ public class board {
         int dmg = 1;
         for (ship ship : fleet) {
             for(int i = 0; i < ship.length; i++) {
-                if(ship.pos[i].x == att.x && ship.pos[i].y == att.y) {
+                if(ship.pos[i].y == att.y &&ship.pos[i].x == att.x ) {
                     ship.lifes[i] = 0;
-                    if(ship.destroyed()) dmg = 2;
+                    if(ship.destroyed()) {
+                        dmg = 2;
+                    }
+                    return dmg;
                 }
             }
         }
@@ -159,8 +168,10 @@ public class board {
      * checks if user won because he sunk all his opponents ships
      */
     public boolean won() {
-        if(opp_hp == 0) return false;
-        else return true;
+        if(opp_hp == 0) { 
+            return true;
+        }
+        return false;
     }
     /**
      * checks if someone won
@@ -186,15 +197,14 @@ public class board {
             writer.newLine();
             // write ship_set array into file 
             for(ship ship : fleet) {
-                writer.write(ship.length);
-                writer.write(" ");
+                writer.write(ship.length + " ");
             }
             writer.newLine();
             // write ship_pos into file
             for (int i = 0; i < size; i++) {
                 StringBuilder row = new StringBuilder();
                 for (int j = 0; j < size; j++) {
-                    row.append(ship_pos[i][j]);
+                    row.append(ship_pos[i][j] + " ");
                 }
                 writer.write(row.toString());
                 writer.newLine();
@@ -203,7 +213,7 @@ public class board {
             for (int i = 0; i < size; i++) {
                 StringBuilder row = new StringBuilder();
                 for (int j = 0; j < size; j++) {
-                    row.append(hit_pos[i][j]);
+                    row.append(hit_pos[i][j] + " ");
                 }
                 writer.write(row.toString());
                 writer.newLine();
@@ -211,16 +221,16 @@ public class board {
             // write entire fleet into file
             // order: x-pos, y-pos, lifes
             for (ship ship : fleet) {
-                for (int i = 0; i < ship_pos.length; i++) {
-                    writer.write(ship.pos[i].x);
+                for (int i = 0; i < ship.pos.length; i++) {
+                    writer.write(ship.pos[i].x + " ");
                 }
                 writer.newLine();
-                for (int i = 0; i < ship_pos.length; i++) {
-                    writer.write(ship.pos[i].y);
+                for (int i = 0; i < ship.pos.length; i++) {
+                    writer.write(ship.pos[i].y + " ");
                 }
                 writer.newLine();
-                for (int i = 0; i < ship_pos.length; i++) {
-                    writer.write((ship.lifes[i]));
+                for (int i = 0; i < ship.pos.length; i++) {
+                    writer.write(ship.lifes[i] + " ");
                 }
                 writer.newLine();
             }
@@ -228,11 +238,13 @@ public class board {
             for (int i = 0; i < size; i++) {
                 StringBuilder row = new StringBuilder();
                 for (int j = 0; j < size; j++) {
-                    row.append(opp_hit[i][j]);
+                    row.append(opp_hit[i][j] + " ");
                 }
                 writer.write(row.toString());
                 writer.newLine();
             }
+            writer.write(opp_hp + " ");
+
         } catch (IOException e) {
             System.err.println("Failed saving: " + e.getMessage());
         }

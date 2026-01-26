@@ -129,15 +129,17 @@ public class game {
             protected Void doInBackground() {
                 try {
                     response = coms.sendShot(x, y); // response = 0,1,2
-                    board1.register_shot(new coordinate(x, y), response);
                 } catch(Exception e) {
                     System.err.println("sending shot error: " + e);
                 }
                 return null;
             }
             protected void done() {
+                board1.register_shot(new coordinate(x, y), response);
+                board1.dec_hp(response);
                 if(board1.won()) {
                     // add win sequence here1
+                    start_local_turn();
                 }
                 gui.shot_answer(response);
                 if(response == 0) {
@@ -214,11 +216,12 @@ public class game {
                     break;
                     case 2:
                     gui.colorPlayerShip(p.x, p.y, answer);
-                    u_turn = 0;
-                    start_opp_turn();
                     if(board1.lost()) {
+                        start_local_turn();
                         // add losing sequence here
                     }
+                    u_turn = 0;
+                    start_opp_turn();
                     break;
                 }
             }
@@ -230,11 +233,18 @@ public class game {
      * by activating the users ui
      */
     public void start_local_turn() {
-        if(board1.game_over()) {
+        if(!board1.game_over()) {
             System.out.println("start local turn");
             gui.enableUI();
             u_turn = 1;
             // wait for shot from user
+        } else {
+            if(board1.won()) {
+                System.out.println("Won!!!!!!!!!!!!!!"); 
+            }
+            if(board1.lost()) {
+                System.out.println("Lost hahahahahaha"); 
+            }
         }
     }
     
@@ -243,7 +253,7 @@ public class game {
      * by listening for a shot, save or pass
      */
     public void start_opp_turn() {
-        if(board1.game_over()) {
+        if(!board1.game_over()) {
             System.out.println("start opp turn");
             gui.disableUI();
             new SwingWorker<Void, Void>() {
@@ -260,6 +270,8 @@ public class game {
                     return null;
                 }
             }.execute();
+        } else {
+            start_local_turn();
         }
     }
 } 
