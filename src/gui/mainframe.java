@@ -16,9 +16,13 @@ public class mainframe extends JFrame {
     public gamescreen GameScreen;
     public battlescreen BattleScreen;
     public pregamescreen PreGameScreen;
+    public pregamescreen2 PreGameScreen2;
     public String lastscreen;
-    //public game logic;
-    //public NetworkPlayer coms;
+    public game logic;
+    public NetworkPlayer coms;
+    int[] ships = null;
+    int size = 0;
+    public mainframe frame = this;
 
     private String color = "navy";
     public String lastscreen2;
@@ -30,6 +34,8 @@ public class mainframe extends JFrame {
     verschiedene Farben:
     new Color(20, 30, 50) new Color(220, 200, 190));
     */
+
+   public int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
    
     /**
      * Konstruiert Fensteroberfläche
@@ -59,7 +65,9 @@ public class mainframe extends JFrame {
         joinscreen joinscreen = new joinscreen(this);
         hostscreen hostscreen = new hostscreen(this);
         waitingscreen waitingscreen = new waitingscreen(this);
+        joinwaitscreen joinwaitscreen = new joinwaitscreen(this);
         PreGameScreen = new pregamescreen(this);
+        PreGameScreen2 = new pregamescreen2(this);
 
         /*--add to cPanel--*/
         cPanel.add(titlescreen, "titlescreen");
@@ -69,8 +77,10 @@ public class mainframe extends JFrame {
         cPanel.add(multiplayer, "multiplayer");
         cPanel.add(waitingscreen, "waitingscreen");
         cPanel.add(PreGameScreen, "pregamescreen");
+        cPanel.add(PreGameScreen2, "pregamescreen2");
         cPanel.add(joinscreen, "joinscreen");
         cPanel.add(hostscreen, "hostscreen");
+        cPanel.add(joinwaitscreen, "joinwaitscreen");
         add(cPanel);
         setVisible(true);
         pack();
@@ -83,44 +93,73 @@ public class mainframe extends JFrame {
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
-    /*
-    public boolean setupServer() {
-        Server host = (Server) coms;
-        try {
-            if(host.sendSize(PreGameScreen.gridSize)) {
-                if(host.sendShips(PreGameScreen.ships)) {
-                    if(host.sendReady()) {
-                        return true; 
-                    }
-                }
-            } 
-            return false;
-            
+
+    public void setupComs() {
+
+        if (coms instanceof Server) {
+            ships = PreGameScreen.ships;
+            size = PreGameScreen.gridSize;
+            try {
+                Server host = (Server) coms;
+                host.sendSize(size);
+                host.sendShips(ships);
         } catch (Exception e) {
             System.err.println("failed transmitting the setup variables: " + e);
-            return false;
         }
-    }
-
-    public void setupClient() {
-        Client joinee = (Client) coms;
-        try {
-            joinee.receiveSetup();
-        } catch (Exception e) {
-            System.err.println("Failed to recieve Setup variables: " + e);
+        } else if (coms instanceof Client) {
+            Client joinee = (Client) coms;
+            try {
+                joinee.receiveSetup();
+            } catch (Exception e) {
+                System.err.println("Failed to recieve Setup variables: " + e);
+            }
+            ships = joinee.ships;
+            size = joinee.size;
+        } else {
+            try {
+                ships = PreGameScreen2.ships;
+                size = PreGameScreen2.gridSize;
+                Bot b = (Bot) coms;
+                b.setdifficulty(1);
+                b.sendSize(size);
+                b.sendShips(ships);
+            } catch(Exception e) {
+                System.err.println("Bot couldnt receive parameters: " + e);
+            }
         }
 
     }
 
-    public void setupCPU() {
-        // setup for the AI opponent
-    }
-
-    */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
-        GameScreen = new gamescreen(this, PreGameScreen.ships, PreGameScreen.gridSize);
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                setupComs();
+                return null;
+            }
+            protected void done() {
+
+                GameScreen = new gamescreen(frame, ships, size);
+
+                cPanel.add(GameScreen, "gamescreen");
+                cLayout.show(cPanel, "gamescreen");
+                cPanel.revalidate();
+                cPanel.repaint();
+
+            }
+        }.execute();
+
+
+    }
+
+    /**
+    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
+    */
+    public void startGamescreen2() {
+        if (GameScreen != null) cPanel.remove(GameScreen);
+
+        GameScreen = new gamescreen(this, PreGameScreen2.ships, PreGameScreen2.gridSize);
 
         /*if (coms instanceof Server) {
             try {
@@ -155,17 +194,34 @@ public class mainframe extends JFrame {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
         BattleScreen = new battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
-        /*
+
         if (logic != null) logic = null;
         logic = new game(BattleScreen.gridSize, BattleScreen.SHIPS, BattleScreen, coms);
         BattleScreen.setGame(logic);
         coms.set_game(logic);
-        logic.setup_board();
-        */
-        cPanel.add(BattleScreen, "battlescreen");
-        cLayout.show(cPanel, "battlescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
+
+         new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                    try {
+                        coms.sendReady();
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+                return null;
+            }
+            protected void done() {
+                logic.setup_board();
+                if(coms instanceof Client) {
+                    logic.u_turn = 0;
+                    logic.start_opp_turn();
+                }
+                cPanel.add(BattleScreen, "battlescreen");
+                cLayout.show(cPanel, "battlescreen");
+                cPanel.revalidate();
+                cPanel.repaint();
+            }
+        }.execute();
+       
     }
 
     /**
@@ -190,9 +246,9 @@ public class mainframe extends JFrame {
     /**  
     Handles loading the game.
     */
-   /*
+   
     public void handleLoadGame() {
-      JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
+    /*  JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
 
         // Optional: restrict to text files
         fileChooser.setFileFilter( // es werden nur txt Dateien angezeigt
@@ -206,6 +262,8 @@ public class mainframe extends JFrame {
         if (result == JFileChooser.APPROVE_OPTION) { // prüft ob der Nutzer eine Datei ausgewählt hat
             File selectedFile = fileChooser.getSelectedFile(); // es wird sich das Datei Objekt geholt, welches der Nutzer angeklickt hat. Es enthält Informationen wie Dateiname, Größe und Pfad, aber nicht über den Inhalt
 
+        String path = selectedFile.getAbsolutePath();
+
         // Pass filename or path to game logic
         gLogic.load_game(selectedFile.getAbsolutePath()); // Pfad zur Datei wird in die gLogic Methode gegeben
 
@@ -213,9 +271,8 @@ public class mainframe extends JFrame {
         } else {
             gameSaved = false;
         }
-    }
-    */
-   
+    */}
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }

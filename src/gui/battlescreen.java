@@ -136,7 +136,7 @@ public class battlescreen extends JPanel {
             gameSaved = true;
             new SaveGameDialog(frame);
         });
-        // saveButton.addActionListener(e -> gLogic.save_game());
+        saveButton.addActionListener(e -> gLogic.save_game());
         pFieldPanel.add(saveButton);
 
         /*--Fügt Spielerfeld-Panel auf Spielerseite (links) hinzu--*/
@@ -352,7 +352,8 @@ public class battlescreen extends JPanel {
         selectedEnemyCell.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
         // Enable confirm button
-        confirmShotButton.setEnabled(true);
+        if(gLogic.u_turn == 1) 
+            confirmShotButton.setEnabled(true);
 
         eCells[x][y].setEnabled(false);
     }
@@ -397,14 +398,17 @@ public class battlescreen extends JPanel {
             return;
         }
 
-        int result = gLogic.send_shot(selectedX, selectedY);
+        gLogic.send_shot(selectedX, selectedY);
+    }
 
-        colorEnemyShip(selectedX, selectedY, result);
+    public void shot_answer(int response) {
+        colorEnemyShip(selectedX, selectedY, response);
 
         // Reset selection
         selectedEnemyCell = null;
         selectedX = -1;
         selectedY = -1;
+
     }
     /**
      * Methode für den Farbverlauf des Screens

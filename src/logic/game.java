@@ -1,6 +1,8 @@
 package src.logic;
 import java.io.*;
 
+import javax.swing.SwingWorker;
+
 import src.gui.*;
 import src.coms.*;
 
@@ -13,18 +15,18 @@ public class game {
     private board board1;
     private battlescreen gui;
     private NetworkPlayer coms;
-    private boolean user_t;
+    public int u_turn = 1;
     private int[] s_dir;
     // add gui and coms classes
     public game(int size, int[] ship_set, battlescreen g, NetworkPlayer n) {
         board1 = new board(size, ship_set);
         this.gui = g;
         this.coms = n;
-        for (int i = 0; i < gui.DIR.length; i++) {
+        s_dir = new int[ship_set.length];
+         for (int i = 0; i < gui.DIR.length; i++) {
             if(gui.DIR[i]) s_dir[i] = 0;
             else s_dir[i] = 1;
         }
- // make first turn distinct between Server and Client
     }
 
     /**
@@ -101,14 +103,15 @@ public class game {
 
         }
     }
-    
+
     /**
      * setup_board() syncs the board with the battlescreen after the user 
      * placed all his ships
      */
     public void setup_board() {
+        coordinate[] c = gui.COR;
         for (int i = 0; i < gui.SHIPS.length; i++) {
-            board1.place_ship(gui.COR[i], s_dir[i], i);
+            board1.place_ship(c[i], s_dir[i], i);
         }        
     }
     /**
@@ -118,33 +121,32 @@ public class game {
      *
      * @param x horizontal position of the shot fired by the user
      * @param y vertical position of the shot fired by the user
-     * @return response from the network prob. will be deleted soon
      */
-    public int send_shot(int x, int y) {
-        // turn user turn ui off
-        try {
-        int response = coms.sendShot(x, y); // response = 0,1,2
-            // add enemy field to board for save/load and for shot validation
-            board1.register_shot(new coordinate(x, y), response);
-            if(board1.won()) {
-                // add win sequence here
+    public void send_shot(int x, int y) {
+        gui.disableUI();
+        new SwingWorker<Void, Void>() {
+            public int response = 0;
+            protected Void doInBackground() {
+                try {
+                    response = coms.sendShot(x, y); // response = 0,1,2
+                    board1.register_shot(new coordinate(x, y), response);
+                } catch(Exception e) {
+                    System.err.println("sending shot error: " + e);
+                }
+                return null;
             }
-            if(response == 0) {
-                coms.sendPass();
-                // start_opp_turn() here interferes with the gui since the gui relies on the return from send_shot() 
-                // but start_opp_turn() calls to wait for a shot/save message from the other opponent meaning right now 
-                // when a player shoots and misses his shot will only be revealed after all the shots from the opponent
-                // replace the return with a method call to the gui that visuallizes the hit
-                // (just do everything battlescreen.confirm_shot() does after the send_shot() call)
-                start_opp_turn(); 
-            } else {
-                start_local_turn();
+            protected void done() {
+                if(board1.won()) {
+                    // add win sequence here1
+                }
+                gui.shot_answer(response);
+                if(response == 0) {
+                    start_opp_turn(); 
+                } else {
+                    start_local_turn();
+                }
             }
-        return response;
-        } catch (Exception e) {
-            System.err.println("Network error caught in send_shot: " + e);
-            return send_shot(x, y);
-        }
+        }.execute();
     }
 
     /**
@@ -187,37 +189,40 @@ public class game {
      * answers forwards the coordinate and answer to the gui
      *
      * @param p coordinate of the position the opponent is shooting at
-     * @return response from the logic prob. will be deleted soon
      */
-    public int get_hit(coordinate p) {
-        int answer = board1.check_hit(p); 
-        try {
-            coms.sendAnswer(answer);
-            switch(answer) {
-                case 0:
-                gui.colorPlayerShip(p.x, p.y, answer);
-                start_local_turn();
-                break;
-                case 1:
-                gui.colorPlayerShip(p.x, p.y, answer);
-                start_opp_turn();
-                break;
-                case 2:
-                gui.colorPlayerShip(p.x, p.y, answer);
-                start_opp_turn();
-                if(board1.lost()) {
-                    // add losing sequence here
+    public void get_hit(coordinate p) {
+        int answer = board1.check_hit(p);
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() {
+                try {
+                coms.sendAnswer(answer);
+                } catch (Exception e) {
+                    System.err.println("Network error caught in get_hit: " + e);
                 }
-                break;
-                case -1:
-
-                break;
+                return null;
             }
-            return answer; 
-        } catch (Exception e) {
-            System.err.println("Network error caught in get_hit: " + e);
-            return get_hit(p);
-        }
+            protected void done() { 
+                switch(answer) {
+                    case 0:
+                    gui.colorPlayerShip(p.x, p.y, answer);
+                    start_local_turn();
+                    break;
+                    case 1:
+                    gui.colorPlayerShip(p.x, p.y, answer);
+                    u_turn = 0;
+                    start_opp_turn();
+                    break;
+                    case 2:
+                    gui.colorPlayerShip(p.x, p.y, answer);
+                    u_turn = 0;
+                    start_opp_turn();
+                    if(board1.lost()) {
+                        // add losing sequence here
+                    }
+                    break;
+                }
+            }
+        }.execute();
     }
  
     /**
@@ -226,7 +231,9 @@ public class game {
      */
     public void start_local_turn() {
         if(board1.game_over()) {
-            // activate turn ui for user
+            System.out.println("start local turn");
+            gui.enableUI();
+            u_turn = 1;
             // wait for shot from user
         }
     }
@@ -237,12 +244,22 @@ public class game {
      */
     public void start_opp_turn() {
         if(board1.game_over()) {
-            // disable user turn ui   
-            try {
-                coms.receiveMessageWithSaveHandling();
-            } catch (Exception e) {
-                System.err.println("Network error caught in start_opp_turn(): " + e);
-            }
+            System.out.println("start opp turn");
+            gui.disableUI();
+            new SwingWorker<Void, Void>() {
+                protected Void doInBackground() {
+                    try {
+                        if(u_turn == 1) {
+                            u_turn = 0;
+                            coms.sendPass();
+                        }
+                        coms.receivemessagewsave();
+                    } catch (Exception e) {
+                        System.err.println("Network error caught in start_opp_turn(): " + e);
+                    }
+                    return null;
+                }
+            }.execute();
         }
     }
 } 

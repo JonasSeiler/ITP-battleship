@@ -8,7 +8,7 @@ import java.awt.*;
  * Festlegung der Anzahl der Schiffe und der Spielfeldgröße
  * @author Matthias Wiese
  */
-public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
     private JSpinner ship_size3;
     private JSpinner ship_size4;
@@ -18,6 +18,9 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private RoundButton zurueck_button;
     private JButton hamburger;
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
+    private JRadioButton easy;
+    private JRadioButton medium;
+    private JRadioButton hard;
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
     private mainframe frame; // Referenz auf das Hauptfenster
@@ -26,9 +29,9 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
      * Erstellt den Screen für die Spieleinstellungen und erstellt und initialisiert Objekte
      * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
      */
-    public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
+    public pregamescreen2(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen2 gibt Befehle an den mainframe
         this.frame = frame;
-        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen gepackt
+        setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen2 gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
@@ -38,7 +41,8 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         capacityBar.setUI(new javax.swing.plaf.basic.BasicProgressBarUI()); // verbietet dem Betriebssystem sich in das Design einzumischen, man nimmt die Original JProgressBar
         capacityBar.setForeground(new Color(0,191,255)); // Der Fortschrittsbalken ist in einem "Deep Sky Blue". Es wird ein neues Color Objekt mit diesen Werten erstellt, was diese Farbe ist
         capacityBar.setBackground(new Color(20,30,50)); // Der noch zu füllende Bereich ist in einem sehr dunklen Blau
-        capacityBar.setFont(new Font("Times New Roman",Font.PLAIN,16));
+        Font font = new Font("Times New Roman", Font.PLAIN, 16);
+        capacityBar.setFont(font);
         capacityBar.setBorder(BorderFactory.createLineBorder(new Color(20,30,50),3,true)); // es wird ein Rahmen um die capacityBar gelegt der außen ein ganz bisschen abgerundet ist
         SpinnerNumberModel mapSizeModel = new SpinnerNumberModel(7, 5, 30, 1); // legt die Logik fest also startet bei 10 usw.
         SpinnerNumberModel shipSizeModel5 = new SpinnerNumberModel(1,0,6,1);
@@ -46,30 +50,42 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         SpinnerNumberModel shipSizeModel3 = new SpinnerNumberModel(1,0,10,1);
         SpinnerNumberModel shipSizeModel2 = new SpinnerNumberModel(1,0,15,1); // jeder Button braucht seine eigene Logik sonst springt der Button den man nicht ausgewählt hat auch höher, wenn man die Logik mehreren Button gibt
         start_button = new RoundButton("Start"); // neuer Button mit Text im Button
-        // start_button.setBackground(Color.GREEN); // Hintergrund grün
-        // start_button.setForeground(Color.BLACK); // Schrift weiß
-        // start_button.setFont(new Font("Times New Roman", Font.PLAIN,16)); // Schriftart
-        // start_button.setOpaque(true); // Sonst sieht man die Farbe auf dem Mac oft nicht
+        JPanel difficulty = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0)); // ordnet alles nebeneinander an
+        difficulty.setOpaque(false);
+        easy = new JRadioButton("Easy");
+        medium = new JRadioButton("Medium", true); // der Punkt wird mit true gesetzt
+        hard = new JRadioButton("Hard");
+        ButtonGroup difficulty_group = new ButtonGroup(); // dadurch kann immer nur ein JRadioButton gleichzeitig ausgewählt sein
+        difficulty_group.add(easy);
+        difficulty_group.add(medium);
+        difficulty_group.add(hard);
+        easy.setFont(font);
+        medium.setFont(font);
+        hard.setFont(font);
+        easy.setForeground(Color.WHITE);
+        medium.setForeground(Color.WHITE);
+        hard.setForeground(Color.WHITE);
         zurueck_button = new RoundButton("Exit");
-        // zurueck_button.setForeground(Color.BLACK);
-        // zurueck_button.setFont(new Font("Times New Roman", Font.BOLD,22));
         gridSize1 = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
         ship_size5 = new JSpinner(shipSizeModel5);
         ship_size4 = new JSpinner(shipSizeModel4);
         ship_size3 = new JSpinner(shipSizeModel3);
         ship_size2 = new JSpinner(shipSizeModel2);
+        JLabel difficulty_label = new JLabel("Difficulty (Bot)");
         JLabel BarLabel = new JLabel("Available Space");
         JLabel sizeLabel = new JLabel("Field Size"); // Textfeld
         JLabel shipSizeLabel5 = new JLabel("Aircraft Carrier (Size 5)");
         JLabel shipSizeLabel4 = new JLabel("Battleship (Size 4)");
         JLabel shipSizeLabel3 = new JLabel("Submarine (Size 3)");
         JLabel shipSizeLabel2 = new JLabel("Destroyer (Size 2)");
+        difficulty_label.setFont(new Font("Times New Roman", Font.BOLD, 16));
         BarLabel.setFont(new Font("Times New Roman",Font.BOLD,16));
         sizeLabel.setFont(new Font("Times New Roman", Font.BOLD, 16)); // Schriftart-Objekt wird erstellt und in Schriftart Times New Roman fett und in größe 16
         shipSizeLabel5.setFont(new Font("Times New Roman", Font.BOLD, 16));
         shipSizeLabel4.setFont(new Font("Times New Roman", Font.BOLD, 16));
         shipSizeLabel3.setFont(new Font("Times New Roman", Font.BOLD, 16));
         shipSizeLabel2.setFont(new Font("Times New Roman", Font.BOLD, 16));
+        difficulty_label.setForeground(Color.WHITE);
         BarLabel.setForeground(Color.WHITE);
         sizeLabel.setForeground(Color.WHITE); // Textfarbe ist weiß
         shipSizeLabel5.setForeground(Color.WHITE);
@@ -91,7 +107,11 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
-
+        difficulty.add(easy);
+        difficulty.add(medium);
+        difficulty.add(hard);
+        contentPanel.add(difficulty_label);
+        contentPanel.add(difficulty);
         contentPanel.add(BarLabel);
         contentPanel.add(capacityBar);
         contentPanel.add(sizeLabel); // fügt die Objekte auf die innere Leinwand Schritt für Schritt also erst das erste, dann das zweite...
@@ -122,10 +142,11 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
             int max = (Integer) capacityBar.getMaximum();
             if (max == occupied) {
                 start();
+                start2();
                 frame.startGamescreen();
             }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
         hamburger.addActionListener(e -> {
-                frame.lastscreen = "pregamescreen";
+                frame.lastscreen = "pregamescreen2";
                 frame.showScreen("settings");
         });
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
@@ -157,6 +178,16 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
             ships[i] = 2;
         }
         gridSize = (Integer) gridSize1.getValue();
+    }
+
+    public void start2() {
+        if (easy.isSelected()) {
+            frame.difficulty = 1;
+        } else if (medium.isSelected()) {
+            frame.difficulty = 2;
+        } else if (hard.isSelected()) {
+            frame.difficulty = 3;
+        }
     }
 
     /**

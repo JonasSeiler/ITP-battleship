@@ -2,6 +2,7 @@ package src.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import src.coms.*;
 
 /**
  * Screen im Multiplayermodus, indem man entscheiden kann, ob man einem Spiel joined oder ein Spiel hostet
@@ -13,7 +14,6 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
     private RoundButton host_game;
     private RoundButton exit;
     private JButton hamburger;
-
     /**
      * Erstellt den Multiplayerscreen und erstellt und initialisiert Objekte
      * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
@@ -26,8 +26,8 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE);
-        join_game = new RoundButton("Join game");
-        host_game = new RoundButton("Host game");
+        join_game = new RoundButton("Join Game");
+        host_game = new RoundButton("Host Game");
         exit = new RoundButton("Exit");
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
         // join_game.setFont(new Font("Times New Roman", Font.BOLD,20));
@@ -62,7 +62,25 @@ public class multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         join_game.addActionListener(e -> {frame.showScreen("joinscreen");});
         host_game.addActionListener(e -> {
             frame.lastscreen2 = "multiplayer";
-            frame.showScreen("waitingscreen");});
+            frame.showScreen("waitingscreen");
+            if (frame.coms != null) {
+                frame.coms = null;
+            }
+
+            frame.coms = new Server();
+            new SwingWorker<Void, Void>() {
+                protected Void doInBackground() throws Exception {
+                    try {
+                        frame.coms.start();
+                        frame.showScreen("pregamescreen");
+                    } catch(Exception ex) {
+                        System.err.println("Error starting to host: " + ex);
+                    }
+                    return null;
+                }
+            }.execute();
+        });
+
         exit.addActionListener(e -> {frame.showScreen("titlescreen");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "multiplayer";

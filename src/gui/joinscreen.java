@@ -2,6 +2,7 @@ package src.gui; // Datei gehört in das Verzeichnis src.gui
 
 import javax.swing.*;
 import java.awt.*;
+import src.coms.*;
 
 /**
  * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
@@ -28,7 +29,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         JLabel title = new JLabel("Tidebreaker");
         title.setForeground(Color.WHITE); // Farbe der Schrift
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        JLabel ip_adress = new JLabel("             IP adress");
+        JLabel ip_adress = new JLabel("             IP Adress");
         ip_adress.setForeground(Color.WHITE);
         ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         exit = new RoundButton("Exit");
@@ -62,7 +63,10 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
         exit.addActionListener(e -> {frame.showScreen("multiplayer");});
 
-        connect.addActionListener(e -> {connection();});
+        connect.addActionListener(e -> {
+            connection(); 
+            frame.lastscreen2 = "joinscreen"; 
+        });
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";
@@ -75,6 +79,27 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      */
     void connection() {
         String ipAdress = ip.getText();
+        if(frame.coms != null) {
+            frame.coms = null;
+        }
+        frame.coms = new Client();
+        Client c = (Client) frame.coms;
+        new SwingWorker<Void, Void>() {
+            protected Void doInBackground() throws Exception {
+                c.setServerAddress(ipAdress);
+                try {
+                    c.start();
+                } catch (Exception e) {
+                    System.err.println("Couldnt connect to server: " + e);
+                }
+
+                return null;
+            }
+            protected void done() {
+                frame.showScreen("joinwaitscreen");
+                frame.startGamescreen();
+            }
+        }.execute();
     }
 
 

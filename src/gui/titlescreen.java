@@ -2,6 +2,7 @@ package src.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import src.coms.*;
 
 /**
  * Erster Screen den der Spieler sieht. Auswahl zwischen Singleplayer und Multiplayer
@@ -52,7 +53,18 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        singleplayer.addActionListener(e -> {frame.showScreen("singleplayer");});
+        singleplayer.addActionListener(e -> {
+            frame.showScreen("singleplayer");
+            if(frame.coms != null) {
+                frame.coms = null;
+            }
+            frame.coms = new Bot();
+            try {
+                frame.coms.start();
+            } catch(Exception ex) {
+                System.err.println("Error initing Bot: " + ex);
+            }
+        });
         multiplayer.addActionListener(e -> {frame.showScreen("multiplayer");});
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "titlescreen";
