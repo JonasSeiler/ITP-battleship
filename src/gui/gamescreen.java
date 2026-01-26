@@ -91,7 +91,7 @@ public class gamescreen extends JPanel {
         this.setOpaque(false);
 
         /*--Titel--*/
-        JLabel title = new JLabel("Tidebreaker");
+        JLabel title = new JLabel("Battleship");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Times New Roman", Font.BOLD, 28));
         title.setForeground(Color.WHITE);

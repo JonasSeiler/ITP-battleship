@@ -69,7 +69,7 @@ public class battlescreen extends JPanel {
         this.setOpaque(false);
 
         /*--Titel--*/
-        JLabel title = new JLabel("Tidebreaker");
+        JLabel title = new JLabel("Battleship");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Times New Roman", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
@@ -384,8 +384,6 @@ public class battlescreen extends JPanel {
     private void handleExitGame() {
         if (gameSaved) {
             frame.showScreen("titlescreen");
-        } else {
-            new QuitConfirmDialog(frame);
             try {
                 frame.coms.close();
             } catch(Exception ex) {
@@ -394,25 +392,7 @@ public class battlescreen extends JPanel {
             frame.coms = null;
             return;
         } else {
-            int choice = JOptionPane.showConfirmDialog(
-                this,
-                "The game has not been saved.\nDo you really want to quit?",
-                "Unsaved Progress",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-            );
-
-            if (choice == JOptionPane.YES_OPTION) {
-                frame.showScreen("titlescreen");
-                try {
-                    frame.coms.close();
-                } catch(Exception ex) {
-                    System.err.println("Failed closing connection: " + ex);
-                }
-                frame.coms = null;
-            } else if (choice == JOptionPane.NO_OPTION) {
-                frame.showScreen("battlescreen");
-            }
+            new QuitConfirmDialog(frame);
         }
     }
     /**
