@@ -195,12 +195,17 @@ public class Bot extends NetworkPlayer {
     @Override
     public int sendShot(int row, int col) throws IOException {
     
-        if (row < 0 || row > boardSize || col < 0 || col > boardSize) {
-            throw new IOException("Ungueltige Koordinaten: (" + row + ", " + col + ")");
+        int zeroBasedRow = row - 1;
+        int zeroBasedCol = col - 1;
+    
+        // Korrekte Grenzpruefung (0-basiert)
+        if (zeroBasedRow < 0 || zeroBasedRow >= boardSize || 
+            zeroBasedCol < 0 || zeroBasedCol >= boardSize) {
+            throw new IOException("Ungueltige Koordinaten: (" + row + ", " + col + ") fuer Board-Groesse " + boardSize);
         }
-        
-        coordinate shot = new coordinate(row, col);
-        
+    
+        coordinate shot = new coordinate(zeroBasedRow, zeroBasedCol);  // 0-basiert!
+    
         return ownBoard.check_hit(shot);
     }
     
