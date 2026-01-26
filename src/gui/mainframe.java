@@ -41,7 +41,7 @@ public class mainframe extends JFrame {
      * Konstruiert Fensteroberfläche
      */
     public mainframe() {
-        this.setTitle("Tidebreaker"); // title of frame
+        this.setTitle("Battleship"); // title of frame
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits program when hitting the close button
         this.setSize(640, 640); // sets x- and y-dimension
 
