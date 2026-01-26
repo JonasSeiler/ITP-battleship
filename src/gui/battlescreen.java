@@ -71,7 +71,7 @@ public class battlescreen extends JPanel {
         /*--Titel--*/
         JLabel title = new JLabel("Tidebreaker");
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setFont(new Font("Sans Serif", Font.BOLD, 28));
+        title.setFont(new Font("Times New Roman", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
@@ -92,10 +92,10 @@ public class battlescreen extends JPanel {
         pSide.add(pField, BorderLayout.CENTER);
 
         /*--Spielertitel--*/
-        JLabel playerTitle = new JLabel("Your side");
+        JLabel playerTitle = new JLabel("Your Side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
-        playerTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--Netzhalter (Spieler)--*/
@@ -134,12 +134,7 @@ public class battlescreen extends JPanel {
         saveButton.setEnabled(true);
         saveButton.addActionListener(e -> {
             gameSaved = true;
-            JOptionPane.showMessageDialog(
-                this,
-                "The game has been successfully saved",
-                "Save Game",
-                JOptionPane.INFORMATION_MESSAGE
-            );
+            new SaveGameDialog(frame);
         });
         // saveButton.addActionListener(e -> gLogic.save_game());
         pFieldPanel.add(saveButton);
@@ -158,10 +153,10 @@ public class battlescreen extends JPanel {
         eSide.add(eField, BorderLayout.CENTER);
 
         /*--Gegnertitel--*/
-        JLabel enemyTitle = new JLabel("Enemy side");
+        JLabel enemyTitle = new JLabel("Enemy Side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
-        enemyTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--Netzhalter (Gegner)--*/
@@ -213,8 +208,8 @@ public class battlescreen extends JPanel {
         this.add(board, BorderLayout.CENTER);
         drawPlayerShips();
         setFocusable(true);
+        //new EndGameDialog(frame, "You Lost!");
     }
-    
     /**
      * Erstellt ein Spielfeld
      * 
@@ -375,22 +370,9 @@ public class battlescreen extends JPanel {
     */
     private void handleExitGame() {
         if (gameSaved) {
-        frame.showScreen("titlescreen");
-        return;
-        } else {
-            int choice = JOptionPane.showConfirmDialog(
-            this,
-            "The game has not been saved.\nDo you really want to quit?",
-            "Unsaved Progress",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-            );
-
-            if (choice == JOptionPane.YES_OPTION) {
             frame.showScreen("titlescreen");
-            } else if (choice == JOptionPane.NO_OPTION) {
-            frame.showScreen("battlescreen");
-            }
+        } else {
+            new QuitConfirmDialog(frame);
         }
     }
     /**
@@ -441,17 +423,14 @@ public class battlescreen extends JPanel {
 }
 
 /*  
-    Grid left side abstand/rahmen
-    Cells should always be quadratic
-    --Macht Matthias alles----
-    Load Game implementieren -> when explorer button 'open' is pressed call Jonas' load_game("data-name.txt") function
-    -> remove load game
-    --------------------------
-    confirm shot button and save game button -> 1 method to disable the button -> 1 method to enable the button
-    confirm shot button -> cell has to be selected and then shot button
-    during game 'battlescreen' load game button -> false and save game button -> true
-    during 'gamescreen' load game button -> true and save game button -> false
+    -> undo ship with mouseclick on ship X
+    -> exit and save msg not ugly X
+    -> change text font to 'Times New Roman' titles X
+    -> when game is over -> end screen pop up --> exit button leads to titlescreen X
+    -> enter uses confirm shot button
+    -> esc uses exit button
+
+    -> battlescreen Reihenfolge von Schiffen passt nicht so wie gamescreen (COR[], SHIPS[], DIR[])
 
     when somebody wins/loses user msg
-    change background colors for each specific color theme (beige, dark, blue)
 */

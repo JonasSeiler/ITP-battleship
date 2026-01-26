@@ -93,7 +93,7 @@ public class gamescreen extends JPanel {
         /*--Titel--*/
         JLabel title = new JLabel("Tidebreaker");
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setFont(new Font("Sans Serif", Font.BOLD, 28));
+        title.setFont(new Font("Times New Roman", Font.BOLD, 28));
         title.setForeground(Color.WHITE);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
@@ -113,10 +113,10 @@ public class gamescreen extends JPanel {
         pField = createField(gridSize, gridSize, pCells);
 
         /*--Spielertitel--*/
-        JLabel playerTitle = new JLabel("Your side");
+        JLabel playerTitle = new JLabel("Your Side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
-        playerTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--Netzhalter (Spieler)--*/
@@ -193,10 +193,10 @@ public class gamescreen extends JPanel {
         eField = createField(gridSize, gridSize, eCells);
 
         /*--Gegnertitel--*/
-        JLabel enemyTitle = new JLabel("Enemy side");
+        JLabel enemyTitle = new JLabel("Enemy Side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
-        enemyTitle.setFont(new Font("Sans Serif", Font.BOLD, 20));
+        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--Netzhalter (Gegner)--*/
@@ -308,7 +308,11 @@ public class gamescreen extends JPanel {
                     }
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        placeShip(row, col);
+                        if (occupied[row][col]) {
+                            removeShipAt(row, col);
+                        } else {
+                            placeShip(row, col);
+                        }
                     }
                 });
             }
@@ -577,23 +581,11 @@ public class gamescreen extends JPanel {
     */
     private void handleExitGame() {
         if (gameSaved) {
-        frame.showScreen("titlescreen");
-        return;
-        } else {
-            int choice = JOptionPane.showConfirmDialog(
-            this,
-            "The game has not been saved.\nDo you really want to quit?",
-            "Unsaved Progress",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-            );
-
-            if (choice == JOptionPane.YES_OPTION) {
             frame.showScreen("titlescreen");
-            } else if (choice == JOptionPane.NO_OPTION) {
-            frame.showScreen("battlescreen");
-            }
+            return;
         }
+
+        new QuitConfirmDialog(frame);
     }
     /**
      * Entfernt alle bereits platzierten Schiffe
@@ -634,6 +626,70 @@ public class gamescreen extends JPanel {
         shipSelector.setEnabled(true);
         updateComboBoxDisplayAutoSkip();
     }
+    /**
+     * Entfernt Schiff an spezifischer Koordinate
+     * 
+     * @param r     row (x-Koordinate)
+     * @param c     column (y-Koordinate)
+     */
+    private void removeShipAt(int r, int c) {
+        int index = findShipIndexAt(r, c);
+        if (index == -1) return;
+
+        int size = SHIPS[index];
+        boolean dir = DIR[index];
+        coordinate start = COR[index];
+
+        // clear board + occupied
+        for (int i = 0; i < size; i++) {
+            int rr = start.x + (dir ? i : 0);
+            int cc = start.y + (dir ? 0 : i);
+
+            occupied[rr][cc] = false;
+            pCells[rr][cc].setBackground(Color.DARK_GRAY);
+        }
+
+        // restore ship count
+        shipsLeft[size - 2]++;
+
+        // compact arrays (IMPORTANT)
+        for (int i = index; i < placedShipCount - 1; i++) {
+            COR[i] = COR[i + 1];
+            SHIPS[i] = SHIPS[i + 1];
+            DIR[i] = DIR[i + 1];
+        }
+
+        COR[placedShipCount - 1] = null;
+        placedShipCount--;
+
+        shipSelector.setEnabled(true);
+        updateComboBoxDisplayAutoSkip();
+        clearPreview();
+    }
+    /**
+     * Findet Schiff-Index an spezifischer Koordinate
+     * @param r     row (x-Koordinate)
+     * @param c     column (y-Koordinate)
+     * @return      Rückgabewert ist der Index
+     */
+    private int findShipIndexAt(int r, int c) {
+        for (int i = 0; i < placedShipCount; i++) {
+            coordinate start = COR[i];
+            int size = SHIPS[i];
+            boolean dir = DIR[i];
+
+            for (int j = 0; j < size; j++) {
+                int rr = start.x + (dir ? j : 0);
+                int cc = start.y + (dir ? 0 : j);
+
+                if (rr == r && cc == c) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
     /**
      * Methode für den Farbverlauf des Screens
      * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
