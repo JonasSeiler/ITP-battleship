@@ -2,9 +2,13 @@ package src.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
+import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
+import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_Escape)
+import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen, wodurch der User die Anleitung des Spiels lesen kann
+ * Screen allowing the user to read the game instructions
  * @author Matthias
  */
 public class game_instructions extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -14,14 +18,25 @@ public class game_instructions extends JPanel { // JPanel ist ein Standard-Conta
     private JTextArea game_instructions;
 
     /**
-     * Erstellt den Startbildschirm und erstellt und initialisiert Objekte
-     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     * Creates the start screen and creates and initializes objects
+     * @param frame the reference to the main window so that methods for changing screens can be called on it later
      *
      */
     public game_instructions(mainframe frame) { // mainframe ist das Hauptfenster und game_instructions gibt Befehle an den mainframe
         this.frame = frame;
         this.setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den game_instructionsscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
+
+        AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                frame.showScreen("settings");
+            }
+        };
+        KeyStroke exitTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die esc Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(exitTaste, "exit"); // überwacht, ob die Exit Taste gedrückt wurde
+        this.getActionMap().put("exit", exitAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         game_instructions_label = new JLabel("Game Instructions");
@@ -61,13 +76,13 @@ public class game_instructions extends JPanel { // JPanel ist ein Standard-Conta
         gbc.fill = GridBagConstraints.BOTH; // nimmt den kompletten Platz, den ich bei weightx und weighty reserviert habe
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        hamburger.addActionListener(e -> {frame.showScreen("settings");});
+        hamburger.addActionListener(exitAction);
     }
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     * Method for the color gradient of the screen
+     * Method is automatically called by the system when the component needs to be redrawn.
+     * @param g The graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen

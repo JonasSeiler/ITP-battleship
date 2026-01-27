@@ -4,9 +4,13 @@ import javax.swing.*;
 import src.coms.Server;
 
 import java.awt.*;
+import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
+import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
+import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_Escape)
+import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
+ * Screen in multiplayer mode, where you can join a game
  * @author Max Steingräber, Matthias Wiese
  */
 public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -16,13 +20,30 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
     JLabel waitMsg;
 
     /**
-     * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
-     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     * Creates the screen to join a game and creates and initializes objects.
+     * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
     public waitingscreen(mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den waitingscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
+
+        AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                frame.showScreen("multiplayer");
+            try {
+            frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+            }
+        };
+        KeyStroke exitTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die esc Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(exitTaste, "exit"); // überwacht, ob die Exit Taste gedrückt wurde
+        this.getActionMap().put("exit", exitAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
@@ -81,9 +102,9 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
 
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g ein Grafik-Objekt, das vom System zur Verfügung gestellt wird, um die Komponente auf dem Bildschirm darzustellen
+     * Method for the color gradient of the screen
+     * Method is automatically called by the system when the component needs to be redrawn.
+     * @param g A graphic object provided by the system to display the component on the screen.
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen

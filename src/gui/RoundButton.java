@@ -3,8 +3,8 @@ import javax.swing.*; // Werkzeuge für den Button
 import java.awt.*; // Werkzeuge für Farben, Schriften und die Grafik-Power
 
 /**
- * Eine angepasste Version des JButtons mit
- * Glas Design und abgerundeten Ecken
+ * A customized version of the JButtons with
+ * Glass design and rounded corners
  * @author Matthias Wiese
  */
 public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ein JButton
@@ -12,10 +12,10 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
     private int cornerRadius = 30; // Wie rund der Button sein soll
 
     /**
-     * Initialisiert den RoundButton
-     * Deaktiviert das Standard-Design von Swing, um den benutzerdefinierten 
-     * Glas-Look und die abgerundeten Ecken zu ermöglichen.
-     * @param label Der Text der auf dem Button angezeigt werden soll
+     * Initializes the RoundButton
+     * Disables the default Swing theme to use the custom
+     * Glass look and rounded corners.
+     * @param label The text to be displayed on the button
      */
     public RoundButton(String label) { // Konstruktor
         super(label); // ruft den Konstruktor von JButton auf und der JButton, also die Mutterklasse schreibt den Text rein, aber es wird erstmal nur gespeichert
@@ -28,9 +28,9 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
     }
 
     /**
-     * Methode, welche den Button malt
-     * überschreibt die Standard Methode um abgerundete Ecken und den Glas Effekt zu ermöglichen
-     * @param g ein Grafik-Objekt, das vom System zur Verfügung gestellt wird, um die Komponente auf dem Bildschirm darzustellen
+     * Method that draws the button
+     * Overrides the default method to enable rounded corners and the glass effect.
+     * @param g A graphic object provided by the system to display the component on the screen.
      */
     @Override // signalisiert Java benutzt nicht die Standard-Zeichenmethode, sondern die hier
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann

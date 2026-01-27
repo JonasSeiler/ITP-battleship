@@ -3,15 +3,15 @@ import javax.swing.*; // enthält die Komponenten
 import java.awt.*; // Grafik-Werkzeuge für Farben, Schriftarten und die Zeichenbefehle
 
 /**
- * Eine angepasste Version des JTextfields mit
- * Glas Design und abgerundeten Ecken
+ * A customized version of the JTextField with
+ * Glass design and rounded corners
  * @author Matthias Wiese
  */
 public class RoundTextField extends JTextField { // erbt die Klasse JTextField also unter anderem alle Funktionen eines normalen Eingabefeldes
 
     /**
-     * Initialisiert das RoundTextField
-     * Setzt Schriftart, Farben, das der Hintergrund nicht gemalt wird, sowie die zentrierte Texteingabe.
+     * Initializes the RoundTextField
+     * Sets the font, colors, the background not to be painted, and centered text input.
      */
     public RoundTextField() {
         setOpaque(false); // Der Hintergrund wird dadurch nicht gemalt
@@ -23,11 +23,11 @@ public class RoundTextField extends JTextField { // erbt die Klasse JTextField a
     }
 
     /**
-     * überschreibt die JTextField Methode der Oberklasse um den Glas Effekt und den modernen Look mit
-     * abgerundeten Ecken zu ermöglichen
-     * @param g ein Grafik-Objekt, das vom System zur Verfügung gestellt wird, um die Komponente auf dem Bildschirm darzustellen
+     * Overrides the JTextField method of the superclass to add the glass effect and modern look with
+     * rounded corners.
+     * @param g A graphic object provided by the system to display the component on the screen.
      */
-    @Override // überschreibt die Standard-Malfunktion von Java
+    @Override // overrides Java's default paint function
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann
         Graphics2D g2d = (Graphics2D) g.create(); // Grafik Objekt wird in das modernere Graphics2D Objekt umgewandelt und es wird eine Kopie erstellt also g ist immernoch gleich
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // macht die Kurven glatt und den Text glatt
