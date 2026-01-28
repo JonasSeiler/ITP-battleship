@@ -57,6 +57,60 @@ public class board {
 
     }
 
+ public boolean isPlacementValidOptimized(coordinate head, int dir, int s_index) {
+
+    int length = fleet[s_index].length;
+    /*int boardSize = ship_pos.length;
+    // 1. Check if starting coordinate is within bounds
+    if (head.x < 0 || head.x >= boardSize || head.y < 0 || head.y >= boardSize) {
+        return false;
+    }
+    
+    // 2. Check if entire ship fits within board
+    if (dir == 0) { // Horizontal (x-direction)
+        // Ship occupies head.x through head.x + (length - 1)
+        // The last coordinate should be head.x + length - 1
+        // Check if the last coordinate is within bounds: 0 to boardSize-1
+        int lastX = head.x + length - 1;
+        if (lastX >= boardSize) {  // If lastX equals boardSize, it's out of bounds
+            return false;
+        }
+    } else { // Vertical (y-direction)
+        // Ship occupies head.y through head.y + (length - 1)
+        int lastY = head.y + length - 1;
+        if (lastY >= boardSize) {
+            return false;
+        }
+    }*/
+            // 3. Check each ship coordinate and its surroundings
+    for (int i = 0; i < length; i++) {
+        int x = (dir == 0) ? head.x + i : head.x;
+        int y = (dir == 0) ? head.y : head.y + i;
+            if (!inBounds(x, y)) {
+                return false;
+            }
+
+        // Check 3x3 area around this ship cell
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                int checkX = x + dx;
+                int checkY = y + dy;
+                // Check if coordinate is within board bounds
+                if (inBounds(checkX, checkY)) {
+                    
+                    // Check if there's already a ship at this position
+                    if (ship_pos[checkX][checkY] == 1) {
+                        return false;
+                    }
+                    }             
+                }
+            }
+        }
+    
+    return true;
+}
+
+    
     /**
      * places a ship 
      * 

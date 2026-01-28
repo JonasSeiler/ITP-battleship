@@ -6,6 +6,7 @@
     - UPDATE: very wrong and throw tons of errors
     v/
     - fix it
+    v/
 - make save_game() put files in a savestates/ dir
 - make load_game() start the gui good
 - make load_game() for Bot
@@ -19,6 +20,14 @@
     - Client waiting for host to pick parameters
     v/
     - Host or Client placing ships
+    v/
+v/
 - i think there is a exception thrown when you win
+v/
 - board.game_over() does not work (meaning either won() or lost() dont work)
-- horizontal ships dont return 2
+v/
+- include win/loss pop ups
+v/
+
+
+jar --create --file=battleship.jar --main-class=src.gui.mainframe -C out/ .

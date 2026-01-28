@@ -322,8 +322,10 @@ public class Bot extends NetworkPlayer {
                 coordinate start = new coordinate(x, y);
             
                 if (canPlaceShipWithSpacing(start, shiplengths[i], horizontal, 1)) {
+                    if (ownBoard.isPlacementValidOptimized(start,horizontal ? 0:1, i)) {
                     ownBoard.place_ship(start, horizontal ? 0 : 1, i);
                     placed = true;
+                    }
                 }
             }
         
@@ -405,27 +407,28 @@ public class Bot extends NetworkPlayer {
             int length = shiplengths[idx];
             boolean placed = false;
             int attempts = 0;
-            int maxAttempts = 800;
+            int maxAttempts = 100000;
+
 
             while (!placed && attempts < maxAttempts) {
                 attempts++;
 
-                // Strategische Ausrichtung: Bei kleinen Boards gro·e Schiffe vertikal
+                // Strategische Ausrichtung: Bei kleinen Boards grosse Schiffe vertikal
                 boolean horizontal;
                 if (boardSize < 10 && length >= 4) {
-                    horizontal = false; // Vertikal fÅr gro·e Schiffe auf kleinen Boards
+                    horizontal = false; // Vertikal fuer grosse Schiffe auf kleinen Boards
                 } else {
                     horizontal = random.nextBoolean();
                 }
 
                 int x, y;
 
-                // FÅr sehr kleine Boards (Grî·e < 5), normale Platzierung verwenden
+                // fuer sehr kleine Boards (Groesse < 5), normale Platzierung verwenden
                 if (boardSize < 5) {
                     x = random.nextInt(boardSize);
                     y = random.nextInt(boardSize);
                 } 
-                // Gro·e Schiffe (LÑnge >= 4): Im inneren 70% des Feldes
+                // Grosse Schiffe (Laenge >= 4): Im inneren 70% des Feldes
                 else if (length >= 4) {
                     int margin = Math.max(0, (int)(boardSize * 0.15));
                     int innerSize = boardSize - 2 * margin;
@@ -439,7 +442,7 @@ public class Bot extends NetworkPlayer {
                     x = margin + random.nextInt(innerSize);
                     y = margin + random.nextInt(innerSize);
                 } 
-                // Mittlere Schiffe (LÑnge == 3): Im inneren 85% des Feldes
+                // Mittlere Schiffe (laenge == 3): Im inneren 85% des Feldes
                 else if (length == 3) {
                     int margin = Math.max(0, (int)(boardSize * 0.075));
                     int innerSize = boardSize - 2 * margin;
@@ -452,7 +455,7 @@ public class Bot extends NetworkPlayer {
                     x = margin + random.nextInt(innerSize);
                     y = margin + random.nextInt(innerSize);
                 } 
-                // Kleine Schiffe (LÑnge <= 2): 70% innen, 30% Åberall
+                // Kleine Schiffe (Laenge <= 2): 70% innen, 30% ueberall
                 else {
                     if (random.nextFloat() < 0.7) {
                         int margin = Math.max(0, (int)(boardSize * 0.1));
@@ -479,22 +482,26 @@ public class Bot extends NetworkPlayer {
 
                 // 1. Versuch: Mit geplanter Ausrichtung
                 if (canPlaceShipWithSpacing(start, length, horizontal, 1)) {
-                    ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
-                    placed = true;
-                    continue;
+                    if(ownBoard.isPlacementValidOptimized(start, horizontal ? 0: 1, idx)) {
+                        ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                        placed = true;
+                        continue;
+                    }
                 }
 
                 // 2. Versuch: Alternative Ausrichtung an derselben Stelle
                 if (!placed) {
                     boolean altHorizontal = !horizontal;
                     if (canPlaceShipWithSpacing(start, length, altHorizontal, 1)) {
-                        ownBoard.place_ship(start, altHorizontal ? 0 : 1, idx);
-                        placed = true;
-                        continue;
+                        if(ownBoard.isPlacementValidOptimized(start, altHorizontal ? 0: 1, idx)) {
+                            ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                            placed = true;
+                            continue;
+                        }
                     }
                 }
 
-                // 3. Versuch: In den letzten 20% der Versuche komplett zufÑllig
+                // 3. Versuch: In den letzten 20% der Versuche komplett zufuellig
                 if (!placed && attempts > maxAttempts * 0.8) {
                     int randX = random.nextInt(boardSize);
                     int randY = random.nextInt(boardSize);
@@ -502,8 +509,11 @@ public class Bot extends NetworkPlayer {
                     coordinate randStart = new coordinate(randX, randY);
 
                     if (canPlaceShipWithSpacing(randStart, length, randHorizontal, 1)) {
-                        ownBoard.place_ship(randStart, randHorizontal ? 0 : 1, idx);
-                        placed = true;
+                        if(ownBoard.isPlacementValidOptimized(start, randHorizontal ? 0: 1, idx)) {
+                            ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                            placed = true;
+                            continue;
+                        }
                     }
                 }
 
@@ -516,16 +526,20 @@ public class Bot extends NetworkPlayer {
 
                             // Teste horizontale Ausrichtung
                             if (canPlaceShipWithSpacing(tryStart, length, true, 1)) {
-                                ownBoard.place_ship(tryStart, 0, idx);
-                                placed = true;
-                                break;
+                                if(ownBoard.isPlacementValidOptimized(start, 0, idx)) {
+                                    ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                                    placed = true;
+                                    break;
+                                }
                             }
 
                             // Teste vertikale Ausrichtung
                             if (canPlaceShipWithSpacing(tryStart, length, false, 1)) {
-                                ownBoard.place_ship(tryStart, 1, idx);
-                                placed = true;
-                                break;
+                                if(ownBoard.isPlacementValidOptimized(start, 1, idx)) {
+                                    ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                                    placed = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -538,13 +552,13 @@ public class Bot extends NetworkPlayer {
             }
 
             if (!placed) {
-                throw new IOException("Konnte Schiff der LÑnge " + length + 
+                throw new IOException("Konnte Schiff der lange " + length + 
                     " nicht platzieren (Schwer-Stufe). " +
-                    "Board-Grî·e: " + boardSize + ", Versuche: " + maxAttempts);
+                    "Board-Groesse: " + boardSize + ", Versuche: " + maxAttempts);
             }
 
             // Debug-Ausgabe (optional)
-            // System.out.println("Schiff " + idx + " (LÑnge " + length + ") platziert nach " + attempts + " Versuchen");
+            // System.out.println("Schiff " + idx + " (Laenge " + length + ") platziert nach " + attempts + " Versuchen");
         }
     }
 
@@ -560,13 +574,17 @@ public class Bot extends NetworkPlayer {
                 coordinate start = new coordinate(x, y);
         
                 if (canPlaceShipWithSpacing(start, length, true, 1)) {
-                    ownBoard.place_ship(start, 0, shipIndex);
-                    return true;
+                    if(ownBoard.isPlacementValidOptimized(start, 0, shipIndex)) {
+                        ownBoard.place_ship(start, 0, shipIndex);
+                        return true;
+                    }
                 }
-        
+
                 if (canPlaceShipWithSpacing(start, length, false, 1)) {
-                    ownBoard.place_ship(start, 1, shipIndex);
-                    return true;
+                    if(ownBoard.isPlacementValidOptimized(start, 1, shipIndex)) {
+                        ownBoard.place_ship(start, 1 , shipIndex);
+                        return true;
+                    }
                 }
             }
         }
@@ -605,9 +623,9 @@ public class Bot extends NetworkPlayer {
         if (ownBoard == null || ownBoard.ship_pos == null || boardSize <= 0) {
             return false;
         }
-    
+        return true;    
         // Pruefe ob Startpunkt im Feld ist
-       if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
+/*       if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
            return false;
        }
     
@@ -634,10 +652,14 @@ public class Bot extends NetworkPlayer {
         }
     
         // Debug-Ausgabe (kann spaeter entfernt werden)
-         System.out.println("startX=" + startX + ", startY=" + startY + 
-                           ", endX=" + endX + ", endY=" + endY + 
-                           ", boardSize=" + boardSize);
-    
+         //System.out.println("startX=" + startX + ", startY=" + startY + 
+           //                ", endX=" + endX + ", endY=" + endY + 
+             //              ", boardSize=" + boardSize);
+         startX = Math.max(0, startX);
+         startY = Math.max(0, startY);
+         endX = Math.min(boardSize - 1, endX);
+         endY = Math.min(boardSize - 1, endY);
+
         // Pruefe alle Felder im erweiterten Bereich
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
@@ -652,7 +674,7 @@ public class Bot extends NetworkPlayer {
             }
         }
     
-        return true;
+        return true;*/
     }
 
     /**

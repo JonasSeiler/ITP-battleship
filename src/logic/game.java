@@ -137,11 +137,12 @@ public class game {
             protected void done() {
                 board1.register_shot(new coordinate(x, y), response);
                 board1.dec_hp(response);
+                gui.shot_answer(response);
                 if(board1.won()) {
                     // add win sequence here1
                     start_local_turn();
+                    return;
                 }
-                gui.shot_answer(response);
                 if(response == 0) {
                     start_opp_turn(); 
                 } else {
@@ -218,7 +219,7 @@ public class game {
                     gui.colorPlayerShip(p.x, p.y, answer);
                     if(board1.lost()) {
                         start_local_turn();
-                        // add losing sequence here
+                        break;
                     }
                     u_turn = 0;
                     start_opp_turn();
@@ -238,12 +239,14 @@ public class game {
             gui.enableUI();
             u_turn = 1;
             // wait for shot from user
-        } else {
+        } else if(u_turn != 2) {
             if(board1.won()) {
-                System.out.println("Won!!!!!!!!!!!!!!"); 
+                gui.game_over(true);
+                u_turn = 2;
             }
             if(board1.lost()) {
-                System.out.println("Lost hahahahahaha"); 
+                gui.game_over(false);   
+                u_turn = 2;
             }
         }
     }
@@ -270,8 +273,15 @@ public class game {
                     return null;
                 }
             }.execute();
-        } else {
-            start_local_turn();
+        } else if (u_turn != 2){
+             if(board1.won()) {
+                gui.game_over(true);
+                u_turn = 2;
+            }
+            if(board1.lost()) {
+                gui.game_over(false);   
+                u_turn = 2;
+            }
         }
     }
 } 

@@ -364,10 +364,10 @@ public class battlescreen extends JPanel {
         selectedEnemyCell.setBorder(BorderFactory.createLineBorder(Color.WHITE, 3));
 
         // Enable confirm button
-        if(gLogic.u_turn == 1) 
+        if(gLogic.u_turn == 1) {
             confirmShotButton.setEnabled(true);
 
-        eCells[x][y].setEnabled(false);
+        }
     }
     /**
      * Setzt Spielelogik
@@ -414,7 +414,8 @@ public class battlescreen extends JPanel {
         if (selectedEnemyCell == null) {
             return;
         }
-
+        
+        eCells[selectedX][selectedY].setEnabled(false);
         gLogic.send_shot(selectedX, selectedY);
     }
 
@@ -425,6 +426,13 @@ public class battlescreen extends JPanel {
         selectedEnemyCell = null;
         selectedX = -1;
         selectedY = -1;
+    }
+    public void game_over(boolean wl) {
+        if (wl) {
+            new EndGameDialog(frame, "You've Won!");
+        } else {
+            new EndGameDialog(frame, "You've Lost!");
+        }
     }
     /**
      * Methode für den Farbverlauf des Screens
