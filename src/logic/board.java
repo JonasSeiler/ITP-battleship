@@ -57,7 +57,7 @@ public class board {
 
     }
 
- public boolean isPlacementValidOptimized(coordinate head, int dir, int s_index) {
+ public boolean isPlacementvalid(coordinate head, int dir, int s_index) {
 
     int length = fleet[s_index].length;
     /*int boardSize = ship_pos.length;
