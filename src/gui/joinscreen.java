@@ -3,9 +3,13 @@ package src.gui; // Datei gehört in das Verzeichnis src.gui
 import javax.swing.*;
 import java.awt.*;
 import src.coms.*;
+import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
+import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
+import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_Escape)
+import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen im Multiplayermodus, bei dem man einem Spiel joinen kann
+ * Screen in multiplayer mode, where you can join a game
  * @author Max Steingräber, Matthias Wiese
  */
 public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -16,8 +20,8 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
     private RoundButton connect;
 
     /**
-     * Erstellt den Screen um einem Spiel zu joinen und erstellt und initialisiert Objekte
-     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     * Creates the screen for joining a game and creates and initializes objects.
+     * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
     public joinscreen(mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
         this.frame = frame;
@@ -29,7 +33,34 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         JLabel title = new JLabel("Battleship");
         title.setForeground(Color.WHITE); // Farbe der Schrift
         title.setFont(new Font("Times New Roman", Font.BOLD,40));
-        JLabel ip_adress = new JLabel("             IP Adress");
+        AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                frame.showScreen("multiplayer");
+                try {
+                    frame.coms.close();
+                } catch(Exception ex) {
+                    System.err.println("Failed closing connection: " + ex);
+                }
+                frame.coms = null;
+            }
+        };
+        KeyStroke exitTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die esc Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(exitTaste, "exit"); // überwacht, ob die Exit Taste gedrückt wurde
+        this.getActionMap().put("exit", exitAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
+        AbstractAction connectAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                connection(); 
+                frame.lastscreen2 = "joinscreen";
+            }
+        };
+        KeyStroke connectTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die Enter Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(connectTaste, "connect"); // überwacht, ob die Connect Taste gedrückt wurde
+        this.getActionMap().put("connect", connectAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
+        JLabel ip_adress = new JLabel("        IP Adress");
         ip_adress.setForeground(Color.WHITE);
         ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         exit = new RoundButton("Exit");
@@ -61,20 +92,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        exit.addActionListener(e -> {
-            frame.showScreen("multiplayer");
-            try {
-            frame.coms.close();
-            } catch(Exception ex) {
-                System.err.println("Failed closing connection: " + ex);
-            }
-            frame.coms = null;
-        });
+        exit.addActionListener(exitAction); // nimmt das Objekt und führt die überschriebene Methode aus
 
-        connect.addActionListener(e -> {
-            connection(); 
-            frame.lastscreen2 = "joinscreen"; 
-        });
+        connect.addActionListener(connectAction);
 
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "joinscreen";
@@ -83,7 +103,8 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
     }
 
     /**
-     * String des JTextFields wird gespeichert
+     * Establishes a network connection to the specified IP address.
+     * After successful completion, the program switches to JoinWaitScreen.
      */
     void connection() {
         String ipAdress = ip.getText();
@@ -112,9 +133,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
 
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     * Method for the color gradient of the screen
+     * Method is automatically called by the system when the component needs to be redrawn.
+     * @param g The graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen

@@ -4,39 +4,44 @@ import java.awt.event.*;
 import javax.swing.*;
 import src.logic.*;
 /**
- * Spielfeldscreen, wo die bereits ausgewählten Schiffe
- * auf das Spielfeld platziert werden und schließlich
- * das Spiel gestartet wird.
+ * Gamescreen, where the previously selcted user ships
+ * are being placed on the game board
  * @author Max Steingräber
  */
 public class gamescreen extends JPanel {
     /**
-     * Spielattribute
+     * Game Attributes
      * 
-     * Felddaten
-     * @param pCells    Spielerzellen
-     * @param eCells    Gegnerzellen
-     * @param pField    Spielerfeld
-     * @param eField    Gegnerfeld
+     * Field Data
+     * @param pCells                player cells
+     * @param eCells                enemy cells
+     * @param pField                player field
+     * @param eField                enemy field
+     * @param placedShipCount   
      * 
-     * Schiffbearbeitungsdaten
-     * @param horizontal        Richtung (0 -> horizontal, 1 -> vertikal)
-     * @param currentShipSize   Aktuelle ausgewählte Schiffsgröße
-     * @param occupied          Feld, das Schiffskoordinaten speichert
-     *                          (0 -> Zelle frei  1 -> Zelle belegt)   
-     * @param shipsLeft         Übrige Schiffe pro Größe
-     * @param hoverRow          Rotationsvorschau (Reihe)
-     * @param hoverCol          Rotationsvorschau (Spalte)
-     * @param shipSelector      Auswahlbox für Schiffsgröße
+     * Ship-Processing-Data
+     * @param horizontal            direction (0 -> horizontal, 1 -> vertical)
+     * @param currentShipSize       currently selected ship-size
+     * @param occupied              array, that stores ship-coordinates
+     *                              (0 -> cell free  1 -> cell occupied)   
+     * @param shipsLeft             remaining ships per size
+     * @param hoverRow              rotation preview (row)
+     * @param hoverCol              rotation preview (column)
+     * @param shipSelector          selection box for ship-size
+     * @param gameSaved             true -> game was saved
+     *                              false -> game wasn't saved
+     * @param frame                 mainframe (window)
+     * @param exitButton            exits the game
      * 
-     * Gemeinsame Daten
-     * @param COR       Koordinaten (x, y) des jeweiligen Schiffs
-     * @param SHIPS     Schiffslänge des jeweilgen Schiffs
-     * @param DIR       Richtung (false -> vertikal, true -> horizontal) des jeweiligen Schiffs
-     * @param status    Speichert Rückgabewert von 'send_shot' Methode
-     *                  (0 -> Daneben   1 -> Getroffen  2 -> Versunken)
-     * @param gridSize  Speichert die übergebene Spielfeldgröße
-     * @param gLogic    Enthält Spielelogik und 'send_shot' Methode
+     * Shared Data
+     * @param COR                   coordinates (x, y) of each ship
+     * @param SHIPS                 ship length of each ship
+     * @param DIR                   direction (0 -> horizontal, 1 -> vertical) of each ship
+     * @param status                saves return value of 'send_shot' method
+     *                              (0 -> miss   1 -> hit  2 -> sunk)
+     * @param gridSize              saves shared grid size
+     * @param gLogic                contains game logic and 'send_shot' method
+     * @param startButton           startButton
      * 
      */
     private JButton[][] pCells;
@@ -44,12 +49,6 @@ public class gamescreen extends JPanel {
     public JPanel pField;
     private JPanel eField;
     private int placedShipCount = 0;
-
-    public coordinate[] COR;
-    public int[] SHIPS;
-    public boolean[] DIR;
-    public int gridSize;
-    public int[] ships;
 
     private boolean horizontal = true;
     private int currentShipSize = 2;
@@ -60,16 +59,23 @@ public class gamescreen extends JPanel {
     private JComboBox<String> shipSelector;
     private boolean gameSaved = false;
     private mainframe frame;
+    private JButton exitButton;
+    private JButton startButton;
 
+    public coordinate[] COR;
+    public int[] SHIPS;
+    public boolean[] DIR;
+    public int gridSize;
+    public int[] ships;
     /**
-     * Konstruiert den Schiffplatzierungsscreen ('gamescreen')
+     * Constructor 'gamescreen'
      * 
-     * @param frame         Hauptfensterscreen, der alle Screens enthält und verwaltet
-     * @param inShips       Übergebenes Schiffsfeld Bsp. {5, 5, 4, 3, 3, 3, 2} von {@link hostpregamescreen}
-     * @param inGridSize    Übergebene Spielfeldgröße von {@link hostpregamescreen}
+     * @param frame         mainframe (window), which contains and manages every screen
+     * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link hostpregamescreen}
+     * @param inGridSize    passed grid size of {@link hostpregamescreen}
      */
     public gamescreen(mainframe f, int[] inShips, int inGridSize) {
-        /*--Speichern der übergebenen Input-Parameter--*/
+        /*--save passed class parameters--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;
         this.frame = f;
@@ -78,19 +84,19 @@ public class gamescreen extends JPanel {
         DIR = new boolean[totalShips];
         SHIPS = new int[totalShips];
 
-        /*--Konvertierung in Schiffbearbeitungsformat--
+        /*--converts to ship-edit-format--
         --ships[0] = 2-sized--
         --ships[1] = 3-sized--
         --ships[2] = 4-sized--
         --ships[3] = 5-sized--*/
         ships = convertShipArray(inShips);
 
-        /*--Layoutmanager 'this'-Panel--*/
+        /*--layoutmanager 'this'-Panel--*/
         this.setLayout(new BorderLayout());
         this.setBackground(Color.black);
         this.setOpaque(false);
 
-        /*--Titel--*/
+        /*--title--*/
         JLabel title = new JLabel("Battleship");
         title.setHorizontalAlignment(SwingConstants.CENTER);
         title.setFont(new Font("Times New Roman", Font.BOLD, 28));
@@ -98,28 +104,28 @@ public class gamescreen extends JPanel {
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
 
-        /*--Erstellung des Spielboards--*/
+        /*--creating game board--*/
         JPanel board = new JPanel(new GridLayout(1, 2, 20, 0));
         board.setBackground(Color.black);
         board.setOpaque(false);
 
-        /*--Spielerseite (links) Panel--*/
+        /*--player side (left) panel--*/
         JPanel pSide = new JPanel(new BorderLayout());
         pSide.setBackground(Color.black);
         pSide.setOpaque(false);
 
-        /*--Spielerfelderstellung (linke Zellen)--*/
+        /*--creating player field (left cells)--*/
         pCells = new JButton[gridSize][gridSize];
         pField = createField(gridSize, gridSize, pCells);
 
-        /*--Spielertitel--*/
+        /*--player title--*/
         JLabel playerTitle = new JLabel("Your Side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
         playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
-        /*--Netzhalter (Spieler)--*/
+        /*--grid wrapper (player)--*/
         JPanel pCenter = new JPanel(new GridBagLayout());
         pCenter.setBackground(Color.black);
         pCenter.setOpaque(false);
@@ -135,7 +141,7 @@ public class gamescreen extends JPanel {
 
         pCenter.add(pField, gbc);
 
-        /*--Titel-Netz-Kombination (Spieler)--*/
+        /*--title-grid-wrapper (player)--*/
         JPanel pCenterWrapper = new JPanel(new BorderLayout());
         pCenterWrapper.setBackground(Color.black);
         pCenterWrapper.add(playerTitle, BorderLayout.NORTH);
@@ -144,25 +150,25 @@ public class gamescreen extends JPanel {
 
         pSide.add(pCenterWrapper, BorderLayout.CENTER);
 
-        /*--Feld, das Schiffskoordinaten speichert--*/
+        /*--array, that saves coordinates of placed ships--*/
         occupied = new boolean[gridSize][gridSize];
 
-        /*--Klone Schiffsfeld--*/
+        /*--clone ships-field--*/
         shipsLeft = ships.clone();
 
-        /*--Zusätzliches Spielerfeld-Panel auf Spielerseite (links) für saveButton--*/
+        /*--additional player field panel (left) for saveButton--*/
         JPanel pFieldPanel = new JPanel();
         pFieldPanel.setBackground(Color.black);
         pFieldPanel.setOpaque(false);
         pFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
-        /*--Kombobox Textfeld--*/
+        /*--combobox textfield--*/
         String[] shipNames = new String[ships.length];
         for (int i = 0; i < ships.length; i++) {
             shipNames[i] = (i + 2) + "-ships: " + ships[i] + "x";
         }
 
-        /*--Erstellung 'shipSelector' Kombobox--*/
+        /*--creating 'shipSelector' combobox--*/
         shipSelector = new JComboBox<>(shipNames);
 
         int firstAvailable = findNextAvailableIndex(0);
@@ -183,26 +189,26 @@ public class gamescreen extends JPanel {
         });
         pFieldPanel.add(startButton);
 
-        /*--Fügt Spielerfeld-Panel auf Spielerseite (links) hinzu--*/
+        /*--adds player field panel onto player side panel (left)--*/
         pSide.add(pFieldPanel, BorderLayout.SOUTH);
 
-        /*--Gegnerseite (rechts) Panel--*/
+        /*--enemy side (right) panel--*/
         JPanel eSide = new JPanel(new BorderLayout());
         eSide.setBackground(Color.black);
         eSide.setOpaque(false);
 
-        /*--Gegnerfelderstellung (rechte Zellen)--*/
+        /*--creating enemy field (right cells)--*/
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells);
 
-        /*--Gegnertitel--*/
+        /*--enemyTitle--*/
         JLabel enemyTitle = new JLabel("Enemy Side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
         enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
-        /*--Netzhalter (Gegner)--*/
+        /*--grid wrapper (enemy)--*/
         JPanel eCenter = new JPanel(new GridBagLayout());
         eCenter.setBackground(Color.black);
         eCenter.setOpaque(false);
@@ -218,7 +224,7 @@ public class gamescreen extends JPanel {
 
         eCenter.add(eField, gbc2);
 
-        /*--Titel-Netz-Kombination (Gegner)--*/
+        /*--title-grid wrapper (enemy)--*/
         JPanel eCenterWrapper = new JPanel(new BorderLayout());
         eCenterWrapper.setBackground(Color.black);
         eCenterWrapper.setOpaque(false);
@@ -227,12 +233,12 @@ public class gamescreen extends JPanel {
 
         eSide.add(eCenterWrapper, BorderLayout.CENTER);
 
-        /*--Exit button--*/
-        JButton exitButton = new RoundButton("Exit Game");
+        /*--exit button--*/
+        exitButton = new RoundButton("Exit Game");
         exitButton.setEnabled(true);
         exitButton.addActionListener(e -> handleExitGame());
 
-        /*--Zusätzliches Gegnerfeld-Panel auf Gegnerseite (rechts) für loadButton und exitButton--*/
+        /*--additional panel on enemy side (right) for ConfirmShotButton and exitButton--*/
         JPanel eFieldPanel = new JPanel();
         eFieldPanel.setBackground(Color.BLACK);
         eFieldPanel.setOpaque(false);
@@ -240,23 +246,23 @@ public class gamescreen extends JPanel {
         eFieldPanel.add(exitButton);
         eSide.add(eFieldPanel, BorderLayout.SOUTH);
 
-        /*--Fügt Spielerseite und Gegnerseite zu Spielboard hinzu--*/
+        /*--add player side and enemy side to game board--*/
         board.add(pSide);
         board.add(eSide);
         this.add(board, BorderLayout.CENTER);
 
-        /*--Fügt interaktive Spielfeld-Komponenten hinzu--*/
+        /*--adds interactive game components--*/
         addPlacementListeners();
         setupKeyBindings();
         setFocusable(true);
     }
     /**
-     * Erstellt ein Spielfeld
+     * Creates playground (grid)
      * 
-     * @param x         Reihenanzahl
-     * @param y         Spaltenanzahl
-     * @param array     Button Array (Zellen)
-     * @return          Generiertes Spielfeld
+     * @param x         number of rows
+     * @param y         number of columns
+     * @param array     button array (cells)
+     * @return          created playground
      */
     private JPanel createField(int x, int y, JButton[][] array) {
         JPanel field = new SquareGridPanel(x, y);
@@ -275,7 +281,7 @@ public class gamescreen extends JPanel {
         return field;
     }
     /**
-     * Fügt interaktive Maussteuerung (hover, exit, click) hinzu
+     * Adds interactive mouse controls (hover, exit, click)
      */
     private void addPlacementListeners() {
         /*--update selected ship size using the combo box index (safe)--*/
@@ -322,9 +328,11 @@ public class gamescreen extends JPanel {
         }
     }
     /**
-     * Fügt interaktives Tastatursteuerung hinzu, um Schiffe
-     * mit 'r' oder 'R' drehen zu können, mit 'z' oder 'Z' das
-     * zuletzt platzierte Schiff zu entfernen und mit 'strg' + 'z'
+     * Adds interactive keyboard controls
+     * 'r' or 'R' rotates ship 90 degrees
+     * 'z' or 'Z' removes previously placed ship
+     * 'ctrl' + 'z' removes all previously placed ships
+     * 'esc' presses the 'exitButton'
      */
     private void setupKeyBindings() {
         /*--build input/action map to use key-bindings--*/
@@ -367,12 +375,31 @@ public class gamescreen extends JPanel {
                 clearPreview();
             }
         });
+
+        // ENTER → Confirm Shot
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmShot");
+        am.put("confirmShot", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (startButton.isEnabled()) {
+                    startButton.doClick();
+                }
+            }
+        });
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exitGame");
+        am.put("exitGame", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exitButton.doClick();
+            }
+        });
     }
     /**
-     * Schiffsvorschau
+     * Ship preview
      * 
-     * @param r     Ausgewählte Reihe
-     * @param c     Ausgewählte Spalte
+     * @param r     selected row
+     * @param c     selected column
      */
     private void previewShip(int r, int c) {
         int index = currentShipSize - 2;
@@ -403,10 +430,10 @@ public class gamescreen extends JPanel {
         }
     }
     /**
-     * Platziert Spielerschiffe
+     * Ship placement
      * 
-     * @param r     Ausgewählte Reihe
-     * @param c     Ausgewählte Spalte
+     * @param r     selected row
+     * @param c     selected column
      */
     private void placeShip(int r, int c) {
         /*--get index of each ship size--*/
@@ -457,8 +484,8 @@ public class gamescreen extends JPanel {
         clearPreview();
     }
     /**
-     * Wechselt automatisch die Schiffsauswahl zur nächsten Schiffsgröße
-     * in der Kombobox, nachdem ein Schiffstyp 'leer' ist
+     * Changes ship selection automatically to the next bigger ship-size,
+     * after current ship size is 'empty'
      */
     private void updateComboBoxDisplayAutoSkip() {
         int previousIndex = shipSelector.getSelectedIndex();
@@ -480,7 +507,7 @@ public class gamescreen extends JPanel {
         }
     }
     /**
-     * Setzt Schiffsvorschau zurück
+     * Resets ship-preview
      */
     private void clearPreview() {
         for (int r = 0; r < pCells.length; r++) {
@@ -492,10 +519,10 @@ public class gamescreen extends JPanel {
         }
     }
     /**
-     * Überprüft, ob alle Schiffe platziert wurden
+     * Checks whether all ships have been placed
      * 
-     * @return  true, wenn alle Schiffe platziert wurden
-     *          false, wenn noch nicht alle Schiffe platziert wurden
+     * @return  true, if all ships have been placed
+     *          false, if not all ships have placed
      */
     private boolean allShipsPlaced() {
         for (int v : shipsLeft) {
@@ -504,12 +531,12 @@ public class gamescreen extends JPanel {
         return true;
     }
     /**
-     * Überprüft, ob Koordinaten sich innerhalb des Spielfelds befinden
+     * Checks whether coordinates are still within the grid
      * 
-     * @param r     x-Koordinate
-     * @param c     y-Koordinate
-     * @return      true, wenn innerhalb des Spielfelds
-     *              false, wenn außerhalb des Spielfelds
+     * @param r     x-coordinate
+     * @param c     y-coordinate
+     * @return      true, if it's inside of the grid
+     *              false, if not
      */
     private boolean isInBounds(int r, int c) {
         return r >= 0 && c >= 0 &&
@@ -517,13 +544,13 @@ public class gamescreen extends JPanel {
                c < pCells[0].length;
     }
     /**
-     * Überprüft, ob Zelle neben an (auch diagonal) schon belegt ist
+     * Checks if the adjacent cell (including diagonally opposite cells) is already occupied
      * 
-     * @param r         x-Koordinate
-     * @param c         y-Koordinate
-     * @param board     Belegte Spielfeldkoordinaten
-     * @return          true, wenn belegt
-     *                  false, wenn nicht belegt
+     * @param r         x-coordinate
+     * @param c         y-coordinate
+     * @param board     occupied ship-coordinates
+     * @return          true, if occupied
+     *                  false, if not
      */
     private boolean hasAdjacentOccupied(int r, int c, boolean[][] board) {
         for (int dr = -1; dr <= 1; dr++) {
@@ -540,15 +567,15 @@ public class gamescreen extends JPanel {
         return false;
     }
     /**
-     * Konvertiert übergebenes Schiffsfeldformat zu Schiffbearbeitungsformat
+     * Converts the passed ship-field format to ship-editing format
         --ships[0] = 2-sized--
         --ships[1] = 3-sized--
         --ships[2] = 4-sized--
         --ships[3] = 5-sized--
-     * Bsp.: {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}  ->  [4, 3, 2, 1]
+     * e.g.: {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}  ->  [4, 3, 2, 1]
      *
-     * @param ships     Übergebenes Schiffsfeldformat {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}
-     * @return          Schiffbearbeitungsformat [4, 3, 2, 1]
+     * @param ships     passed ship-field format {5, 4, 4, 3, 3, 3, 2, 2, 2, 2}
+     * @return          ship-editing format [4, 3, 2, 1]
      */
     public int[] convertShipArray(int[] ships) {
         int[] shipCount = new int[4];
@@ -562,8 +589,8 @@ public class gamescreen extends JPanel {
         return shipCount;
     }
     /**
-     * Findet nächst verfügbaren
-     * Schiffsgrößenauswahl in der Kombobox
+     * Finds next available ship-size selection
+     * within the combobox
      * 
      * @param startIndex    Anfangsindex der Auswahl
      * @return              Nächster Index
@@ -578,12 +605,10 @@ public class gamescreen extends JPanel {
         return -1;
     }
     /**
-    * Beendet das Spiel.
-    * Falls das Spiel nicht gespeichert wurde, wird
-    * der Nutzer zur Bestätigung aufgefordert
+     * Exits the game. If the has not been saved, 
+     * the user gets a confirm message
     */
     private void handleExitGame() {
-        if (gameSaved) {
             frame.showScreen("titlescreen");
             try {
                 frame.coms.close();
@@ -592,32 +617,9 @@ public class gamescreen extends JPanel {
             }
             frame.coms = null;
             return;
-        } else {
-            int choice = JOptionPane.showConfirmDialog(
-                this,
-                "The game has not been saved.\nDo you really want to quit?",
-                "Unsaved Progress",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.WARNING_MESSAGE
-            );
-
-            if (choice == JOptionPane.YES_OPTION) {
-                frame.showScreen("titlescreen");
-                try {
-                    frame.coms.close();
-                } catch(Exception ex) {
-                    System.err.println("Failed closing connection: " + ex);
-                }
-                frame.coms = null;          
-            } else if (choice == JOptionPane.NO_OPTION) {
-                frame.showScreen("battlescreen");
-            }
-        }
-
-        new QuitConfirmDialog(frame);
     }
     /**
-     * Entfernt alle bereits platzierten Schiffe
+     * Removes all previously placed ships
      */
     private void undoAllShips() {
         while (placedShipCount > 0) {
@@ -625,7 +627,7 @@ public class gamescreen extends JPanel {
         }
     }
     /**
-     * Entfernt das zuletzt platzierte Schiff
+     * Removes the previously (last) placed ship
      */
     private void undoLastShip() {
         if (placedShipCount == 0) return;
@@ -656,10 +658,10 @@ public class gamescreen extends JPanel {
         updateComboBoxDisplayAutoSkip();
     }
     /**
-     * Entfernt Schiff an spezifischer Koordinate
+     * Removes ship at specific coordinate
      * 
-     * @param r     row (x-Koordinate)
-     * @param c     column (y-Koordinate)
+     * @param r     row (x-coordinate)
+     * @param c     column (y-coordinate)
      */
     private void removeShipAt(int r, int c) {
         int index = findShipIndexAt(r, c);
@@ -696,10 +698,11 @@ public class gamescreen extends JPanel {
         clearPreview();
     }
     /**
-     * Findet Schiff-Index an spezifischer Koordinate
-     * @param r     row (x-Koordinate)
-     * @param c     column (y-Koordinate)
-     * @return      Rückgabewert ist der Index
+     * Finds ship-index at specific coordinate
+     * 
+     * @param r     row (x-coordinate)
+     * @param c     column (y-coordinate)
+     * @return      index
      */
     private int findShipIndexAt(int r, int c) {
         for (int i = 0; i < placedShipCount; i++) {
@@ -720,8 +723,9 @@ public class gamescreen extends JPanel {
     }
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
+     * Method for color gradient, which is called automatically
+     * when new components have to be drawn
+     * 
      * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
      */
     @Override

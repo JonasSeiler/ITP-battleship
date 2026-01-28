@@ -2,16 +2,16 @@ package src.gui;
 import java.awt.Color;
 
 /**
- * Klasse zum verwalten von zwei Farbobjekten
+ * Class for managing two color objects
  * @author Matthias Wiese
  */
 class colorpair {
     public Color color1;
     public Color color2;
     /**
-     * Erstellt ein neues Farbpaar für einen Farbverlauf.
-     * @param color1 erstes Farbobjekt welches im Konstruktor initialisiert wird
-     * @param color2 zweites Farbobjekt welches im Konstruktor initialisiert wird
+     * Creates a new color pair for a color gradient.
+     * @param color1 First color object initialized in the constructor
+     * @param color2 Second color object initialized in the constructor
      */
     colorpair(Color color1, Color color2) {
         this.color1 = color1;

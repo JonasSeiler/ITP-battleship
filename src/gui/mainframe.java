@@ -1,4 +1,7 @@
 package src.gui;
+import java.io.File; // für das File-Objekt
+import javax.swing.JFileChooser; // für das JFileChooser Objekt
+// import javax.swing.filechooser.FileNameExtensionFilter; // für den .txt Filter
 import javax.swing.*;
 
 import src.coms.*;
@@ -225,7 +228,7 @@ public class mainframe extends JFrame {
     }
 
     /**
-     * ändert die aktuellen Hintergrundfarben auf zwei neue
+     * changes the current background colors to two new ones
      */
     public void changeColor() {
         if (color == "navy") {
@@ -243,38 +246,36 @@ public class mainframe extends JFrame {
         }
     }
 
-    /**  
-    Handles loading the game.
-    */
+    /**
+     * Allows the player to select an older save file from the “saves” directory.
+     * The absolute path of the selected file is stored in a variable.
+     * @return true if a file was successfully selected. False if the selection was canceled by the player or an error occurred.
+     */
    
-    public void handleLoadGame() {
-    /*  JFileChooser fileChooser = new JFileChooser(); // Objekt wird erstellt, dass das typische Fenster öffnet, in dem man Ordner durchsuchen kann
-
-        // Optional: restrict to text files
-        fileChooser.setFileFilter( // es werden nur txt Dateien angezeigt
-            new javax.swing.filechooser.FileNameExtensionFilter(
-                "Save Files (*.txt)", "txt"
-            )
-        );
-
-        int result = fileChooser.showOpenDialog(this); // Das Programm pausiert bis der Nutzer etwas ausgewählt hat
-
-        if (result == JFileChooser.APPROVE_OPTION) { // prüft ob der Nutzer eine Datei ausgewählt hat
-            File selectedFile = fileChooser.getSelectedFile(); // es wird sich das Datei Objekt geholt, welches der Nutzer angeklickt hat. Es enthält Informationen wie Dateiname, Größe und Pfad, aber nicht über den Inhalt
-
-        String path = selectedFile.getAbsolutePath();
-
-        // Pass filename or path to game logic
-        gLogic.load_game(selectedFile.getAbsolutePath()); // Pfad zur Datei wird in die gLogic Methode gegeben
-
-        gameSaved = true; // or false, depending on your logic
-        } else {
-            gameSaved = false;
-        }
-    */}
+    public boolean handleLoadGame() {
+      File saveFolder = new File("saves"); // Instanz der Klasse File. Es ist quasi ein Zeiger hinter dem sich ein Ordner oder eine Datei befindet
+      
+      if (!saveFolder.exists()) {
+        saveFolder.mkdir();
+      }
+      JFileChooser fileChooser = new JFileChooser(saveFolder); // Objekt wird erstellt, und es wird der saveFolder Ordner als Startpunkt gesetzt, von wo aus der User später eine Datei auswählen kann
+      int result = fileChooser.showOpenDialog(this); //öffnet das Fenster, indem der User eine Datei auswählen kann
+      if (result == JFileChooser.APPROVE_OPTION) {
+        File selectedFile = fileChooser.getSelectedFile(); // jetzt ist selectedFile ein Zeiger auf die ausgewählte Datei 
+        String path = selectedFile.getAbsolutePath(); // der Pfad zur Datei wird in path gespeichert
+        System.out.println("Dateiauswahl erfolgreich" + path);
+        return true;
+      } else if (result == JFileChooser.CANCEL_OPTION){
+        System.out.println("Vorgang wurde vom Spieler abgebrochen");
+        return false;
+      } else if (result == JFileChooser.ERROR_OPTION) {
+        System.out.println("Es ist ein Fehler aufgetreten");
+        return false;
+      }
+      return false;
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(mainframe::new);
     }
 }
-
