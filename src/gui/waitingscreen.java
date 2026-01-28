@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  */
 public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
+    private RoundButton ip_adress;
     private RoundButton exit;
     private JButton hamburger;
     JLabel waitMsg;
@@ -55,6 +56,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
         waitMsg.setForeground(Color.WHITE);
+        ip_adress = new RoundButton("IP-Adress");
 
 
         hamburger = new JButton("\u2261");
@@ -77,7 +79,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(waitMsg);
-        contentPanel.add(new JLabel(""));
+        contentPanel.add(ip_adress);
         contentPanel.add(exit);
         gbc.gridy = 1;
         gbc.weighty = 0.999;
@@ -92,6 +94,10 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
                 System.err.println("Failed closing connection: " + ex);
             }
             frame.coms = null;
+        });
+
+        ip_adress.addActionListener(e -> {
+            
         });
 
         hamburger.addActionListener(e -> {
