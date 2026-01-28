@@ -195,8 +195,8 @@ public class Bot extends NetworkPlayer {
     @Override
     public int sendShot(int row, int col) throws IOException {
     
-        int zeroBasedRow = row - 1;
-        int zeroBasedCol = col - 1;
+        int zeroBasedRow = row;
+        int zeroBasedCol = col;
     
         // Korrekte Grenzpruefung (0-basiert)
         if (zeroBasedRow < 0 || zeroBasedRow >= boardSize || 
@@ -400,82 +400,151 @@ public class Bot extends NetworkPlayer {
      */
     private void placeshipshard(int[] shiplengths) throws IOException {
         Integer[] sortedIndices = getSortedShipIndices(shiplengths);
-    
+
         for (int idx : sortedIndices) {
             int length = shiplengths[idx];
             boolean placed = false;
             int attempts = 0;
             int maxAttempts = 800;
-        
+
             while (!placed && attempts < maxAttempts) {
                 attempts++;
-            
+
+                // Strategische Ausrichtung: Bei kleinen Boards gro·e Schiffe vertikal
                 boolean horizontal;
                 if (boardSize < 10 && length >= 4) {
-                    horizontal = false;
+                    horizontal = false; // Vertikal fÅr gro·e Schiffe auf kleinen Boards
                 } else {
                     horizontal = random.nextBoolean();
                 }
-            
+
                 int x, y;
-            
-                if (length >= 4) {
-                    int margin = (int)(boardSize * 0.15);
-                    x = margin + random.nextInt(boardSize - 2 * margin);
-                    y = margin + random.nextInt(boardSize - 2 * margin);
-                } else if (length == 3) {
-                    int margin = (int)(boardSize * 0.075);
-                    x = margin + random.nextInt(boardSize - 2 * margin);
-                    y = margin + random.nextInt(boardSize - 2 * margin);
-                } else {
+
+                // FÅr sehr kleine Boards (Grî·e < 5), normale Platzierung verwenden
+                if (boardSize < 5) {
+                    x = random.nextInt(boardSize);
+                    y = random.nextInt(boardSize);
+                } 
+                // Gro·e Schiffe (LÑnge >= 4): Im inneren 70% des Feldes
+                else if (length >= 4) {
+                    int margin = Math.max(0, (int)(boardSize * 0.15));
+                    int innerSize = boardSize - 2 * margin;
+
+                    // Sicherstellen, dass innerSize mindestens 1 ist
+                    if (innerSize <= 0) {
+                        margin = 0;
+                        innerSize = boardSize;
+                    }
+
+                    x = margin + random.nextInt(innerSize);
+                    y = margin + random.nextInt(innerSize);
+                } 
+                // Mittlere Schiffe (LÑnge == 3): Im inneren 85% des Feldes
+                else if (length == 3) {
+                    int margin = Math.max(0, (int)(boardSize * 0.075));
+                    int innerSize = boardSize - 2 * margin;
+
+                    if (innerSize <= 0) {
+                        margin = 0;
+                        innerSize = boardSize;
+                    }
+
+                    x = margin + random.nextInt(innerSize);
+                    y = margin + random.nextInt(innerSize);
+                } 
+                // Kleine Schiffe (LÑnge <= 2): 70% innen, 30% Åberall
+                else {
                     if (random.nextFloat() < 0.7) {
-                        int margin = (int)(boardSize * 0.1);
-                        x = margin + random.nextInt(boardSize - 2 * margin);
-                        y = margin + random.nextInt(boardSize - 2 * margin);
+                        int margin = Math.max(0, (int)(boardSize * 0.1));
+                        int innerSize = boardSize - 2 * margin;
+
+                        if (innerSize <= 0) {
+                            margin = 0;
+                            innerSize = boardSize;
+                        }
+
+                        x = margin + random.nextInt(innerSize);
+                        y = margin + random.nextInt(innerSize);
                     } else {
                         x = random.nextInt(boardSize);
                         y = random.nextInt(boardSize);
                     }
                 }
-            
+
+                // SICHERHEIT: Koordinaten begrenzen
+                x = Math.max(0, Math.min(boardSize - 1, x));
+                y = Math.max(0, Math.min(boardSize - 1, y));
+
                 coordinate start = new coordinate(x, y);
-            
+
+                // 1. Versuch: Mit geplanter Ausrichtung
                 if (canPlaceShipWithSpacing(start, length, horizontal, 1)) {
                     ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
                     placed = true;
                     continue;
                 }
-            
+
+                // 2. Versuch: Alternative Ausrichtung an derselben Stelle
                 if (!placed) {
-                    horizontal = !horizontal;
-                    if (canPlaceShipWithSpacing(start, length, horizontal, 1)) {
-                        ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
+                    boolean altHorizontal = !horizontal;
+                    if (canPlaceShipWithSpacing(start, length, altHorizontal, 1)) {
+                        ownBoard.place_ship(start, altHorizontal ? 0 : 1, idx);
+                        placed = true;
+                        continue;
+                    }
+                }
+
+                // 3. Versuch: In den letzten 20% der Versuche komplett zufÑllig
+                if (!placed && attempts > maxAttempts * 0.8) {
+                    int randX = random.nextInt(boardSize);
+                    int randY = random.nextInt(boardSize);
+                    boolean randHorizontal = random.nextBoolean();
+                    coordinate randStart = new coordinate(randX, randY);
+
+                    if (canPlaceShipWithSpacing(randStart, length, randHorizontal, 1)) {
+                        ownBoard.place_ship(randStart, randHorizontal ? 0 : 1, idx);
                         placed = true;
                     }
                 }
-            
+
+                // 4. Versuch: In den letzten 10% der Versuche, systematischer Ansatz
                 if (!placed && attempts > maxAttempts * 0.9) {
-                    x = random.nextInt(boardSize);
-                    y = random.nextInt(boardSize);
-                    horizontal = random.nextBoolean();
-                    start = new coordinate(x, y);
-                    
-                    if (canPlaceShipWithSpacing(start, length, horizontal, 1)) {
-                        ownBoard.place_ship(start, horizontal ? 0 : 1, idx);
-                        placed = true;
+                    // Versuche systematisch von einer Ecke aus
+                    for (int tryX = 0; tryX < boardSize && !placed; tryX++) {
+                        for (int tryY = 0; tryY < boardSize && !placed; tryY++) {
+                            coordinate tryStart = new coordinate(tryX, tryY);
+
+                            // Teste horizontale Ausrichtung
+                            if (canPlaceShipWithSpacing(tryStart, length, true, 1)) {
+                                ownBoard.place_ship(tryStart, 0, idx);
+                                placed = true;
+                                break;
+                            }
+
+                            // Teste vertikale Ausrichtung
+                            if (canPlaceShipWithSpacing(tryStart, length, false, 1)) {
+                                ownBoard.place_ship(tryStart, 1, idx);
+                                placed = true;
+                                break;
+                            }
+                        }
                     }
                 }
             }
-        
+
+            // Letzter Versuch: Komplette systematische Suche (als separate Methode)
             if (!placed) {
                 placed = attemptSystematicPlacement(idx, length);
             }
-        
+
             if (!placed) {
-                throw new IOException("Konnte Schiff der Laenge " + length + 
-                " nicht platzieren (Schwer-Stufe). " +
-                "Versuche: " + maxAttempts);
+                throw new IOException("Konnte Schiff der LÑnge " + length + 
+                    " nicht platzieren (Schwer-Stufe). " +
+                    "Board-Grî·e: " + boardSize + ", Versuche: " + maxAttempts);
             }
+
+            // Debug-Ausgabe (optional)
+            // System.out.println("Schiff " + idx + " (LÑnge " + length + ") platziert nach " + attempts + " Versuchen");
         }
     }
 
@@ -538,50 +607,44 @@ public class Bot extends NetworkPlayer {
         }
     
         // Pruefe ob Startpunkt im Feld ist
-        if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
-            return false;
-        }
+       if (start.x < 0 || start.x >= boardSize || start.y < 0 || start.y >= boardSize) {
+           return false;
+       }
     
         int startX = Math.max(0, start.x - spacing);
         int startY = Math.max(0, start.y - spacing);
         int endX, endY;
     
         if (horizontal) {
-            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
-            if (start.y + length - 1 >= boardSize) { // WICHTIG: Ohne spacing am Ende pruefen
+            // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
+            if (start.y + length >= boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
-            // Endkoordinaten inklusive Spacing
             endX = Math.min(boardSize - 1, start.x + spacing);
             endY = Math.min(boardSize - 1, start.y + length - 1 + spacing);
-        
-            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
-            if (start.y - spacing < 0) {
-                return false;
-            }
         } else {
-            // Pruefe ob Schiff innerhalb des Feldes passt (inklusive Abstand am Ende)
-            if (start.x + length - 1 >= boardSize) {
+            // Pruefe ob das Schiff (ohne Spacing) ins Feld passt
+            if (start.x + length >= boardSize) {  // WICHTIG: > statt >=
                 return false;
             }
         
-            // Endkoordinaten inklusive Spacing
-            endX = Math.min(boardSize - 1, start.x + length - 1 + spacing);
-            endY = Math.min(boardSize - 1, start.y + spacing);
-        
-            // Zusaetzlich pruefen ob Spacing am Anfang moeglich ist
-            if (start.x - spacing < 0) {
-                return false;
-            }
+            endX = Math.min(boardSize -1 , start.x + length - 1 + spacing);
+            endY = Math.min(boardSize -1, start.y + spacing);
         }
+    
+        // Debug-Ausgabe (kann spaeter entfernt werden)
+         System.out.println("startX=" + startX + ", startY=" + startY + 
+                           ", endX=" + endX + ", endY=" + endY + 
+                           ", boardSize=" + boardSize);
     
         // Pruefe alle Felder im erweiterten Bereich
         for (int x = startX; x <= endX; x++) {
             for (int y = startY; y <= endY; y++) {
                 // Sicherstellen, dass x und y innerhalb des Arrays liegen
                 if (x < 0 || x >= boardSize || y < 0 || y >= boardSize) {
-                    return false;
+                    // Dies sollte nicht passieren, aber zur Sicherheit
+                    continue;  // oder return false je nach Logik
                 }
                 if (ownBoard.ship_pos[x][y] != 0) {
                     return false;

@@ -2,10 +2,14 @@ package src.gui;
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
+import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
+import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_Escape)
+import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen um die Spieleinstellungen im Singleplayermodus zu treffen
- * Festlegung der Anzahl der Schiffe und der Spielfeldgröße
+ * Screen for adjusting game settings in single-player mode
+ * Determining the number of ships and the size of the playing field
  * @author Matthias Wiese
  */
 public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -26,13 +30,39 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     private mainframe frame; // Referenz auf das Hauptfenster
 
     /**
-     * Erstellt den Screen für die Spieleinstellungen und erstellt und initialisiert Objekte
-     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     * Creates the screen for the game settings and creates and initializes objects.
+     * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
     public pregamescreen2(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen2 gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen2 gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
+
+        AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                frame.showScreen(frame.lastscreen2);
+            }
+        };
+        KeyStroke exitTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die esc Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(exitTaste, "exit"); // überwacht, ob die Exit Taste gedrückt wurde
+        this.getActionMap().put("exit", exitAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
+        AbstractAction startAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                int occupied = (Integer) capacityBar.getValue();
+                int max = (Integer) capacityBar.getMaximum();
+                if (max == occupied) {
+                    start();
+                    frame.startGamescreen();
+                }
+            }
+        };
+        KeyStroke startTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die Enter Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(startTaste, "start"); // überwacht, ob die Start Taste gedrückt wurde
+        this.getActionMap().put("start", startAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,2,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
@@ -142,15 +172,8 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         ship_size3.addChangeListener(e -> {updateCapacity();});
         ship_size2.addChangeListener(e -> {updateCapacity();});
         start_button.addChangeListener(e -> {updateCapacity();});
-        zurueck_button.addActionListener(e -> {frame.showScreen(frame.lastscreen2);});
-        start_button.addActionListener(e -> { // Der ActionListener ist ein Objekt der als Zuhörer am Button klebt und eine Methode mit dem Parameter e besitzen muss, um die Klick-Details zu empfangen und daraufhin wird der Code in den {} ausführt
-            int occupied = (Integer) capacityBar.getValue();
-            int max = (Integer) capacityBar.getMaximum();
-            if (max == occupied) {
-                start();
-                start2();
-                frame.startGamescreen();
-            }}); // ActionListener, weil dieser dafür konzipiert ist, eine spezifische, einmalige Handlung zu erfassen
+        zurueck_button.addActionListener(exitAction);
+        start_button.addActionListener(startAction);
         hamburger.addActionListener(e -> {
                 frame.lastscreen = "pregamescreen2";
                 frame.showScreen("settings");
@@ -159,8 +182,8 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Methode die aufgerufen wird, wenn man auf den Start Button drückt
-     * in der Methode werden die gewählten Einstellungen in einem Array und int gespeichert
+     * Method called when the Start button is pressed
+     * In this method, the selected settings are stored in an array and int.
      */
     private void start() {
         int shipSize5 = (Integer) ship_size5.getValue();
@@ -186,6 +209,9 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         gridSize = (Integer) gridSize1.getValue();
     }
 
+    /**
+     * Method writes the selected difficulty level of the bot to a variable in the mainframe.
+     */
     public void start2() {
         if (easy.isSelected()) {
             frame.difficulty = 1;
@@ -197,9 +223,9 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     * Method for the color gradient of the screen
+     * Method is automatically called by the system when the component needs to be redrawn.
+     * @param g The graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -212,9 +238,9 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Methode die aufgerufen wird, wenn eine Spieleinstellung verändert worden ist
-     * Es wird berechnet wie viel Platz man noch belegen darf und ob man noch ein Schiff mit größe x aktuell hinzufügen kann
-     * Zudem wird die Kapazitätsanzeige aktualisiert
+     * Method called when a game setting has been changed
+     * It calculates how much space you can still occupy and whether you can currently add another ship with size x.
+     * In addition, the capacity display is updated.
      */
     private void updateCapacity() {
         int gridSize = (Integer) gridSize1.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert

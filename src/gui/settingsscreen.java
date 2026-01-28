@@ -2,9 +2,13 @@ package src.gui; // Klasse gehört zu src.gui
 
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
+import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
+import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_Escape)
+import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen, wodurch der User die Einstellungen verändern kann
+ * Screen where the user can change the settings
  * @author Max, Matthias
  */
 public class settingsscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -14,8 +18,8 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
     private RoundButton game_instructions;
 
     /**
-     * Erstellt den Startbildschirm und erstellt und initialisiert Objekte
-     * @param frame die Referenz auf das Hauptfenster um später Methoden für den Bildschirmwechsel darauf aufrufen zu können
+     * Creates the start screen and creates and initializes objects
+     * @param frame the reference to the main window so that methods for changing screens can be called on it later
      *
      */
     public settingsscreen(mainframe frame) { // mainframe ist das Hauptfenster und settingsscreen gibt Befehle an den mainframe
@@ -26,6 +30,16 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
         
+        AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
+            @Override
+            public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
+                frame.showScreen(frame.lastscreen);
+            }
+        };
+        KeyStroke exitTaste = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE,0); // erstellt ein fertiges KeyStroke Objekt mit dem Kriterum, dass es die esc Taste speichert
+        this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(exitTaste, "exit"); // überwacht, ob die Exit Taste gedrückt wurde
+        this.getActionMap().put("exit", exitAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
+
         changeColor = new RoundButton("Change Background Color");
         game_instructions = new RoundButton("Game Instructions");
 
@@ -54,15 +68,15 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
         add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
-        hamburger.addActionListener(e -> {frame.showScreen(frame.lastscreen);});
+        hamburger.addActionListener(exitAction);
         changeColor.addActionListener(e -> {frame.changeColor(); repaint();});
         game_instructions.addActionListener(e -> {frame.showScreen("game_instructions");});
     }
 
     /**
-     * Methode für den Farbverlauf des Screens
-     * Methode wird automatisch vom System aufgerufen, wenn die Komponente neu gezeichnet werden muss
-     * @param g Das Grafik-Objekt, das vom System bereitgestellt wird, um darauf zu zeichnen
+     * Method for the color gradient of the screen
+     * Method is automatically called by the system when the component needs to be redrawn.
+     * @param g The graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
