@@ -163,10 +163,15 @@ public class game {
         String file = "TB_" + u_time;
         board1.save_game(file);
         try {
-        coms.sendSave(file);
+            coms.sendSave(file);
         } catch(Exception e) {
 
             System.err.println("Network error caught in save_game: " + e);
+        }
+        if (u_turn == 1) {
+            start_local_turn();
+        } else {
+            start_opp_turn();
         }
     }
     
@@ -178,13 +183,11 @@ public class game {
      */
     public void save_opp_game(String file) {
         board1.save_game(file);
-        try {
-        coms.sendSave(file);
-        } catch(Exception e) {
-            
-            System.err.println("Network error caught in save_opp_game: " + e);
+        if (u_turn == 1) {
+            start_local_turn();
+        } else {
+            start_opp_turn();
         }
-
     }
 
     /**

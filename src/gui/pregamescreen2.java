@@ -55,6 +55,7 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
                 int max = (Integer) capacityBar.getMaximum();
                 if (max == occupied) {
                     start();
+                    start2();
                     frame.startGamescreen();
                 }
             }

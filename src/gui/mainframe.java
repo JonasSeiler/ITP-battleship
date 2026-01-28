@@ -123,7 +123,7 @@ public class mainframe extends JFrame {
                 ships = PreGameScreen2.ships;
                 size = PreGameScreen2.gridSize;
                 Bot b = (Bot) coms;
-                b.setdifficulty(1);
+                b.setdifficulty(difficulty);
                 b.sendSize(size);
                 b.sendShips(ships);
             } catch(Exception e) {
