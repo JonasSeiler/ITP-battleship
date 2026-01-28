@@ -249,8 +249,7 @@ public class mainframe extends JFrame {
     /**
      * Allows the player to select an older save file from the “saves” directory.
      * The absolute path of the selected file is stored in a variable.
-     * @return true if a file was successfully selected; 
-     * false if the selection was canceled by the player or an error occurred.
+     * @return true if a file was successfully selected. False if the selection was canceled by the player or an error occurred.
      */
    
     public boolean handleLoadGame() {
