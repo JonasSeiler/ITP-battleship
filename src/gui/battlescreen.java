@@ -399,6 +399,8 @@ public class battlescreen extends JPanel {
             }
             frame.coms = null;
             return;
+        } else {
+            new QuitConfirmDialog(frame);
         }
     }
     /**

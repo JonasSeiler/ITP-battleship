@@ -31,6 +31,13 @@ public class QuitConfirmDialog extends JDialog {
         yes.addActionListener(e -> {
             dispose();
             frame.showScreen("titlescreen");
+            try {
+                frame.coms.close();
+            } catch(Exception ex) {
+                System.err.println("Failed closing connection: " + ex);
+            }
+            frame.coms = null;
+
         });
 
         JButton no = new RoundButton("No");
