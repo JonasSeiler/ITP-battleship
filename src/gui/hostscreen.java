@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * @author Max Steingräber, Matthias Wiese
  */
 public class hostscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton new_game;
     private RoundButton load_game;
     private RoundButton exit;
@@ -22,7 +22,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
      * Creates the screen to host a game and creates and initializes objects.
      * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
-    public hostscreen(mainframe frame) { // mainframe ist das Hauptfenster und der hostscreen gibt Befehle an den mainframe
+    public hostscreen(Mainframe frame) { // mainframe ist das Hauptfenster und der hostscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den hostscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

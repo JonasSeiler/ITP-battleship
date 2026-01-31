@@ -27,13 +27,13 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     private JRadioButton hard;
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
 
     /**
      * Creates the screen for the game settings and creates and initializes objects.
      * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
-    public pregamescreen2(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen2 gibt Befehle an den mainframe
+    public pregamescreen2(Mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen2 gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen2 gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

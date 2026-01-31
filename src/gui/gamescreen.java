@@ -55,7 +55,7 @@ public class gamescreen extends JPanel {
     private int hoverRow = -1;
     private int hoverCol = -1;
     private JComboBox<String> shipSelector;
-    private mainframe frame;
+    private Mainframe frame;
     private JButton exitButton;
     private JButton startButton;
 
@@ -71,7 +71,7 @@ public class gamescreen extends JPanel {
      * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link hostpregamescreen}
      * @param inGridSize    passed grid size of {@link hostpregamescreen}
      */
-    public gamescreen(mainframe f, int[] inShips, int inGridSize) {
+    public gamescreen(Mainframe f, int[] inShips, int inGridSize) {
         /*--save passed class parameters--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;

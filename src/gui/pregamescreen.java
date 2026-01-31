@@ -24,13 +24,13 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
     public int gridSize; // wird für den GameScreen gebraucht
     public int[] ships; // // wird für den GameScreen gebraucht
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
 
     /**
      * Creates the screen for the game settings and creates and initializes objects.
      * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
-    public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
+    public pregamescreen(Mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

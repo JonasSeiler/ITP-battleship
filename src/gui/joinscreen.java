@@ -13,7 +13,7 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * @author Max Steingräber, Matthias Wiese
  */
 public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
     private JTextField ip;
@@ -23,7 +23,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      * Creates the screen for joining a game and creates and initializes objects.
      * @param frame the reference to the main window so that methods for changing screens can be called on it later
      */
-    public joinscreen(mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
+    public joinscreen(Mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den joinscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

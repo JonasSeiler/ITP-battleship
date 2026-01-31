@@ -7,7 +7,7 @@ import javax.swing.border.EmptyBorder;
 
 public class QuitConfirmDialog extends JDialog {
 
-    public QuitConfirmDialog(mainframe frame) {
+    public QuitConfirmDialog(Mainframe frame) {
         super(frame, true); // modal dialog
         setUndecorated(true); // remove default window borders
         setSize(320, 140); // slightly bigger for button

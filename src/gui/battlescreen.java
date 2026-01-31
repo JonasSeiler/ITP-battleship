@@ -39,7 +39,7 @@ public class battlescreen extends JPanel {
     private JButton[][] eCells;
     private JPanel pField;
     private JPanel eField;
-    private mainframe frame;
+    private Mainframe frame;
     private boolean gameSaved = false;
     private JButton saveButton;
     private JButton confirmShotButton;
@@ -62,7 +62,7 @@ public class battlescreen extends JPanel {
      * @param d             direction (false -> vertical, true -> horizontal) of each ship
      * @param inGridSize    shared grid size of {@link hostpregamescreen}
      */
-    public battlescreen(mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
+    public battlescreen(Mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         /*--saves shared input data--*/
         this.COR = c;
         this.SHIPS = s;
@@ -518,8 +518,7 @@ public class battlescreen extends JPanel {
 }
 
 /*  
-    -> titles stretchable
-    -> comment mainframe english
+    -> selected cells disables
 
     when somebody wins/loses user msg
 */

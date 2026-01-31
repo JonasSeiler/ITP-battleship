@@ -9,7 +9,7 @@ import src.coms.*;
  * @author Max Steingräber, Matthias Wiese
  */
 public class titlescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton singleplayer;
     private RoundButton multiplayer;
     private JButton hamburger;
@@ -19,7 +19,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
      * @param frame the reference to the main window so that methods for changing screens can be called on it later
      *
      */
-    public titlescreen(mainframe frame) { // mainframe ist das Hauptfenster und titlescreen gibt Befehle an den mainframe
+    public titlescreen(Mainframe frame) { // mainframe ist das Hauptfenster und titlescreen gibt Befehle an den mainframe
         this.frame = frame;
         this.setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den titlescreen gepackt
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
