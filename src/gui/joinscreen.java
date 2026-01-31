@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * Screen in multiplayer mode, where the player can join a game by entering the appropriate IP address.
  * @author Max Steingräber, Matthias Wiese
  */
-public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+public class Joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
@@ -24,7 +24,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      * Creates buttons and a textfield for the IP address.
      * @param frame the reference to the main window used for screen transitions
      */
-    public joinscreen(mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
+    public Joinscreen(mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den joinscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
