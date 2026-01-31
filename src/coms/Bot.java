@@ -29,12 +29,6 @@ public class Bot extends NetworkPlayer {
      * 
      */
     private int difficulty = 2;
-
-    /**
-     * 
-     */
-    private boolean paritymode = true;
-
     /**
      * 
      */
@@ -89,7 +83,18 @@ public class Bot extends NetworkPlayer {
      * 
      */
     private int[] shiplengths;
-
+    /**
+     *
+     */
+    private boolean[] triedDirections = new boolean[4]; // 0: right, 1: down, 2: left, 3: up
+    /**
+     *  
+     */
+    private boolean foundPositiveEnd = false;
+    /**
+     *  
+     */
+    private boolean foundNegativeEnd = false;
 
     //
     // General functions
@@ -106,6 +111,7 @@ public class Bot extends NetworkPlayer {
         currentdirection = -1;
         lastshothit = false;
         isConnected = true;
+        resetDirectionTracking();
     }
 
     /**
@@ -137,10 +143,10 @@ public class Bot extends NetworkPlayer {
      */
     public boolean sendSize(int size) throws IOException {
         this.boardSize = size;
-        
+
         return true;
     }
-    
+
     /**
      * 
      * @param shiplengths
@@ -149,14 +155,14 @@ public class Bot extends NetworkPlayer {
      */
     public boolean sendShips(int[] shiplengths) throws IOException {
         this.shiplengths = shiplengths;
-        
+
         ownBoard = new board(boardSize, shiplengths);
 
         shiplengthsleft = new ArrayList<>();
         for (int l : shiplengths) {
             shiplengthsleft.add(l);
         }
-        
+
         shipssunk = 0;
 
         placeships(shiplengths);
@@ -168,7 +174,7 @@ public class Bot extends NetworkPlayer {
 
         return true;
     }
-    
+
     /**
      * 
      * @param id
@@ -180,7 +186,7 @@ public class Bot extends NetworkPlayer {
         loadGameId = id;
         return true;
     }
-    
+
     /**
      * 
      * @return
@@ -190,7 +196,7 @@ public class Bot extends NetworkPlayer {
         gameStarted = true;
         return true;
     }
-    
+
     /**
      * 
      * @param row
@@ -200,18 +206,18 @@ public class Bot extends NetworkPlayer {
      */
     @Override
     public int sendShot(int row, int col) throws IOException {
-        
+
         // Korrekte Grenzpruefung (0-basiert)
         if (row < 0 || row >= boardSize || 
-            col < 0 || col >= boardSize) {
+        col < 0 || col >= boardSize) {
             throw new IOException("Ungueltige Koordinaten: (" + row + ", " + col + ") fuer Board-Groesse " + boardSize);
         }
-    
+
         coordinate shot = new coordinate(row, col);  // 0-basiert!
-    
+
         return ownBoard.check_hit(shot);
     }
-    
+
     /**
      * 
      * @throws IOException
@@ -219,18 +225,18 @@ public class Bot extends NetworkPlayer {
     @Override
     public void receivemessagewsave() throws IOException {
         generatedshot = genshot();
-    
+
         if (generatedshot == null) {
             throw new IOException("Konnte keinen Schuss generieren");
         }
-    
+
         if (user == null) {
             throw new IOException("User-Referenz nicht gesetzt");
         }
 
         user.get_hit(generatedshot);
     }
-    
+
     /**
      * 
      * @param answerCode
@@ -242,14 +248,14 @@ public class Bot extends NetworkPlayer {
         }
 
         ownBoard.register_shot(generatedshot, answerCode);
-        
+
         updatetracking(generatedshot, answerCode);
 
         if (difficulty == 3 || difficulty == 2) {
             updateProbabilityMap(generatedshot, answerCode);
         }
     }
-    
+
     /**
      * 
      * @param message
@@ -258,7 +264,7 @@ public class Bot extends NetworkPlayer {
     @Override
     protected void sendmessage(String message) throws IOException {
     }
-    
+
     /**
      * 
      * @return
@@ -267,8 +273,9 @@ public class Bot extends NetworkPlayer {
     @Override
     protected String receivemessage() throws IOException {
         return "";
+
     }
-    
+
     /**
      * 
      */
@@ -276,7 +283,7 @@ public class Bot extends NetworkPlayer {
     public void close() {
         isConnected = false;
         gameStarted = false;
-        
+
         if (hitseq != null) {
             hitseq.clear();
         }
@@ -288,8 +295,9 @@ public class Bot extends NetworkPlayer {
         currentdirection = -1;
         lastshothit = false;
         currenttarget = null;
+        resetDirectionTracking();
     }
-    
+
     //
     // automatic shipplacement related functions
     //
@@ -327,8 +335,8 @@ public class Bot extends NetworkPlayer {
         }
     }
 
-    
-    
+
+
     //
     // shooting related functions
     //
@@ -339,11 +347,11 @@ public class Bot extends NetworkPlayer {
      */
     private coordinate genshot() {
         try {
-        switch(difficulty) {
-            case 1: return genshoteasy();
-            case 2: return genshotmedium();
-            case 3: return genshothard();
-            default: return genshotmedium();
+            switch(difficulty) {
+                case 1: return genshoteasy();
+                case 2: return genshotmedium();
+                case 3: return genshothard();
+                default: return genshotmedium();
             }
         } catch (Exception e) {
             System.err.println("couldnt generate shot: " + e);
@@ -366,8 +374,6 @@ public class Bot extends NetworkPlayer {
      * @throws IOException
      */
     private coordinate genshotmedium() throws IOException {
-        // verwende gleichen code wie von hardshot und passe 
-        // die logik in initprobmap und gehighestprobcell an
         if (!hunting) {
             return target();
         } else {
@@ -396,30 +402,28 @@ public class Bot extends NetworkPlayer {
 
     }
 
-    
+
     // Probabilitymap related functions
 
     /**
      * 
      */
     private void initprobmap() {
+
         if (boardSize <= 0) {
             return;
         }
 
 
-        // paritiy muster setzen
         if (difficulty == 2) {
             for (int i = 0; i < boardSize; i++) {
                 for (int j = 0; j < boardSize; j++) { 
-                       probmap[i][j] = ((i+j) % 2 == 0) ? 1 : 0;          
+                    probmap[i][j] = ((i+j) % 2 == 0) ? 1 : 0;          
                 }
             }
         }
 
-        // probmuster enstprechend des kleinsten Schiffes setzen
         if (difficulty == 3) {
-            // neuercode
             int smallestship = 5;
 
             for (int ship : shiplengths) {
@@ -427,11 +431,11 @@ public class Bot extends NetworkPlayer {
                     smallestship = ship;
                 }
             }
-            
+
             setprobmaptopattern(smallestship);
-            
+
         }
-            
+
         probmapinit = true;
     }
 
@@ -451,6 +455,16 @@ public class Bot extends NetworkPlayer {
      *
      *
      */
+    private void resetDirectionTracking() {
+        triedDirections = new boolean[4];
+        foundPositiveEnd = false;
+        foundNegativeEnd = false;
+    }
+
+    /**
+     *
+     *
+     */
     private void updateprobmapforsmallestship() {
         if (difficulty != 3 || shiplengthsleft == null || shiplengthsleft.isEmpty()) {
             return;
@@ -458,7 +472,7 @@ public class Bot extends NetworkPlayer {
 
         int smallestship = 5;
 
-        for (int ship : shiplengths) {
+        for (int ship : shiplengthsleft) {
             if (ship < smallestship) {
                 smallestship = ship;
             }
@@ -466,7 +480,7 @@ public class Bot extends NetworkPlayer {
 
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) { 
-                if (ownBoard.opp_hit[i][j] == -1) {
+                if (ownBoard.opp_hit[i][j] == -1 && probmap[i][j] != -1) {
                     probmap[i][j] = ((i + (smallestship -1) * j) % smallestship == 0) ? 1 : 0;          
                 }
             }
@@ -493,7 +507,7 @@ public class Bot extends NetworkPlayer {
 
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
-                if (isCellAvailable(x, y)) {
+                if (isCellAvailable(x, y) && probmap[x][y] > 0) {
                     if (probmap[x][y] > maxProb) {
                         maxProb = probmap[x][y];
                         bestCells.clear();
@@ -506,7 +520,7 @@ public class Bot extends NetworkPlayer {
         }
 
         if (bestCells.isEmpty()) {
-            throw new IOException("Keine verfuegbaren Zellen fuer Wahrscheinlichkeitsauswahl");
+            return getrandomcell(); 
         }
 
         return bestCells.get(random.nextInt(bestCells.size()));
@@ -531,30 +545,60 @@ public class Bot extends NetworkPlayer {
             for (int[] dir : directions) {
                 int x = shot.x + dir[0];
                 int y = shot.y + dir[1];
-                if (x >= 0 && x < boardSize && y >= 0 && y < boardSize && probmap[x][y] > 0) {
-                    probmap[x][y] += 10;
+                if (x >= 0 && x < boardSize && y >= 0 && y < boardSize && ownBoard.opp_hit[x][y] == -1) {
+                    if (probmap[x][y] != -1) {
+                        probmap[x][y] += 10;
+                    }
+
                 }
             }
         } else if (result == 2) {
+
+
+
+            List<coordinate> allShipCells = new ArrayList<>(hitseq);
+
             for (coordinate shipCell : hitseq) {
+                int[][] dirs = {{0,1},{1,0},{0,-1},{-1,0}};
+                // Mark all 8 surrounding cells (including diagonals)
+                for (int[] dir : dirs) {
+                    int x = shipCell.x + dir[0];
+                    int y = shipCell.y + dir[1];
+                    if (x >= 0 && x < boardSize && y >= 0 && y < boardSize &&
+                    ownBoard.opp_hit[x][y] == 1) {  // Another hit cell
+                        coordinate adj = new coordinate(x, y);
+                        boolean alreadyInList = false;
+                        for (coordinate c : allShipCells) {
+                            if (c.x == adj.x && c.y == adj.y) {
+                                alreadyInList = true;
+                                break;
+                            }
+                        }
+                        if (!alreadyInList) {
+                            allShipCells.add(adj);
+                        }
+                    }
+                }
+            }
+
+            for (coordinate shipCell : allShipCells) {
                 // Mark all 8 surrounding cells (including diagonals)
                 for (int dx = -1; dx <= 1; dx++) {
                     for (int dy = -1; dy <= 1; dy++) {
                         int x = shipCell.x + dx;
                         int y = shipCell.y + dy;
 
-                        // Skip the ship cell itself
-                        if (dx == 0 && dy == 0) continue;
-
                         if (x >= 0 && x < boardSize && y >= 0 && y < boardSize) {
-                            probmap[x][y] = 0;
+                            probmap[x][y] = -1;
                         }
                     }
                 }
             }
 
+            hitseq.clear();
+
             // Update probability map for new smallest ship
-           updateprobmapforsmallestship();
+            updateprobmapforsmallestship();
         }
     }
 
@@ -575,9 +619,22 @@ public class Bot extends NetworkPlayer {
         if (x < 0 || x >= boardSize || y < 0 || y >= boardSize) {
             return false;
         }
-        return ownBoard.opp_hit[x][y] == -1;
-    }
 
+        // Check if cell has been shot already
+        if (ownBoard.opp_hit[x][y] != -1) {
+            return false;
+        }
+
+        // For hard difficulty, also check if cell is marked as off-limits
+        if (difficulty == 3 && probmap != null) {
+            // Cells marked as -1 are off-limits (adjacent to sunken ships)
+            if (probmap[x][y] == -1) {
+                return false;
+            }
+        }
+
+        return true;
+    }
     /** 
      * 
      * @param coord
@@ -597,9 +654,9 @@ public class Bot extends NetworkPlayer {
         if (ownBoard == null || ownBoard.opp_hit == null) {
             throw new IOException("Board nicht initialisiert");
         }
-    
+
         List<coordinate> availableCells = new ArrayList<>();
-    
+
         for (int x = 0; x < boardSize; x++) {
             for (int y = 0; y < boardSize; y++) {
                 if (isCellAvailable(x, y)) {
@@ -607,56 +664,15 @@ public class Bot extends NetworkPlayer {
                 }
             }
         }
-    
+
         if (availableCells.isEmpty()) {
             throw new IOException("Keine freien Zellen mehr verfuegbar");
         }
-    
+
         return availableCells.get(random.nextInt(availableCells.size()));
     }
 
-    /**
-     * 
-     * @return
-     * @throws IOException
-     */
-    private coordinate getparitycell() throws IOException {
-        if (ownBoard == null || ownBoard.opp_hit == null) {
-            throw new IOException("Board nicht initialisiert");
-        }
-    
-        List<coordinate> availableCells = new ArrayList<>();
-        int parity = paritymode ? 0 : 1;
-    
-        for (int x = 0; x < boardSize; x++) {
-            for (int y = 0; y < boardSize; y++) {
-                if (isCellAvailable(x, y) && (x + y) % 2 == parity) {
-                    availableCells.add(new coordinate(x, y));
-                }
-            }
-        }
-    
-        if (availableCells.isEmpty()) {
-            parity = 1 - parity;
-            paritymode = !paritymode;
-        
-            for (int x = 0; x < boardSize; x++) {
-                for (int y = 0; y < boardSize; y++) {
-                    if (isCellAvailable(x, y) && (x + y) % 2 == parity) {
-                        availableCells.add(new coordinate(x, y));
-                    }
-                }
-            }
-        }
-    
-        if (availableCells.isEmpty()) {
-            return getrandomcell();
-        }
-    
-        return availableCells.get(random.nextInt(availableCells.size()));
-    }
 
-    
 
     /**
      * 
@@ -673,81 +689,105 @@ public class Bot extends NetworkPlayer {
             return gethighestprobcell();
         }
 
-        // First, try to determine direction if not known
-        if (currentdirection == -1 && hitseq.size() >= 2) {
-            // We have at least 2 hits, we can determine direction
-            coordinate first = hitseq.get(0);
-            coordinate second = hitseq.get(1);
-
-            if (first.x == second.x) {
-                // Horizontal ship
-                currentdirection = 0; // 0 = horizontal (left/right)
-            } else if (first.y == second.y) {
-                // Vertical ship
-                currentdirection = 1; // 1 = vertical (up/down)
-            }
+        if (hitseq.size() == 1) {
+            return tryDirectionsFromFirstHit();
         }
 
-        if (currentdirection == -1 && hitseq.size() == 1) {
-            // Only one hit, try all directions
-            int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-            List<coordinate> possibleShots = new ArrayList<>();
+        if (currentdirection == -1) {
+            determineDirectionFromHits();
+        }
 
-            for (int[] dir : directions) {
-                int newX = currenttarget.x + dir[0];
-                int newY = currenttarget.y + dir[1];
+        if (currentdirection != -1) {
+            if (!foundPositiveEnd) {
+                coordinate lastHit = hitseq.get(hitseq.size() - 1);
+
+                int newX = lastHit.x + getDirectionDeltaX(currentdirection);
+                int newY = lastHit.y + getDirectionDeltaY(currentdirection);
 
                 if (isCellAvailable(newX, newY)) {
-                    possibleShots.add(new coordinate(newX, newY));
+                    return new coordinate(newX, newY);
+                } else {
+                    foundPositiveEnd = true;
                 }
             }
 
-            if (!possibleShots.isEmpty()) {
-                return possibleShots.get(random.nextInt(possibleShots.size()));
-            }
-        } else if (currentdirection != -1) {
-            // We know the direction, shoot along it
-            coordinate lastHit = hitseq.get(hitseq.size() - 1);
+            if (!foundNegativeEnd) {
+                coordinate firstHit = hitseq.get(0);
+                int oppositeDir = getOppositeDirection(currentdirection);
+                int newX = firstHit.x + getDirectionDeltaX(oppositeDir);
+                int newY = firstHit.y + getDirectionDeltaY(oppositeDir);
 
-            // Try in positive direction first
-            int newX = lastHit.x;
-            int newY = lastHit.y;
-
-            if (currentdirection == 0) { // Horizontal
-                newY = lastHit.y + 1;
-            } else { // Vertical
-                newX = lastHit.x + 1;
+                if (isCellAvailable(newX, newY)) {
+                    return new coordinate(newX, newY);
+                } else {
+                    foundNegativeEnd = true;
+                }
             }
 
-            if (isCellAvailable(newX, newY)) {
-                return new coordinate(newX, newY);
-            }
-
-            // Try in negative direction
-            newX = hitseq.get(0).x;
-            newY = hitseq.get(0).y;
-
-            if (currentdirection == 0) { // Horizontal
-                newY = hitseq.get(0).y - 1;
-            } else { // Vertical
-                newX = hitseq.get(0).x - 1;
-            }
-
-            if (isCellAvailable(newX, newY)) {
-                return new coordinate(newX, newY);
-            }
+            hunting = true;
+            currentdirection = -1;
+            currenttarget = null;
+            resetDirectionTracking();
+            return gethighestprobcell();
         }
 
-        // If we get here, we couldn't find a valid shot in the known direction
-        // Switch back to hunting mode
         hunting = true;
-        currentdirection = -1;
-        currenttarget = null;
-
-        if (!probmapinit) {
-            initprobmap();
-        }
         return gethighestprobcell();
+    }
+
+    /**
+     *
+     *
+     */
+    private coordinate tryDirectionsFromFirstHit() throws IOException {
+        coordinate firstHit = hitseq.get(0);
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+        for (int i = 0; i < 4; i++) {
+            if (!triedDirections[i]) {
+                int newX = firstHit.x + directions[i][0];
+                int newY = firstHit.y + directions[i][1];
+
+                if (isCellAvailable(newX, newY)) {
+                    triedDirections[i] = true;
+                    return new coordinate(newX, newY);
+                } else {
+                    triedDirections[i] = true;
+                }
+            }
+        }
+
+        hunting = true;
+        currenttarget = null;
+        resetDirectionTracking();
+        return gethighestprobcell();
+
+    }
+
+    /**
+     *
+     */
+    private void determineDirectionFromHits() {
+        if (hitseq.size() < 2) return;
+
+        coordinate first = hitseq.get(0);
+        coordinate second = hitseq.get(1);
+
+        if (first.x == second.x) {
+            // Horizontal
+            if (second.y > first.y) {
+                currentdirection = 0; // right
+            } else {
+                currentdirection = 2; // left
+            }
+        } else if (first.y == second.y) {
+            // Vertical
+            if (second.x > first.x) {
+                currentdirection = 1; // down
+            } else {
+                currentdirection = 3; // up
+            }
+        }
     }
 
     /**
@@ -810,7 +850,17 @@ public class Bot extends NetworkPlayer {
         lastshothit = (result == 1 || result == 2);
 
         if (result == 1 || result == 2) {
-            hitseq.add(shot);
+            boolean alreadyInList = false;
+            for (coordinate c : hitseq) {
+                if (c.x == shot.x && c.y == shot.y) {
+                    alreadyInList = true;
+                    break;
+                }
+            }
+
+            if (!alreadyInList) {
+                hitseq.add(shot);
+            }
 
             if (currenttarget == null) {
                 currenttarget = shot;
@@ -822,18 +872,22 @@ public class Bot extends NetworkPlayer {
 
                 // Remove ship from shiplengthsleft (for hard difficulty)
                 if (shiplengthsleft != null) {
-                    // Find and remove the first occurrence of this length
-                    Integer lengthToRemove = sunkLength;
-                    shiplengthsleft.remove(lengthToRemove);
+                    for (int i = 0; i < shiplengthsleft.size(); i++) {
+                        if (shiplengthsleft.get(i) == sunkLength) {
+                            shiplengthsleft.remove(i);
+                            break;
+                        }
+                    }
                 }
 
                 shipssunk++;
 
                 // Clear tracking for next ship
-                hitseq.clear();
+                // hitseq.clear(); is needed to set all surrounding cells as -1 
                 currenttarget = null;
                 currentdirection = -1;
                 hunting = true;
+                resetDirectionTracking();
             } else {
                 // Hit but not sunk - continue hunting this ship
                 hunting = false;
@@ -841,18 +895,12 @@ public class Bot extends NetworkPlayer {
         } else {
             // Miss
             if (!hunting) {
-                // We were targeting a ship but missed
-                // If we have a direction, try the other way
-                if (currentdirection != -1) {
-                    // We'll handle direction switching in the target() method
-                } else {
-                    // No direction yet, just continue with current ship
-                }
+
             }
         }
     }
-    
-    
+
+
 
     /**
      * 
