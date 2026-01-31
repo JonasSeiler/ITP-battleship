@@ -11,7 +11,7 @@ public class Bot extends NetworkPlayer {
     /**
      * 
      */
-    private board ownBoard;
+    public board ownBoard;
     /**
      * 
      */
@@ -165,12 +165,13 @@ public class Bot extends NetworkPlayer {
             probmap = new int[boardSize][boardSize];
             initprobmap();
         }
-
         return true;
     }
     
     /**
      * 
+     * loads the Bot's side of the game
+     *
      * @param id
      * @return
      * @throws IOException
@@ -178,9 +179,103 @@ public class Bot extends NetworkPlayer {
     public boolean sendLoad(String id) throws IOException {
         isLoadGame = true;
         loadGameId = id;
+        load_game(id + "Bot");
         return true;
     }
     
+    public void load_game(String filepath) {
+        try(BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+            System.out.println("Reading: ");
+            // read grid size
+            int new_s = Integer.parseInt(reader.readLine().trim());
+            
+            System.out.println("Reading: " + new_s);
+            // read ship array
+            String line = reader.readLine();
+            String[] parts = line.trim().split("\\s+");
+            int[] s_set = new int[parts.length];
+            System.out.print("Reading: ");
+            for (int i = 0; i < s_set.length; i++) {
+                s_set[i] = Integer.parseInt(parts[i]);
+                System.out.print(s_set[i] + " ");
+            }
+
+            // init new board
+            board new_b = new board(new_s, s_set);
+            
+            // read and copy ship_pos 
+            for (int i = 0; i < new_s; i++) {
+                String row = reader.readLine();
+                String[] segments = row.trim().split("\\s+");
+                for (int j = 0; j < new_s; j++) {
+                    new_b.ship_pos[i][j] = Integer.parseInt(segments[j]);
+                }
+            }
+            // read and copy hit_pos
+            for (int i = 0; i < new_s; i++) {
+                String row = reader.readLine();
+                String[] segments = row.trim().split("\\s+");
+                for (int j = 0; j < new_s; j++) {
+                    new_b.hit_pos[i][j] = Integer.parseInt(segments[j]);
+                }
+            }
+
+            // read and copy fleet
+            for (ship s : new_b.fleet) {
+                line = reader.readLine();
+                parts = line.trim().split("\\s+");
+                for (int i = 0; i < s.length; i++) {
+                    s.pos[i].x = Integer.parseInt(parts[i]);
+                    if(i == 0) s.head_x = s.pos[i].x;
+                }
+                line = reader.readLine();
+                parts = line.trim().split("\\s+");
+                for (int i = 0; i < s.length; i++) {
+                    s.pos[i].y = Integer.parseInt(parts[i]);
+                    if(i == 0) s.head_y = s.pos[i].y;
+                }
+                line = reader.readLine();
+                parts = line.trim().split("\\s+");
+                for (int i = 0; i < s.length; i++) {
+                    s.lifes[i] = Integer.parseInt(parts[i]);
+                }
+            s.dir = Integer.parseInt(reader.readLine().trim());
+            } 
+
+            // read and copy opp_hit
+            for (int i = 0; i < new_s; i++) {
+                String row = reader.readLine();
+                String[] segments = row.trim().split("\\s+");
+                for (int j = 0; j < new_s; j++) {
+                    new_b.opp_hit[i][j] = Integer.parseInt(segments[j]);
+                }
+            }
+            int hp = Integer.parseInt(reader.readLine().trim());
+            new_b.opp_hp = hp;
+
+            int diff = Integer.parseInt(reader.readLine().trim());
+            difficulty = diff;
+            // read and copy probmap
+            this.probmap = new int[new_s][new_s];
+            for (int i = 0; i < new_s; i++) {
+                String row = reader.readLine();
+                String[] segments = row.trim().split("\\s+");
+                for (int j = 0; j < new_s; j++) {
+                    probmap[i][j] = Integer.parseInt(segments[j]);
+                }
+            }
+
+            ownBoard = new_b;
+            boardSize = new_s;
+            shiplengths = s_set;
+
+            // load a new battlescreen with the correct ships and hits 
+        } catch (Exception e) {
+            System.err.println("Failed loading: " + e.getMessage());
+
+        }
+    }
+
     /**
      * 
      * @return
@@ -248,6 +343,34 @@ public class Bot extends NetworkPlayer {
         if (difficulty == 3 || difficulty == 2) {
             updateProbabilityMap(generatedshot, answerCode);
         }
+    }
+
+    /**
+     * saves the Bot's side of the game
+     *
+     * @param id 
+     * @return 
+     */
+    @Override 
+    public boolean sendSave(String id) {
+        ownBoard.save_game(id + "Bot");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(id + "Bot", true))) {
+            writer.newLine();
+            writer.write(String.valueOf(difficulty));
+            writer.newLine();
+
+            for (int i = 0; i < boardSize; i++) {
+                StringBuilder row = new StringBuilder();
+                for (int j = 0; j < boardSize; j++) {
+                    row.append(probmap[i][j] + " ");
+                }
+                writer.write(row.toString());
+                writer.newLine();
+            }
+        } catch(Exception e) {
+
+        }
+        return true;
     }
     
     /**

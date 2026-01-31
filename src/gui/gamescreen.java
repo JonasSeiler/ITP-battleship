@@ -185,7 +185,7 @@ public class gamescreen extends JPanel {
         JButton startButton = new RoundButton("Start Game");
         startButton.addActionListener(e -> {if (allShipsPlaced())
             startButton.setText("waiting...");
-            frame.startBattle();
+            frame.startBattle(false);
         });
         pFieldPanel.add(startButton);
 

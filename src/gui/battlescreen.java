@@ -327,7 +327,8 @@ public class battlescreen extends JPanel {
      * @param y     y-coordinate
      * @param i     status code (0: red, 1: yellow, 2: green)
      */
-    private void colorEnemyShip(int x, int y, int i) {
+    public void colorEnemyShip(int x, int y, int i) {
+        eCells[x][y].setEnabled(false);
         switch(i) {
             case 0:
                 eCells[x][y].setBackground(Color.red);
@@ -426,6 +427,7 @@ public class battlescreen extends JPanel {
         }
         
         eCells[selectedX][selectedY].setEnabled(false);
+        eCells[selectedX][selectedY].setBorder(BorderFactory.createLineBorder(Color.white, 1));
         gLogic.send_shot(selectedX, selectedY);
     }
 
