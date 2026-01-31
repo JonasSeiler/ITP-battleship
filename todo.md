@@ -29,5 +29,6 @@ v/
 - include win/loss pop ups
 v/
 
+- make hard, not target surrounding tiles
 
 jar --create --file=battleship.jar --main-class=src.gui.mainframe -C out/ .
