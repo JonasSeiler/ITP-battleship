@@ -7,7 +7,7 @@ import javax.swing.border.EmptyBorder;
 
 public class SaveGameDialog extends JDialog {
 
-    public SaveGameDialog(mainframe frame) {
+    public SaveGameDialog(Mainframe frame) {
         super(frame, true); // modal dialog
         setUndecorated(true); // remove default window borders
         setSize(320, 140); // slightly bigger for button

@@ -28,8 +28,6 @@ public class gamescreen extends JPanel {
      * @param hoverRow              rotation preview (row)
      * @param hoverCol              rotation preview (column)
      * @param shipSelector          selection box for ship-size
-     * @param gameSaved             true -> game was saved
-     *                              false -> game wasn't saved
      * @param frame                 mainframe (window)
      * @param exitButton            exits the game
      * 
@@ -57,8 +55,7 @@ public class gamescreen extends JPanel {
     private int hoverRow = -1;
     private int hoverCol = -1;
     private JComboBox<String> shipSelector;
-    private boolean gameSaved = false;
-    private mainframe frame;
+    private Mainframe frame;
     private JButton exitButton;
     private JButton startButton;
 
@@ -74,7 +71,7 @@ public class gamescreen extends JPanel {
      * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link hostpregamescreen}
      * @param inGridSize    passed grid size of {@link hostpregamescreen}
      */
-    public gamescreen(mainframe f, int[] inShips, int inGridSize) {
+    public gamescreen(Mainframe f, int[] inShips, int inGridSize) {
         /*--save passed class parameters--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;
@@ -99,8 +96,9 @@ public class gamescreen extends JPanel {
         /*--title--*/
         JLabel title = new JLabel("Battleship");
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setFont(new Font("Times New Roman", Font.BOLD, 28));
+        title.setFont(new Font("Times New Roman", Font.BOLD, 32));
         title.setForeground(Color.WHITE);
+        makeLabelScalable(title, this, 0.05f);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
 
@@ -122,7 +120,8 @@ public class gamescreen extends JPanel {
         JLabel playerTitle = new JLabel("Your Side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
-        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 22));
+        makeLabelScalable(playerTitle, pSide, 0.08f);
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--grid wrapper (player)--*/
@@ -205,7 +204,8 @@ public class gamescreen extends JPanel {
         JLabel enemyTitle = new JLabel("Enemy Side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
-        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 22));
+        makeLabelScalable(enemyTitle, eSide, 0.08f);
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--grid wrapper (enemy)--*/
@@ -271,7 +271,7 @@ public class gamescreen extends JPanel {
         for (int r = 0; r < x; r++) {
             for (int c = 0; c < y; c++) {
                 JButton cell = new JButton();
-                cell.setBackground(Color.DARK_GRAY);
+                cell.setBackground(Color.BLUE);
                 cell.setMargin(new Insets(0, 0, 0, 0));
                 cell.setFocusPainted(false);
                 array[r][c] = cell;
@@ -454,14 +454,14 @@ public class gamescreen extends JPanel {
             if (occupied[rr][cc] || hasAdjacentOccupied(rr, cc, occupied)) {return;}
         }
 
-        /*--place ship, color it blue and save it in 'occupied'-array--*/
+        /*--place ship, color it dark gray and save it in 'occupied'-array--*/
         for (int i = 0; i < currentShipSize; i++) {
             /*--calculates tile positions of the ship--*/
             int rr = r + (horizontal ? i : 0);
             int cc = c + (horizontal ? 0 : i);
 
             occupied[rr][cc] = true;
-            pCells[rr][cc].setBackground(Color.BLUE);
+            pCells[rr][cc].setBackground(Color.DARK_GRAY);
         }
 
         /*--save placed ship data--*/
@@ -513,7 +513,7 @@ public class gamescreen extends JPanel {
         for (int r = 0; r < pCells.length; r++) {
             for (int c = 0; c < pCells[r].length; c++) {
                 if (!occupied[r][c]) {
-                    pCells[r][c].setBackground(Color.DARK_GRAY);
+                    pCells[r][c].setBackground(Color.BLUE);
                 }
             }
         }
@@ -645,7 +645,7 @@ public class gamescreen extends JPanel {
             int cc = c + (dir ? 0 : i);
 
             occupied[rr][cc] = false;
-            pCells[rr][cc].setBackground(Color.DARK_GRAY);
+            pCells[rr][cc].setBackground(Color.BLUE);
         }
 
         shipsLeft[size - 2]++;
@@ -677,7 +677,7 @@ public class gamescreen extends JPanel {
             int cc = start.y + (dir ? 0 : i);
 
             occupied[rr][cc] = false;
-            pCells[rr][cc].setBackground(Color.DARK_GRAY);
+            pCells[rr][cc].setBackground(Color.BLUE);
         }
 
         // restore ship count
@@ -721,7 +721,22 @@ public class gamescreen extends JPanel {
         }
         return -1;
     }
-
+    /**
+     * Makes label stretchable when frame(window) size changes
+     * 
+     * @param label         label
+     * @param reference     reference panel/component
+     * @param factor        scale factor
+     */
+    private void makeLabelScalable(JLabel label, JComponent reference, float factor) {
+        reference.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int size = Math.max(16, (int)(reference.getWidth() * factor));
+                label.setFont(label.getFont().deriveFont((float) size));
+            }
+        });
+    }
     /**
      * Method for color gradient, which is called automatically
      * when new components have to be drawn

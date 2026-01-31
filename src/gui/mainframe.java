@@ -9,10 +9,10 @@ import src.logic.game;
 
 import java.awt.*;
 /**
- * Fensteroberfläche, die alle Menübildschirme(Panels) enthält
+ * Main window, which contains every screen of the game
  * @author Max Steingräber, Matthias Wiese
  */
-public class mainframe extends JFrame {
+public class Mainframe extends JFrame {
     private CardLayout cLayout;
     private JPanel cPanel;
     /*--shared data--*/
@@ -25,7 +25,7 @@ public class mainframe extends JFrame {
     public NetworkPlayer coms;
     int[] ships = null;
     int size = 0;
-    public mainframe frame = this;
+    public Mainframe frame = this;
 
     private String color = "navy";
     public String lastscreen2;
@@ -33,20 +33,16 @@ public class mainframe extends JFrame {
     public colorpair beige = new colorpair(new Color(235, 220, 180), new Color(40, 30, 20));
     public colorpair deep_ocean = new colorpair(new Color(15,32,39), new Color(32,58,67));
     public colorpair colorsheme = new colorpair(navy.color1, navy.color2);
-    /*
-    verschiedene Farben:
-    new Color(20, 30, 50) new Color(220, 200, 190));
-    */
 
    public int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
    
     /**
-     * Konstruiert Fensteroberfläche
+     * Constructor of Mainframe(window), where all screens get added to
      */
-    public mainframe() {
-        this.setTitle("Battleship"); // title of frame
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits program when hitting the close button
-        this.setSize(640, 640); // sets x- and y-dimension
+    public Mainframe() {
+        this.setTitle("Battleship");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setSize(640, 640);
 
         colorsheme.color1 = navy.color1;
         colorsheme.color2 = navy.color2;
@@ -89,14 +85,17 @@ public class mainframe extends JFrame {
         pack();
     }
     /**
-     * Zeigt ein bestimmtes Menübildschirm an
+     * Shows certain screen
      * 
-     * @param name      Name des Menübildschirms
+     * @param name      name of specific screen
      */
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
 
+    /**
+     * Sets the communication for multiplayer
+     */
     public void setupComs() {
 
         if (coms instanceof Server) {
@@ -133,6 +132,9 @@ public class mainframe extends JFrame {
 
     }
 
+    /**
+     * Starts the 'gamescreen'
+     */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
@@ -155,43 +157,9 @@ public class mainframe extends JFrame {
 
 
     }
-
-    /**
-    * GameScreen object is created with the data selected by the user.
-    */
-    public void startGamescreen2() {
-        if (GameScreen != null) cPanel.remove(GameScreen);
-
-        GameScreen = new gamescreen(this, PreGameScreen2.ships, PreGameScreen2.gridSize);
-
-        /*if (coms instanceof Server) {
-            try {
-            setupServer();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else if (coms instanceof Client) {
-            try {
-                setupClient();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else {
-            try {
-                setupCPU();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        }*/
-
-        cPanel.add(GameScreen, "gamescreen");
-        cLayout.show(cPanel, "gamescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
-    }
     
     /**
-     * Startet ein Spiel und öffnet den Spielbildschirm
+     * Starts the game and opens 'battlescreen'
      */
     public void startBattle() {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
@@ -276,6 +244,6 @@ public class mainframe extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(mainframe::new);
+        SwingUtilities.invokeLater(Mainframe::new);
     }
 }

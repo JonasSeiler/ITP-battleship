@@ -29,14 +29,14 @@ public class pregamescreen extends JPanel { // JPanel ist ein Standard-Container
     /**
      * The array containing the size of the selected ships.
      */
-    public int[] ships; // wird für den GameScreen gebraucht
-    private mainframe frame; // Referenz auf das Hauptfenster
+    public int[] ships; // // wird für den GameScreen gebraucht
+    private Mainframe frame; // Referenz auf das Hauptfenster
 
     /**
      * Creates the screen for the game settings and initializes buttons and also a capacity bar.
      * @param frame the reference to the main window used for screen transitions
      */
-    public pregamescreen(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
+    public pregamescreen(Mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den pregamescreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

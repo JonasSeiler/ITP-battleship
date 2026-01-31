@@ -13,8 +13,9 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * Screen, where the player is waiting for the host to start a game.
  * @author Max Steingräber, Matthias Wiese
  */
+
 public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
     JLabel waitMsg;
@@ -24,7 +25,8 @@ public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
      * Creates and initializes objects and sets the layout.
      * @param frame the reference to the main window used for screen transitions
      */
-    public Joinwaitscreen(mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
+
+    public Joinwaitscreen(Mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den waitingscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing

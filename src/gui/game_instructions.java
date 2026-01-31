@@ -11,8 +11,9 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * Screen where the user can read the game instructions and learn about shortcuts.
  * @author Matthias
  */
+
 public class Game_instructions extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private JButton hamburger;
     private JLabel game_instructions_label;
     private JTextArea gameInstructions;
@@ -22,7 +23,8 @@ public class Game_instructions extends JPanel { // JPanel ist ein Standard-Conta
      * Sets up the layout, creates the game instruction text, and describes the navigation shortcuts.
      * @param frame the reference to the main window used for screen transitions
      */
-    public Game_instructions(mainframe frame) { // mainframe ist das Hauptfenster und game_instructions gibt Befehle an den mainframe
+
+    public Game_instructions(Mainframe frame) { // mainframe ist das Hauptfenster und game_instructions gibt Befehle an den mainframe
         this.frame = frame;
         this.setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den game_instructionsscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
