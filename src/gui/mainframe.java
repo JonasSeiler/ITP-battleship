@@ -157,7 +157,7 @@ public class mainframe extends JFrame {
     }
 
     /**
-    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
+    * GameScreen object is created with the data selected by the user.
     */
     public void startGamescreen2() {
         if (GameScreen != null) cPanel.remove(GameScreen);
@@ -228,7 +228,7 @@ public class mainframe extends JFrame {
     }
 
     /**
-     * changes the current background colors to two new ones
+     * Changes the current background colors to two new ones.
      */
     public void changeColor() {
         if (color == "navy") {
@@ -249,7 +249,7 @@ public class mainframe extends JFrame {
     /**
      * Allows the player to select an older save file from the “saves” directory.
      * The absolute path of the selected file is stored in a variable.
-     * @return true if a file was successfully selected. False if the selection was canceled by the player or an error occurred.
+     * @return {@code true} if a file was successfully selected and {@code false} if the selection was canceled by the player or an error occurred.
      */
    
     public boolean handleLoadGame() {

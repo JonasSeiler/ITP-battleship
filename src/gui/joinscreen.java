@@ -9,7 +9,7 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen in multiplayer mode, where you can join a game
+ * Screen in multiplayer mode, where the player can join a game by entering the appropriate IP address.
  * @author Max Steingräber, Matthias Wiese
  */
 public class joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -20,8 +20,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
     private RoundButton connect;
 
     /**
-     * Creates the screen for joining a game and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Initializes the screen for joining a game.
+     * Creates buttons and a textfield for the IP address.
+     * @param frame the reference to the main window used for screen transitions
      */
     public joinscreen(mainframe frame) { // mainframe ist das Hauptfenster und der joinscreen gibt Befehle an den mainframe
         this.frame = frame;
@@ -32,7 +33,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
         JLabel title = new JLabel("Battleship");
         title.setForeground(Color.WHITE); // Farbe der Schrift
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         AbstractAction exitAction = new AbstractAction() { // Objekt welches die Logik für eine Aktion definiert
             @Override
             public void actionPerformed(ActionEvent e) { // Methode des Objekts wird überschrieben mit der Logik
@@ -60,9 +61,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(connectTaste, "connect"); // überwacht, ob die Connect Taste gedrückt wurde
         this.getActionMap().put("connect", connectAction); // führt die Aktion aus, wenn die InputMap die Taste erkannt hat
 
-        JLabel ip_adress = new JLabel("        IP Adress");
-        ip_adress.setForeground(Color.WHITE);
-        ip_adress.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+        JLabel ip_address = new JLabel("        IP Address");
+        ip_address.setForeground(Color.WHITE);
+        ip_address.setFont(new Font("Times New Roman", Font.PLAIN, 20));
         exit = new RoundButton("Exit");
         ip = new RoundTextField();
         connect = new RoundButton("Connect");
@@ -84,7 +85,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
-        contentPanel.add(ip_adress);
+        contentPanel.add(ip_address);
         contentPanel.add(ip);
         contentPanel.add(connect);
         contentPanel.add(exit);
@@ -107,7 +108,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
      * After successful completion, the program switches to JoinWaitScreen.
      */
     void connection() {
-        String ipAdress = ip.getText();
+        String ipAddress = ip.getText();
         if(frame.coms != null) {
             frame.coms = null;
         }
@@ -115,7 +116,7 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         Client c = (Client) frame.coms;
         new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
-                c.setServerAddress(ipAdress);
+                c.setServerAddress(ipAddress);
                 try {
                     c.start();
                 } catch (Exception e) {
@@ -133,9 +134,9 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
 
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -144,6 +145,6 @@ public class joinscreen extends JPanel { // JPanel ist ein Standard-Container od
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt.
     }
 }

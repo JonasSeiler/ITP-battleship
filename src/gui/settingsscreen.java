@@ -8,8 +8,8 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen where the user can change the settings
- * @author Max, Matthias
+ * Screen where the user can change the settings.
+ * @author Matthias Wiese
  */
 public class settingsscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private mainframe frame; // Referenz auf das Hauptfenster
@@ -18,8 +18,8 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
     private RoundButton game_instructions;
 
     /**
-     * Creates the start screen and creates and initializes objects
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Creates the screen and adds the setting buttons.
+     * @param frame the reference to the main window used for screen transitions
      *
      */
     public settingsscreen(mainframe frame) { // mainframe ist das Hauptfenster und settingsscreen gibt Befehle an den mainframe
@@ -59,7 +59,7 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den settingsscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
         contentPanel.add(new JLabel("")); // Erzeugt eine leere Zelle als Platzhalter
         contentPanel.add(new JLabel(""));
         contentPanel.add(changeColor);
@@ -67,16 +67,16 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das settingsscreen-Panel gelegt
         hamburger.addActionListener(exitAction);
         changeColor.addActionListener(e -> {frame.changeColor(); repaint();});
         game_instructions.addActionListener(e -> {frame.showScreen("game_instructions");});
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -85,6 +85,6 @@ public class settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt
     }
 }

@@ -5,7 +5,8 @@ import java.awt.*;
 import src.coms.*;
 
 /**
- * First screen the player sees. Choice between single player and multiplayer.
+ * Player can choose between single player and multiplayer.
+ * It is the first screen in the game.
  * @author Max Steingräber, Matthias Wiese
  */
 public class titlescreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -15,9 +16,8 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
     private JButton hamburger;
 
     /**
-     * Creates the start screen and creates and initializes objects
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
-     *
+     * Creates the start screen and initializes objects and buttons.
+     * @param frame the reference to the main window used for screen transitions
      */
     public titlescreen(mainframe frame) { // mainframe ist das Hauptfenster und titlescreen gibt Befehle an den mainframe
         this.frame = frame;
@@ -29,7 +29,7 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         title.setForeground(Color.WHITE);
         singleplayer = new RoundButton("Singleplayer");
         multiplayer = new RoundButton("Multiplayer");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         hamburger = new JButton("\u2261");
         hamburger.setForeground(Color.WHITE);
         hamburger.setBorderPainted(false); // Entfernt die Hintergrundfläche des Buttons also man sieht nur noch das ≡ Symbol
@@ -73,9 +73,9 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g A graphic object provided by the system to display the component on the screen.
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -84,6 +84,6 @@ public class titlescreen extends JPanel { // JPanel ist ein Standard-Container o
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt
     }
 }

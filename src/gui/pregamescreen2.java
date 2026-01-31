@@ -8,8 +8,8 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen for adjusting game settings in single-player mode
- * Determining the number of ships and the size of the playing field
+ * Screen for adjusting game settings in singleplayer mode.
+ * Determining the number of ships and the size of the playing field.
  * @author Matthias Wiese
  */
 public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -25,13 +25,19 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     private JRadioButton easy;
     private JRadioButton medium;
     private JRadioButton hard;
+    /**
+     * The size of the playing field grid.
+     */
     public int gridSize; // wird für den GameScreen gebraucht
-    public int[] ships; // // wird für den GameScreen gebraucht
+    /**
+     * The array containing the size of the selected ships.
+     */
+    public int[] ships; // wird für den GameScreen gebraucht
     private mainframe frame; // Referenz auf das Hauptfenster
 
     /**
-     * Creates the screen for the game settings and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Creates the screen for the game settings and initializes buttons and also a capacity bar.
+     * @param frame the reference to the main window used for screen transitions
      */
     public pregamescreen2(mainframe frame) { // mainframe ist das Hauptfenster und pregamescreen2 gibt Befehle an den mainframe
         this.frame = frame;
@@ -142,7 +148,7 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den pregamescreen2 aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
         difficulty.add(easy);
         difficulty.add(medium);
         difficulty.add(hard);
@@ -165,7 +171,7 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das pregamescreen2-Panel gelegt
         gridSize1.addChangeListener(e -> {updateCapacity();}); // wenn der Button verändert wird, wird updateCapacity ausgeführt
         ship_size5.addChangeListener(e -> {updateCapacity();});
         ship_size4.addChangeListener(e -> {updateCapacity();});
@@ -182,8 +188,8 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Method called when the Start button is pressed
-     * In this method, the selected settings are stored in an array and int.
+     * Stores the selected settings when the start button is pressed.
+     * They are stored in an array and integer.
      */
     private void start() {
         int shipSize5 = (Integer) ship_size5.getValue();
@@ -210,7 +216,7 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Method writes the selected difficulty level of the bot to a variable in the mainframe.
+     * Writes the selected difficulty level of the bot to a variable in the mainframe.
      */
     public void start2() {
         if (easy.isSelected()) {
@@ -223,9 +229,9 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -234,11 +240,11 @@ public class pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt
     }
 
     /**
-     * Method called when a game setting has been changed
+     * Updates the component settings and calculates the remaining ship capacity.
      * It calculates how much space you can still occupy and whether you can currently add another ship with size x.
      * In addition, the capacity display is updated.
      */

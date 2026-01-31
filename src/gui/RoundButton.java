@@ -3,8 +3,8 @@ import javax.swing.*; // Werkzeuge für den Button
 import java.awt.*; // Werkzeuge für Farben, Schriften und die Grafik-Power
 
 /**
- * A customized version of the JButtons with
- * Glass design and rounded corners
+ * A customized version of the JButton.
+ * It has a glass design and rounded corners.
  * @author Matthias Wiese
  */
 public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ein JButton
@@ -12,10 +12,9 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
     private int cornerRadius = 30; // Wie rund der Button sein soll
 
     /**
-     * Initializes the RoundButton
-     * Disables the default Swing theme to use the custom
-     * Glass look and rounded corners.
-     * @param label The text to be displayed on the button
+     * Initializes the RoundButton.
+     * Disables the default Swing theme to use the custom look.
+     * @param label the text to be displayed on the button
      */
     public RoundButton(String label) { // Konstruktor
         super(label); // ruft den Konstruktor von JButton auf und der JButton, also die Mutterklasse schreibt den Text rein, aber es wird erstmal nur gespeichert
@@ -28,9 +27,9 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
     }
 
     /**
-     * Method that draws the button
+     * Draws the button.
      * Overrides the default method to enable rounded corners and the glass effect.
-     * @param g A graphic object provided by the system to display the component on the screen.
+     * @param g graphic object provided by the system to display the component on the screen
      */
     @Override // signalisiert Java benutzt nicht die Standard-Zeichenmethode, sondern die hier
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann

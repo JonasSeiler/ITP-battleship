@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen in single-player mode, where you can load a game or create a new one
+ * Screen in singleplayer mode, where you can load a game or create a new one.
  * @author Max Steingräber, Matthias Wiese
  */
 public class singleplayer extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -19,8 +19,9 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
     private JButton hamburger;
 
     /**
-     * Creates the single-player screen and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Creates the singleplayer screen and initializes buttons.
+     * The player can decide to start a new game or load an old game.
+     * @param frame the reference to the main window used for screen transitions
      */
     public singleplayer(mainframe frame) { // mainframe ist das Hauptfenster und der singleplayerscreen gibt Befehle an den mainframe
         this.frame = frame;
@@ -39,13 +40,13 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
 
         JPanel contentPanel = new JPanel(); // Erstellt das zentrale Pannel, das alle Steuerelemente bündelt. JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
         contentPanel.setOpaque(false); // Content Panel soll durchsichtig sein
-        contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, zwei Spalte und die Abstände sind 10
+        contentPanel.setLayout(new GridLayout(0,1,10,10)); // der Layout Manager legt fest es gibt beliebig viele Zeilen, eine Spalte und die Abstände sind 10
         JLabel title = new JLabel("Battleship");
         title.setForeground(Color.WHITE);
         new_game = new RoundButton("New Game");
         load_game = new RoundButton("Load Game");
         exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
         hamburger.setForeground(Color.WHITE);
@@ -60,7 +61,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den singleplayerscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
 
         contentPanel.add(title);
@@ -71,7 +72,7 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das singleplayerscreen-Panel gelegt
         new_game.addActionListener(e -> {
             frame.lastscreen2 = "singleplayer";
             frame.showScreen("pregamescreen2");});
@@ -84,9 +85,9 @@ public class singleplayer extends JPanel { // JPanel ist ein Standard-Container 
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen

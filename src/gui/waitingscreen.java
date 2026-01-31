@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen in multiplayer mode, where you can join a game
+ * Screen in multiplayer mode, where the player is waiting for the joining player.
  * @author Max Steingräber, Matthias Wiese
  */
 public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
@@ -21,8 +21,8 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
     JLabel waitMsg;
 
     /**
-     * Creates the screen to join a game and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Creates the screen and initializes objects and buttons.
+     * @param frame the reference to the main window used for screen transitions
      */
     public waitingscreen(mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
         this.frame = frame;
@@ -52,7 +52,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         JLabel waitMsg = new JLabel("waiting for connection...");
         title.setForeground(Color.WHITE);
         exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
         waitMsg.setForeground(Color.WHITE);
@@ -74,7 +74,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den waitingscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
@@ -84,7 +84,7 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das waitingscreen-Panel gelegt
 
         exit.addActionListener(e -> {
             frame.showScreen("multiplayer");
@@ -108,9 +108,9 @@ public class waitingscreen extends JPanel { // JPanel ist ein Standard-Container
 
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g A graphic object provided by the system to display the component on the screen.
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
