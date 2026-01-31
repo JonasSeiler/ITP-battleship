@@ -13,15 +13,15 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * @author Matthias Wiese
  */
 public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private JSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
-    private JSpinner ship_size3;
-    private JSpinner ship_size4;
-    private JSpinner ship_size5;
+    private RoundSpinner ship_size2; // unterschiedliche hoch und runter klickbarer Button für die Anzahl der jeweiligen Schiffe
+    private RoundSpinner ship_size3;
+    private RoundSpinner ship_size4;
+    private RoundSpinner ship_size5;
     private JProgressBar capacityBar; // Balken der Anzeigen soll wie viele Platz man noch mit Schiffen belegen kann
     private RoundButton start_button;
     private RoundButton zurueck_button;
     private JButton hamburger;
-    private JSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
+    private RoundSpinner gridSize1; // Dekleration des hoch und runter klickbaren Buttons
     private JRadioButton easy;
     private JRadioButton medium;
     private JRadioButton hard;
@@ -109,11 +109,11 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         medium.setForeground(Color.WHITE);
         hard.setForeground(Color.WHITE);
         zurueck_button = new RoundButton("Exit");
-        gridSize1 = new JSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
-        ship_size5 = new JSpinner(shipSizeModel5);
-        ship_size4 = new JSpinner(shipSizeModel4);
-        ship_size3 = new JSpinner(shipSizeModel3);
-        ship_size2 = new JSpinner(shipSizeModel2);
+        gridSize1 = new RoundSpinner(mapSizeModel); // Erstellt den Button wo man draufklicken kann
+        ship_size5 = new RoundSpinner(shipSizeModel5);
+        ship_size4 = new RoundSpinner(shipSizeModel4);
+        ship_size3 = new RoundSpinner(shipSizeModel3);
+        ship_size2 = new RoundSpinner(shipSizeModel2);
         JLabel difficulty_label = new JLabel("Difficulty (Bot)");
         JLabel BarLabel = new JLabel("Available Space");
         JLabel sizeLabel = new JLabel("Field Size"); // Textfeld
@@ -217,11 +217,7 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     }
 
     /**
-<<<<<<< HEAD:src/gui/Pregamescreen2.java
-     * Method writes the selected difficulty level of the bot to a variable in the Mainframe.
-=======
      * Writes the selected difficulty level of the bot to a variable in the mainframe.
->>>>>>> refs/remotes/origin/main:src/gui/pregamescreen2.java
      */
     public void start2() {
         if (easy.isSelected()) {
@@ -256,7 +252,7 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
     private void updateCapacity() {
         int gridSize = (Integer) gridSize1.getValue(); // Wert des eingestellten gridSize Buttons wird gespeichert
         int max = (int) (gridSize * gridSize * 0.3); // maximale Flächenfelder die mit Schiffen belegt werden darf wird berechnet. Man muss Cast (Integer) machen, weil man ein Objekt zurück bekommt und man muss sagen, was es ist, in diesem Fall ein Integer
-        int shipSize5 = (Integer) ship_size5.getValue(); // aktueller Wert der gerade in dem JSpinner drin steht wird in einem int gespeichert
+        int shipSize5 = (Integer) ship_size5.getValue(); // aktueller Wert der gerade in dem RoundSpinner drin steht wird in einem int gespeichert
         int shipSize4 = (Integer) ship_size4.getValue();
         int shipSize3 = (Integer) ship_size3.getValue();
         int shipSize2 = (Integer) ship_size2.getValue();
