@@ -7,7 +7,7 @@ import src.logic.*;
  * Battlescreen, where two players shoot at each others' ships
  * @author Max Steingräber
  */
-public class battlescreen extends JPanel {
+public class Battlescreen extends JPanel {
     /**
      * Game Attributes
      * 
@@ -47,12 +47,12 @@ public class battlescreen extends JPanel {
     private int selectedY = -1;
     private JButton selectedEnemyCell = null;
     
-    public coordinate[] COR;
+    public Coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
     public int status = 0;
     public int gridSize;
-    public game gLogic;
+    public Game gLogic;
     /**
      * Constructor of 'battlescreen'
      * 
@@ -62,7 +62,7 @@ public class battlescreen extends JPanel {
      * @param d             direction (false -> vertical, true -> horizontal) of each ship
      * @param inGridSize    shared grid size of {@link hostpregamescreen}
      */
-    public battlescreen(Mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
+    public Battlescreen(Mainframe f, Coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         /*--saves shared input data--*/
         this.COR = c;
         this.SHIPS = s;
@@ -394,7 +394,7 @@ public class battlescreen extends JPanel {
      * 
      * @param g     game logic object
      */
-    public void setGame(game g) {
+    public void setGame(Game g) {
         this.gLogic = g;
     }
     /**

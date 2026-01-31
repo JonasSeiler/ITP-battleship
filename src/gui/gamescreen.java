@@ -8,7 +8,7 @@ import src.logic.*;
  * are being placed on the game board
  * @author Max Steingräber
  */
-public class gamescreen extends JPanel {
+public class Gamescreen extends JPanel {
     /**
      * Game Attributes
      * 
@@ -59,7 +59,7 @@ public class gamescreen extends JPanel {
     private JButton exitButton;
     private JButton startButton;
 
-    public coordinate[] COR;
+    public Coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
     public int gridSize;
@@ -71,13 +71,13 @@ public class gamescreen extends JPanel {
      * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link hostpregamescreen}
      * @param inGridSize    passed grid size of {@link hostpregamescreen}
      */
-    public gamescreen(Mainframe f, int[] inShips, int inGridSize) {
+    public Gamescreen(Mainframe f, int[] inShips, int inGridSize) {
         /*--save passed class parameters--*/
         this.gridSize = inGridSize;
         int totalShips = inShips.length;
         this.frame = f;
 
-        COR = new coordinate[totalShips];
+        COR = new Coordinate[totalShips];
         DIR = new boolean[totalShips];
         SHIPS = new int[totalShips];
 
@@ -669,7 +669,7 @@ public class gamescreen extends JPanel {
 
         int size = SHIPS[index];
         boolean dir = DIR[index];
-        coordinate start = COR[index];
+        Coordinate start = COR[index];
 
         // clear board + occupied
         for (int i = 0; i < size; i++) {
@@ -706,7 +706,7 @@ public class gamescreen extends JPanel {
      */
     private int findShipIndexAt(int r, int c) {
         for (int i = 0; i < placedShipCount; i++) {
-            coordinate start = COR[i];
+            Coordinate start = COR[i];
             int size = SHIPS[i];
             boolean dir = DIR[i];
 
