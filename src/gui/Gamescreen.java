@@ -465,7 +465,7 @@ public class Gamescreen extends JPanel {
         }
 
         /*--save placed ship data--*/
-        COR[placedShipCount] = new coordinate(r, c);   // starting coordinate
+        COR[placedShipCount] = new Coordinate(r, c);   // starting Coordinate
         DIR[placedShipCount] = horizontal;             // direction
         SHIPS[placedShipCount] = currentShipSize;      // ship length
         
@@ -533,8 +533,8 @@ public class Gamescreen extends JPanel {
     /**
      * Checks whether coordinates are still within the grid
      * 
-     * @param r     x-coordinate
-     * @param c     y-coordinate
+     * @param r     x-Coordinate
+     * @param c     y-Coordinate
      * @return      true, if it's inside of the grid
      *              false, if not
      */
@@ -546,8 +546,8 @@ public class Gamescreen extends JPanel {
     /**
      * Checks if the adjacent cell (including diagonally opposite cells) is already occupied
      * 
-     * @param r         x-coordinate
-     * @param c         y-coordinate
+     * @param r         x-Coordinate
+     * @param c         y-Coordinate
      * @param board     occupied ship-coordinates
      * @return          true, if occupied
      *                  false, if not
@@ -658,10 +658,10 @@ public class Gamescreen extends JPanel {
         updateComboBoxDisplayAutoSkip();
     }
     /**
-     * Removes ship at specific coordinate
+     * Removes ship at specific Coordinate
      * 
-     * @param r     row (x-coordinate)
-     * @param c     column (y-coordinate)
+     * @param r     row (x-Coordinate)
+     * @param c     column (y-Coordinate)
      */
     private void removeShipAt(int r, int c) {
         int index = findShipIndexAt(r, c);
@@ -698,10 +698,10 @@ public class Gamescreen extends JPanel {
         clearPreview();
     }
     /**
-     * Finds ship-index at specific coordinate
+     * Finds ship-index at specific Coordinate
      * 
-     * @param r     row (x-coordinate)
-     * @param c     column (y-coordinate)
+     * @param r     row (x-Coordinate)
+     * @param c     column (y-Coordinate)
      * @return      index
      */
     private int findShipIndexAt(int r, int c) {

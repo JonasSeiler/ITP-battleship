@@ -11,7 +11,7 @@ import java.io.*;
 public class Board {
     /**
      * field for the position of the user's ships 
-     * (0 = water | 1 = ship)
+     * (0 = water | 1 = Ship)
      */
     public int[][] ship_pos;
     /**
@@ -22,7 +22,7 @@ public class Board {
     /**
      * array of the user's ships
      */
-    public ship[] fleet;
+    public Ship[] fleet;
     /**
      * size of the Board
      */
@@ -33,7 +33,7 @@ public class Board {
     public int opp_hp;
     /**
      * field for the positions the user has already shot at 
-     * (-1 = no information | 0 = water | 1 = ship | 2 = ship and sunken)
+     * (-1 = no information | 0 = water | 1 = Ship | 2 = Ship and sunken)
      */
     public int[][] opp_hit;
 
@@ -47,11 +47,11 @@ public class Board {
             Arrays.fill(hit_pos[i], 0);
             Arrays.fill(opp_hit[i], -1);
         }
-        fleet = new ship[ship_set.length];
+        fleet = new Ship[ship_set.length];
         
 
         for (int i = 0; i < ship_set.length; i++) { // Schiffe initialisieren
-            fleet[i] = new ship(ship_set[i]);
+            fleet[i] = new Ship(ship_set[i]);
             opp_hp += ship_set[i];
         }
 
@@ -67,7 +67,7 @@ public class Board {
                 return false;
             }
 
-        // Check 3x3 area around this ship cell
+        // Check 3x3 area around this Ship cell
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 int checkX = x + dx;
@@ -75,7 +75,7 @@ public class Board {
                 // Check if Coordinate is within Board bounds
                 if (inBounds(checkX, checkY)) {
                     
-                    // Check if there's already a ship at this position
+                    // Check if there's already a Ship at this position
                     if (ship_pos[checkX][checkY] == 1) {
                         return false;
                     }
@@ -89,10 +89,10 @@ public class Board {
 
     
     /**
-     * places a ship 
+     * places a Ship 
      * 
-     * @param head the field a ship is in with the lowest (x&y position) for the specific ship
-     * @param dir direction the ship is facing, 0 = horizontal | 1 = vertical
+     * @param head the field a Ship is in with the lowest (x&y position) for the specific Ship
+     * @param dir direction the Ship is facing, 0 = horizontal | 1 = vertical
      * @param s_index 
      */
     public void place_ship(Coordinate head, int dir, int s_index) {
@@ -118,7 +118,7 @@ public class Board {
 
     /**
      * registers a shot the user shot at the opponent by saving it in opp_hit
-     * and lowers the opponents hp by 1 if a ship was hit
+     * and lowers the opponents hp by 1 if a Ship was hit
      * @param shot coordinte where the user has shot at
      * @param response the answer the opponent gave for the shot at that position
      */
@@ -158,7 +158,7 @@ public class Board {
      * checks the own Board what an opponent's shot hit
      *
      * @param att position the opponent is attacking
-     * @return what the opponent hit (0 = water, 1 = ship, 2 = ship, also the entire ship was sunk)
+     * @return what the opponent hit (0 = water, 1 = Ship, 2 = Ship, also the entire Ship was sunk)
      */
     public int check_hit(Coordinate att) {
         // registers hit
@@ -167,11 +167,11 @@ public class Board {
             return 0;
         }
         int dmg = 1;
-        for (ship ship : fleet) {
-            for(int i = 0; i < ship.length; i++) {
-                if(ship.pos[i].y == att.y &&ship.pos[i].x == att.x ) {
-                    ship.lifes[i] = 0;
-                    if(ship.destroyed()) {
+        for (Ship Ship : fleet) {
+            for(int i = 0; i < Ship.length; i++) {
+                if(Ship.pos[i].y == att.y &&Ship.pos[i].x == att.x ) {
+                    Ship.lifes[i] = 0;
+                    if(Ship.destroyed()) {
                         dmg = 2;
                     }
                     return dmg;
@@ -187,7 +187,7 @@ public class Board {
      * @return 
      */
     public boolean lost() {
-        for(ship s : fleet) {
+        for(Ship s : fleet) {
             if(!s.destroyed()) {
                 return false;
             }
@@ -227,8 +227,8 @@ public class Board {
             writer.write(String.valueOf(size));
             writer.newLine();
             // write ship_set array into file 
-            for(ship ship : fleet) {
-                writer.write(ship.length + " ");
+            for(Ship Ship : fleet) {
+                writer.write(Ship.length + " ");
             }
             writer.newLine();
             // write ship_pos into file
@@ -251,20 +251,20 @@ public class Board {
             }
             // write entire fleet into file
             // order: x-pos, y-pos, lifes
-            for (ship ship : fleet) {
-                for (int i = 0; i < ship.pos.length; i++) {
-                    writer.write(ship.pos[i].x + " ");
+            for (Ship Ship : fleet) {
+                for (int i = 0; i < Ship.pos.length; i++) {
+                    writer.write(Ship.pos[i].x + " ");
                 }
                 writer.newLine();
-                for (int i = 0; i < ship.pos.length; i++) {
-                    writer.write(ship.pos[i].y + " ");
+                for (int i = 0; i < Ship.pos.length; i++) {
+                    writer.write(Ship.pos[i].y + " ");
                 }
                 writer.newLine();
-                for (int i = 0; i < ship.pos.length; i++) {
-                    writer.write(ship.lifes[i] + " ");
+                for (int i = 0; i < Ship.pos.length; i++) {
+                    writer.write(Ship.lifes[i] + " ");
                 }
                 writer.newLine();
-                writer.write(String.valueOf(ship.dir));
+                writer.write(String.valueOf(Ship.dir));
                 writer.newLine();
             }
              // write opp_hit into file

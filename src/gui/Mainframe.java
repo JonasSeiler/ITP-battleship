@@ -141,7 +141,7 @@ public class Mainframe extends JFrame {
 
         new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
-                setupComs(false);
+                setupComs();
                 return null;
             }
             protected void done() {

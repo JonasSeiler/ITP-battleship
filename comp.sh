@@ -1,2 +1,2 @@
-javac -d out src/gui/mainframe.java
-java -cp out src.gui.mainframe
+javac -d out src/gui/Mainframe.java
+java -cp out src.gui.Mainframe

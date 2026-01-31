@@ -21,8 +21,8 @@ public class Battlescreen extends JPanel {
      *                              false -> game wasn't saved
      * @param saveButton            save button
      * @param confirmShotButton     confirms shot
-     * @param selectedX             selected x-coordinate
-     * @param selectedY             selected y-coordinate
+     * @param selectedX             selected x-Coordinate
+     * @param selectedY             selected y-Coordinate
      * @param selectedEnemyCell     selected enemy cell
      * 
      * Shared Data
@@ -262,8 +262,8 @@ public class Battlescreen extends JPanel {
     /**
      * Checks whether coordinates are within the playing field or not
      * 
-     * @param r     x-coordinate
-     * @param c     y-coordinate
+     * @param r     x-Coordinate
+     * @param c     y-Coordinate
      * @return      true, if within the playing field
      *              false, if outside of the playing field
      */
@@ -278,7 +278,7 @@ public class Battlescreen extends JPanel {
      */
     private void drawPlayerShips() {
     for (int i = 0; i < COR.length; i++) {
-        coordinate start = COR[i];
+        Coordinate start = COR[i];
         int len = SHIPS[i];
         boolean horizontal = DIR[i];
 
@@ -293,8 +293,8 @@ public class Battlescreen extends JPanel {
     /**
      * Colors player-ships
      * 
-     * @param x     x-coordinate
-     * @param y     y-coordinate
+     * @param x     x-Coordinate
+     * @param y     y-Coordinate
      * @param i     status code (0: red, 1: orange, 2: red)
      */
     public void colorPlayerShip(int x, int y, int i) {
@@ -325,51 +325,59 @@ public class Battlescreen extends JPanel {
     /**
      * Colors enemy-ships
      * 
-     * @param x     x-coordinate
-     * @param y     y-coordinate
+     * @param x     x-Coordinate
+     * @param y     y-Coordinate
      * @param i     status code (0: red, 1: orange, 2: red)
      */
     public void colorEnemyShip(int x, int y, int i) {
         eCells[x][y].setEnabled(false);
         switch(i) {
             case 0:
+                //eCells[x][y].setForeground(Color.black);
+                //eCells[x][y].repaint();
                 eCells[x][y].setText("X");
-                eCells[x][y].setForeground(Color.black);
-                eCells[x][y].repaint();
                 break;
             case 1:
                 eCells[x][y].setBackground(Color.orange);
                 break;
             case 2:
                 eCells[x][y].setBackground(Color.red);
-                if (isInBounds(x-1, y) && eCells[x-1][y].getBackground() == Color.orange) {
-                    colorEnemyShip(x-1, y, i);
-                    // eCells[x-1][y+1].setText("X");
-                    // eCells[x-1][y-1].setText("X");
+            for (int i1 = -1; i1 <= 1; i1++) {
+                for (int i2 = -1; i2 <= 1; i2++) {
+                    int sx = x + i1;
+                    int sy = y + i2;
+                    if(isInBounds(sx, sy)) {
+                        if (!(i1 == 0 && i2 == 0)) { 
+                            eCells[sx][sy].setText("X");
+                            eCells[sx][sy].setEnabled(false);
+                        }
+                        if (eCells[sx][sy].getBackground() == Color.red) {
+                            eCells[sx][sy].setText("");
+                        }
+                    }
                 }
-                if (isInBounds(x+1, y) && eCells[x+1][y].getBackground() == Color.orange) {
-                    colorEnemyShip(x+1, y, i);
-                    // eCells[x+1][y+1].setText("X");
-                    // eCells[x+1][y-1].setText("X");
-                }
-                if (isInBounds(x, y-1) && eCells[x][y-1].getBackground() == Color.orange) {
-                    colorEnemyShip(x, y-1, i);
-                    // eCells[x+1][y-1].setText("X");
-                    // eCells[x-1][y-1].setText("X");
-                }
-                if (isInBounds(x, y+1) && eCells[x][y+1].getBackground() == Color.orange) {
-                    colorEnemyShip(x, y+1, i);
-                    // eCells[x+1][y+1].setText("X");
-                    // eCells[x-1][y+1].setText("X");
-                }
+            }
+
+            if (isInBounds(x-1, y) && eCells[x-1][y].getBackground() == Color.orange) {
+                colorEnemyShip(x-1, y, i);
+            }
+            if (isInBounds(x+1, y) && eCells[x+1][y].getBackground() == Color.orange) {
+                colorEnemyShip(x+1, y, i);
+            }
+            if (isInBounds(x, y-1) && eCells[x][y-1].getBackground() == Color.orange) {
+                colorEnemyShip(x, y-1, i);
+            }
+            if (isInBounds(x, y+1) && eCells[x][y+1].getBackground() == Color.orange) {
+                colorEnemyShip(x, y+1, i);
+            }
                 break;
+            }
         }
-    }
     /**
      * Checks what enemy cell was clicked and marks it
      * 
-     * @param x     x-coordinate
-     * @param y     y-coordinate
+     * @param x     x-Coordinate
+     * @param y     y-Coordinate
      */
     private void onEnemyCellClicked(int x, int y) {
         if (selectedEnemyCell != null) {
@@ -439,7 +447,7 @@ public class Battlescreen extends JPanel {
         }
         
         eCells[selectedX][selectedY].setEnabled(false);
-        eCells[selectedX][selectedY].setBorder(BorderFactory.createLineBorder(Color.white, 1));
+        eCells[selectedX][selectedY].setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         gLogic.send_shot(selectedX, selectedY);
     }
 
