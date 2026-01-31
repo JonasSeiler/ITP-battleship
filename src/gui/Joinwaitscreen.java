@@ -10,20 +10,22 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen in multiplayer mode, where you can join a game
+ * Screen, where the player is waiting for the host to start a game.
  * @author Max Steingräber, Matthias Wiese
  */
+
 public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
     JLabel waitMsg;
 
     /**
-     * Creates the screen for joining a game and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Initializes the screen where the joining player is waiting.
+     * Creates and initializes objects and sets the layout.
+     * @param frame the reference to the main window used for screen transitions
      */
-    public Joinwaitscreen(mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
+    public Joinwaitscreen(Mainframe frame) { // mainframe ist das Hauptfenster und der waitingscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den waitingscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
@@ -51,7 +53,7 @@ public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
         JLabel waitMsg = new JLabel("waiting for host to start the game ...");
         title.setForeground(Color.WHITE);
         exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
         waitMsg.setForeground(Color.WHITE);
@@ -94,9 +96,9 @@ public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
 
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g A graphic object provided by the system to display the component on the screen.
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -105,6 +107,6 @@ public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt.
     }
 }

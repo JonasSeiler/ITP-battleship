@@ -23,7 +23,7 @@ public abstract class NetworkPlayer {
     /**
      * 
      */
-    protected game logic; 
+    protected Game logic; 
     /**
      * 
      * @param message
@@ -49,7 +49,7 @@ public abstract class NetworkPlayer {
             String[] parts = message.split(" ");
             int row = Integer.parseInt(parts[1]);
             int col = Integer.parseInt(parts[2]);
-            coordinate coord = new coordinate(row, col);
+            Coordinate coord = new Coordinate(row, col);
             logic.get_hit(coord);
         } 
         else if (message.startsWith("save")) {
@@ -127,7 +127,7 @@ public abstract class NetworkPlayer {
      * 
      * @param g
      */
-    public void set_game(game g) {
+    public void set_game(Game g) {
         this.logic = g;
     }
     

@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
+<<<<<<< HEAD:src/gui/Multiplayer.java
  * Screen in Multiplayer mode, where you can decide whether to join a game or host a game
  * @author Max Steingräber, Matthias Wiese
  */
@@ -44,7 +45,7 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         join_game = new RoundButton("Join Game");
         host_game = new RoundButton("Host Game");
         exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
         
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
@@ -61,7 +62,7 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
 
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den multiplayerscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
@@ -71,7 +72,7 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das multiplayerscreen-Panel gelegt
         join_game.addActionListener(e -> {frame.showScreen("joinscreen");});
         host_game.addActionListener(e -> {
             frame.lastscreen2 = "multiplayer";
@@ -102,9 +103,9 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -113,6 +114,6 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt.
     }
 }

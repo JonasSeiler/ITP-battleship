@@ -3,14 +3,14 @@ import javax.swing.*; // enthält die Komponenten
 import java.awt.*; // Grafik-Werkzeuge für Farben, Schriftarten und die Zeichenbefehle
 
 /**
- * A customized version of the JTextField with
- * Glass design and rounded corners
+ * Customized version of the JTextField.
+ * It has a glass design and rounded corners.
  * @author Matthias Wiese
  */
 public class RoundTextField extends JTextField { // erbt die Klasse JTextField also unter anderem alle Funktionen eines normalen Eingabefeldes
 
     /**
-     * Initializes the RoundTextField
+     * Initializes the RoundTextField.
      * Sets the font, colors, the background not to be painted, and centered text input.
      */
     public RoundTextField() {
@@ -23,9 +23,8 @@ public class RoundTextField extends JTextField { // erbt die Klasse JTextField a
     }
 
     /**
-     * Overrides the JTextField method of the superclass to add the glass effect and modern look with
-     * rounded corners.
-     * @param g A graphic object provided by the system to display the component on the screen.
+     * Draws the text field with a glass effect and rounded corners.
+     * @param g graphic object provided by the system to display the component on the screen
      */
     @Override // overrides Java's default paint function
     protected void paintComponent(Graphics g) { // ein einfaches graphic Objekt auf dem man Zeichenbefehle ausführen kann

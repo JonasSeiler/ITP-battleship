@@ -13,7 +13,7 @@ public class EndGameDialog extends JDialog {
      * @param frame     Reference to the mainframe, used for colors and returning to titlescreen
      * @param message   The message to display, e.g., "You Win!" or "You Lose!"
      */
-    public EndGameDialog(mainframe frame, String message) {
+    public EndGameDialog(Mainframe frame, String message) {
         super(frame, true); // modal
         setUndecorated(true);
         setSize(320, 140);

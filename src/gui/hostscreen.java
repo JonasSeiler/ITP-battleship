@@ -8,21 +8,23 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
- * Screen in multiplayer mode, where you can host a game
+ * Screen in multiplayer mode, where you can choose as a host to start a new game or load an old game.
  * @author Max Steingräber, Matthias Wiese
  */
-public class hostscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
-    private mainframe frame; // Referenz auf das Hauptfenster
+
+public class Hostscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
+    private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton new_game;
     private RoundButton load_game;
     private RoundButton exit;
     private JButton hamburger;
 
     /**
-     * Creates the screen to host a game and creates and initializes objects.
-     * @param frame the reference to the main window so that methods for changing screens can be called on it later
+     * Initializes the host screen and creates buttons and the layout.
+     * @param frame the reference to the main window used for screen transitions
      */
-    public hostscreen(mainframe frame) { // mainframe ist das Hauptfenster und der hostscreen gibt Befehle an den mainframe
+
+    public Hostscreen(Mainframe frame) { // mainframe ist das Hauptfenster und der hostscreen gibt Befehle an den mainframe
         this.frame = frame;
         setLayout(new GridBagLayout()); // Bestimmt, wie Komponenten angeordnet werden, also das JPannel was erstellt wird, wird von dem GridBagLayout in die Mitte auf den hostscreen gepackt
         setOpaque(false); // Deaktiviert die automatische Hintergrundfüllung von Swing
@@ -51,7 +53,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         new_game = new RoundButton("New Game");
         load_game = new RoundButton("Load Game");
         exit = new RoundButton("Exit");
-        title.setFont(new Font("Times New Roman", Font.BOLD,40));
+        title.setFont(new Font("Times New Roman", Font.BOLD,50));
 
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
@@ -67,7 +69,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.weighty = 0.001; // Diese Zelle soll vertikal 0,1 des gesamten verfügbaren Platz beanspruchen
         gbc.anchor = GridBagConstraints.FIRST_LINE_END; // Die Komponente, die hinzugefügt wird kommt in die obere rechte Ecke
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
-        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den Titlescreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
+        add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den hostscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
@@ -77,7 +79,7 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         gbc.gridy = 1;
         gbc.weighty = 0.999;
         gbc.anchor = GridBagConstraints.NORTH;
-        add(contentPanel, gbc); // das contentPanel wird auf das titlescreen-Panel gelegt
+        add(contentPanel, gbc); // das contentPanel wird auf das hostscreen-Panel gelegt
         new_game.addActionListener(e -> {frame.showScreen("pregamescreen");});
         load_game.addActionListener(e -> {frame.handleLoadGame();});
         exit.addActionListener(exitAction);
@@ -88,9 +90,9 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
     }
 
     /**
-     * Method for the color gradient of the screen
+     * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
-     * @param g The graphics object provided by the system for drawing on
+     * @param g the graphics object provided by the system for drawing on
      */
     @Override
     protected void paintComponent(Graphics g) { // Graphics bündelt die notwendigen Werkzeuge und den aktuellen Zeichenzustand(Farbe, Schriftart...) und auf dem Objekt kann man Zeichenbefehle aufrufen
@@ -99,6 +101,6 @@ public class hostscreen extends JPanel { // JPanel ist ein Standard-Container od
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON); // Befehl aktiviert die Kantenglättung
         GradientPaint oceanGradient = new GradientPaint(0, 0, frame.colorsheme.color1, 0, getHeight(), frame.colorsheme.color2); // es wird ein Objekt initialisiert das den Farbverlauf definieren soll. Struktur der Initialisierung: Startpunkt,Startfarbe,Endpunkt,Endfarbe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
-        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
+        g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt
     }
 }

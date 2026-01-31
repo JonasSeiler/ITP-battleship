@@ -9,7 +9,7 @@ import src.logic.Game;
 
 import java.awt.*;
 /**
- * Fensteroberfläche, die alle Menübildschirme(Panels) enthält
+ * Main window, which contains every screen of the game
  * @author Max Steingräber, Matthias Wiese
  */
 public class Mainframe extends JFrame {
@@ -37,11 +37,10 @@ public class Mainframe extends JFrame {
     verschiedene Farben:
     new Color(20, 30, 50) new Color(220, 200, 190));
     */
-
    public int difficulty; // 1 = Easy, 2 = Medium, 3 = Hard
    
     /**
-     * Konstruiert Fensteroberfläche
+     * Constructor of Mainframe(window), where all screens get added to
      */
     public Mainframe() {
         this.setTitle("Battleship"); // title of frame
@@ -89,16 +88,18 @@ public class Mainframe extends JFrame {
         pack();
     }
     /**
-     * Zeigt ein bestimmtes Menübildschirm an
+     * Shows certain screen
      * 
-     * @param name      Name des Menübildschirms
+     * @param name      name of specific screen
      */
     public void showScreen(String name) {
         cLayout.show(cPanel, name);
     }
 
-    public void setupComs(boolean load) {
-
+    /**
+     * Sets the communication for multiplayer
+     */
+    public void setupComs() {
         if (coms instanceof Server) {
             ships = PreGameScreen.ships;
             size = PreGameScreen.gridSize;
@@ -132,6 +133,9 @@ public class Mainframe extends JFrame {
         }
     }
 
+    /**
+     * Starts the 'gamescreen'
+     */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
 
@@ -144,51 +148,17 @@ public class Mainframe extends JFrame {
 
                 GameScreen = new Gamescreen(frame, ships, size);
 
-                cPanel.add(GameScreen, "Gamescreen");
-                cLayout.show(cPanel, "Gamescreen");
+                cPanel.add(GameScreen, "gamescreen");
+                cLayout.show(cPanel, "gamescreen");
                 cPanel.revalidate();
                 cPanel.repaint();
 
             }
         }.execute();
     }
-
+   
     /**
-    * GameScreen Objekt wird mit den Daten, die der Benutzer ausgewählt hat erstellt
-    */
-    public void startGamescreen2() {
-        if (GameScreen != null) cPanel.remove(GameScreen);
-
-        GameScreen = new Gamescreen(this, PreGameScreen2.ships, PreGameScreen2.gridSize);
-
-        /*if (coms instanceof Server) {
-            try {
-            setupServer();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else if (coms instanceof Client) {
-            try {
-                setupClient();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        } else {
-            try {
-                setupCPU();
-            } catch(Exception e) {
-                System.err.println(e);
-            }
-        }*/
-
-        cPanel.add(GameScreen, "Gamescreen");
-        cLayout.show(cPanel, "Gamescreen");
-        cPanel.revalidate();
-        cPanel.repaint();
-    }
-    
-    /**
-     * Startet ein Spiel und öffnet den Spielbildschirm
+     * Starts the game and opens 'battlescreen'
      */
     public void startBattle(boolean load) {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
@@ -226,8 +196,8 @@ public class Mainframe extends JFrame {
                     logic.u_turn = 0;
                     logic.start_opp_turn();
                 }
-                cPanel.add(BattleScreen, "Battlescreen");
-                cLayout.show(cPanel, "Battlescreen");
+                cPanel.add(BattleScreen, "battlescreen");
+                cLayout.show(cPanel, "battlescreen");
                 cPanel.revalidate();
                 cPanel.repaint();
             }
@@ -236,7 +206,7 @@ public class Mainframe extends JFrame {
     }
 
     /**
-     * changes the current background colors to two new ones
+     * Changes the current background colors to two new ones.
      */
     public void changeColor() {
         if (color == "navy") {
@@ -257,7 +227,7 @@ public class Mainframe extends JFrame {
     /**
      * Allows the player to select an older save file from the “saves” directory.
      * The absolute path of the selected file is stored in a variable.
-     * @return true if a file was successfully selected. False if the selection was canceled by the player or an error occurred.
+     * @return {@code true} if a file was successfully selected and {@code false} if the selection was canceled by the player or an error occurred.
      */
 
     public boolean handleLoadGame() {

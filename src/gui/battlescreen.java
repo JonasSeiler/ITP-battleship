@@ -4,11 +4,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import src.logic.*;
 /**
- * Hauptspielscreen, wo der Spieler auf das 
- * Gegnerfeld schießt.
+ * Battlescreen, where two players shoot at each others' ships
  * @author Max Steingräber
  */
-public class battlescreen extends JPanel {
+public class Battlescreen extends JPanel {
     /**
      * Game Attributes
      * 
@@ -24,7 +23,7 @@ public class battlescreen extends JPanel {
      * @param confirmShotButton     confirms shot
      * @param selectedX             selected x-coordinate
      * @param selectedY             selected y-coordinate
-     * @param selectedEnemyCell     
+     * @param selectedEnemyCell     selected enemy cell
      * 
      * Shared Data
      * @param COR                   coordinates (x, y) of each ship
@@ -40,7 +39,7 @@ public class battlescreen extends JPanel {
     private JButton[][] eCells;
     private JPanel pField;
     private JPanel eField;
-    private mainframe frame;
+    private Mainframe frame;
     private boolean gameSaved = false;
     private JButton saveButton;
     private JButton confirmShotButton;
@@ -48,12 +47,12 @@ public class battlescreen extends JPanel {
     private int selectedY = -1;
     private JButton selectedEnemyCell = null;
     
-    public coordinate[] COR;
+    public Coordinate[] COR;
     public int[] SHIPS;
     public boolean[] DIR;
     public int status = 0;
     public int gridSize;
-    public game gLogic;
+    public Game gLogic;
     /**
      * Constructor of 'battlescreen'
      * 
@@ -63,7 +62,7 @@ public class battlescreen extends JPanel {
      * @param d             direction (false -> vertical, true -> horizontal) of each ship
      * @param inGridSize    shared grid size of {@link hostpregamescreen}
      */
-    public battlescreen(mainframe f, coordinate[] c, int[] s, boolean[] d, int inGridSize) {
+    public Battlescreen(Mainframe f, Coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         /*--saves shared input data--*/
         this.COR = c;
         this.SHIPS = s;
@@ -79,8 +78,9 @@ public class battlescreen extends JPanel {
         /*--titel--*/
         JLabel title = new JLabel("Battleship");
         title.setHorizontalAlignment(SwingConstants.CENTER);
-        title.setFont(new Font("Times New Roman", Font.BOLD, 28));
+        title.setFont(new Font("Times New Roman", Font.BOLD, 40));
         title.setForeground(Color.WHITE);
+        makeLabelScalable(title, this, 0.05f);
         title.setBorder(BorderFactory.createEmptyBorder(20, 0, 15, 0));
         this.add(title, BorderLayout.NORTH);
 
@@ -103,7 +103,8 @@ public class battlescreen extends JPanel {
         JLabel playerTitle = new JLabel("Your Side");
         playerTitle.setHorizontalAlignment(SwingConstants.CENTER);
         playerTitle.setForeground(Color.WHITE);
-        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        playerTitle.setFont(new Font("Times New Roman", Font.BOLD, 22));
+        makeLabelScalable(playerTitle, pSide, 0.08f);
         playerTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--grid wrapper (player)--*/
@@ -164,7 +165,8 @@ public class battlescreen extends JPanel {
         JLabel enemyTitle = new JLabel("Enemy Side");
         enemyTitle.setHorizontalAlignment(SwingConstants.CENTER);
         enemyTitle.setForeground(Color.WHITE);
-        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 20));
+        enemyTitle.setFont(new Font("Times New Roman", Font.BOLD, 22));
+        makeLabelScalable(enemyTitle, eSide, 0.08f);
         enemyTitle.setBorder(BorderFactory.createEmptyBorder(30, 0, 10, 0));
 
         /*--grid wrapper (enemy)--*/
@@ -235,7 +237,7 @@ public class battlescreen extends JPanel {
         for (int r = 0; r < row; r++) {
             for (int c = 0; c < col; c++) {
                 JButton cell = new JButton();
-                cell.setBackground(Color.DARK_GRAY);
+                cell.setBackground(Color.BLUE);
                 cell.setMargin(new Insets(0, 0, 0, 0));
                 cell.setFocusPainted(false);
                 array[r][c] = cell;
@@ -284,7 +286,7 @@ public class battlescreen extends JPanel {
             int r = start.x + (horizontal ? j : 0);
             int c = start.y + (horizontal ? 0 : j);
 
-            pCells[r][c].setBackground(Color.BLUE);
+            pCells[r][c].setBackground(Color.DARK_GRAY);
             }
         }
     }
@@ -293,28 +295,28 @@ public class battlescreen extends JPanel {
      * 
      * @param x     x-coordinate
      * @param y     y-coordinate
-     * @param i     status code (0: red, 1: yellow, 2: green)
+     * @param i     status code (0: red, 1: orange, 2: red)
      */
     public void colorPlayerShip(int x, int y, int i) {
         switch(i) {
             case 0:
-                pCells[x][y].setBackground(Color.red);
+                pCells[x][y].setText("X");
                 break;
             case 1:
-                pCells[x][y].setBackground(Color.yellow);
+                pCells[x][y].setBackground(Color.orange);
                 break;
             case 2:
-                pCells[x][y].setBackground(Color.green);
-                if (isInBounds(x-1, y) && pCells[x-1][y].getBackground() == Color.yellow) {
+                pCells[x][y].setBackground(Color.red);
+                if (isInBounds(x-1, y) && pCells[x-1][y].getBackground() == Color.orange) {
                     colorPlayerShip(x-1, y, i);
                 }
-                if (isInBounds(x+1, y) && pCells[x+1][y].getBackground() == Color.yellow) {
+                if (isInBounds(x+1, y) && pCells[x+1][y].getBackground() == Color.orange) {
                     colorPlayerShip(x+1, y, i);
                 }
-                if (isInBounds(x, y-1) && pCells[x][y-1].getBackground() == Color.yellow) {
+                if (isInBounds(x, y-1) && pCells[x][y-1].getBackground() == Color.orange) {
                     colorPlayerShip(x, y-1, i);
                 }
-                if (isInBounds(x, y+1) && pCells[x][y+1].getBackground() == Color.yellow) {
+                if (isInBounds(x, y+1) && pCells[x][y+1].getBackground() == Color.orange) {
                     colorPlayerShip(x, y+1, i);
                 }
                 break;
@@ -325,30 +327,40 @@ public class battlescreen extends JPanel {
      * 
      * @param x     x-coordinate
      * @param y     y-coordinate
-     * @param i     status code (0: red, 1: yellow, 2: green)
+     * @param i     status code (0: red, 1: orange, 2: red)
      */
     public void colorEnemyShip(int x, int y, int i) {
         eCells[x][y].setEnabled(false);
         switch(i) {
             case 0:
-                eCells[x][y].setBackground(Color.red);
+                eCells[x][y].setText("X");
+                eCells[x][y].setForeground(Color.black);
+                eCells[x][y].repaint();
                 break;
             case 1:
-                eCells[x][y].setBackground(Color.yellow);
+                eCells[x][y].setBackground(Color.orange);
                 break;
             case 2:
-                eCells[x][y].setBackground(Color.green);
-                if (isInBounds(x-1, y) && eCells[x-1][y].getBackground() == Color.yellow) {
+                eCells[x][y].setBackground(Color.red);
+                if (isInBounds(x-1, y) && eCells[x-1][y].getBackground() == Color.orange) {
                     colorEnemyShip(x-1, y, i);
+                    // eCells[x-1][y+1].setText("X");
+                    // eCells[x-1][y-1].setText("X");
                 }
-                if (isInBounds(x+1, y) && eCells[x+1][y].getBackground() == Color.yellow) {
+                if (isInBounds(x+1, y) && eCells[x+1][y].getBackground() == Color.orange) {
                     colorEnemyShip(x+1, y, i);
+                    // eCells[x+1][y+1].setText("X");
+                    // eCells[x+1][y-1].setText("X");
                 }
-                if (isInBounds(x, y-1) && eCells[x][y-1].getBackground() == Color.yellow) {
+                if (isInBounds(x, y-1) && eCells[x][y-1].getBackground() == Color.orange) {
                     colorEnemyShip(x, y-1, i);
+                    // eCells[x+1][y-1].setText("X");
+                    // eCells[x-1][y-1].setText("X");
                 }
-                if (isInBounds(x, y+1) && eCells[x][y+1].getBackground() == Color.yellow) {
+                if (isInBounds(x, y+1) && eCells[x][y+1].getBackground() == Color.orange) {
                     colorEnemyShip(x, y+1, i);
+                    // eCells[x+1][y+1].setText("X");
+                    // eCells[x-1][y+1].setText("X");
                 }
                 break;
         }
@@ -383,7 +395,7 @@ public class battlescreen extends JPanel {
      * 
      * @param g     game logic object
      */
-    public void setGame(game g) {
+    public void setGame(Game g) {
         this.gLogic = g;
     }
     /**
@@ -447,7 +459,7 @@ public class battlescreen extends JPanel {
         }
     }
     /**
-     * 
+     * Exits game
      * @param exitButton
      */
     private void setupKeyBindings(JButton exitButton) {
@@ -475,6 +487,22 @@ public class battlescreen extends JPanel {
         });
     }
     /**
+     * Makes label stretchable when frame(window) size changes
+     * 
+     * @param label         label
+     * @param reference     reference panel/component
+     * @param factor        scale factor
+     */
+    private void makeLabelScalable(JLabel label, JComponent reference, float factor) {
+        reference.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                int size = Math.max(16, (int)(reference.getWidth() * factor));
+                label.setFont(label.getFont().deriveFont((float) size));
+            }
+        });
+    }
+    /**
      * Method for color gradient, which is called automatically
      * when new components have to be drawn
      * 
@@ -492,11 +520,7 @@ public class battlescreen extends JPanel {
 }
 
 /*  
-    -> enter uses confirm shot button
-    -> esc uses exit button
-    -> selection bug after ship hit
-    -> kommentieren -> english
-    -> battlescreen Reihenfolge von Schiffen passt nicht so wie gamescreen (COR[], SHIPS[], DIR[])
+    -> selected cells disables
 
     when somebody wins/loses user msg
 */
