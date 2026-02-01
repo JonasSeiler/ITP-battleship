@@ -4,29 +4,30 @@ import java.net.*;
 import java.io.*;
 
 /**
- * 
+ * Server is a subclass of NetworkPlayer that is used to act as the host of the Network
+ * connection
+ * @author Jamie Kopp
  */
 public class Server extends NetworkPlayer {
     /**
-     * 
+     * a serverSocket object for communication
      */
     private ServerSocket serverSocket;
     /**
-     * 
+     * a normal socket object for the client side
      */
     private Socket clientSocket;
     /**
-     * 
+     * object to read from buffer
      */
     private BufferedReader in;
     /**
-     * 
+     * object to write to buffer
      */
     private Writer out;
     
     /**
-     * 
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
     public void start() throws IOException {
@@ -39,21 +40,25 @@ public class Server extends NetworkPlayer {
     }
     
     /**
-     * 
-     * @param size
-     * @return
+     * method to send the board size
+     *
+     * @param size of the board
+     * @return true if enemy recieved size succefully
      * @throws IOException
+     * @author Jamie Kopp
      */
     public boolean sendSize(int size) throws IOException {
-        sendmessage("size " + size);
-        return receivemessage().equals("done");
+        sendMessage("size " + size);
+        return receiveMessage().equals("done");
     }
     
     /**
-     * 
-     * @param ships
-     * @return
+     * method to send the the ship array
+     *
+     * @param ships array containing ship size
+     * @return true if enemy recieved size succefully
      * @throws IOException
+     * @author Jamie Kopp
      */
     public boolean sendShips(int[] ships) throws IOException {
         StringBuilder sb = new StringBuilder("ships");
@@ -61,30 +66,30 @@ public class Server extends NetworkPlayer {
             sb.append(" ").append(ship);
         }
         
-        sendmessage(sb.toString());
-        return receivemessage().equals("done");
+        sendMessage(sb.toString());
+        return receiveMessage().equals("done");
     }
     
     /**
-     * 
-     * @param id
-     * @return
+     * method to send the id to the enemy to load a game file
+     *
+     * @param id to load
+     * @return true if enemy succefully loaded the game id
      * @throws IOException
+     * @author Jamie Kopp
      */
     public boolean sendLoad(String id) throws IOException {
-        sendmessage("load " + id);
-        return receivemessage().equals("ok");
+        sendMessage("load " + id);
+        return receiveMessage().equals("ok");
     }
     
     /**
-     * 
-     * @return
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
     public boolean sendReady() throws IOException {
-        sendmessage("ready");
-        boolean readyReceived = receivemessage().equals("ready");
+        sendMessage("ready");
+        boolean readyReceived = receiveMessage().equals("ready");
         if (readyReceived) {
             gameStarted = true;
         }
@@ -92,24 +97,20 @@ public class Server extends NetworkPlayer {
     }
     
     /**
-     * 
-     * @param message
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
-    protected void sendmessage(String message) throws IOException {
+    protected void sendMessage(String message) throws IOException {
         out.write(message + "\n");
         out.flush();
         System.out.println(message);
     }
     
     /**
-     * 
-     * @return
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
-    protected String receivemessage() throws IOException {
+    protected String receiveMessage() throws IOException {
         String line = in.readLine();
         if (line == null) {
             throw new IOException("Verbindung verloren");
@@ -119,8 +120,7 @@ public class Server extends NetworkPlayer {
     }
     
     /**
-     * 
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
     public void close() throws IOException {

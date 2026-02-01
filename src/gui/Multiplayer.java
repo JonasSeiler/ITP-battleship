@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
 import src.coms.*;
@@ -9,7 +8,6 @@ import java.awt.event.KeyEvent; // Enthält die Namen für alle Tasten (z.B. VK_
 import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die Java für das Action Event liefern muss, welches Java erwartet für die Methode actionPerformed
 
 /**
-<<<<<<< HEAD:src/gui/Multiplayer.java
  * Screen in Multiplayer mode, where you can decide whether to join a game or host a game
  * @author Max Steingräber, Matthias Wiese
  */
@@ -101,7 +99,6 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
                 frame.showScreen("settings");
         });
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

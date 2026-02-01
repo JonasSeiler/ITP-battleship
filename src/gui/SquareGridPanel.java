@@ -1,14 +1,13 @@
 package src.gui;
-
 import javax.swing.JPanel;
 import java.awt.Color;
 import java.awt.Component;
 
 public class SquareGridPanel extends JPanel {
     /**
-    * Klasse, die ein quadratisches Spielfeld erstellt
+    * Creates a quadratic playground
     * 
-    * Attribute
+    * Attributes
     * @param rows      Reihe
     * @param cols      Spalte
     * @param gap       Abstand
@@ -16,14 +15,20 @@ public class SquareGridPanel extends JPanel {
     private final int rows;
     private final int cols;
     private final int gap = 2;
-
+    /**
+     * Constructor of 'SquareGridPanel'
+     * @param rows
+     * @param cols
+     */
     public SquareGridPanel(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
         setLayout(null);
         setBackground(Color.black);
     }
-
+    /**
+     * Determines the layout of the the field
+     */
     @Override
     public void doLayout() {
         int width = getWidth();

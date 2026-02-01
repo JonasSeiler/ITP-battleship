@@ -24,7 +24,6 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
         setForeground(Color.WHITE);
         setCursor(new Cursor(Cursor.HAND_CURSOR)); // Zeiger-Hand beim Hovern
     }
-
     /**
      * Draws the button.
      * Overrides the default method to enable rounded corners and the glass effect.

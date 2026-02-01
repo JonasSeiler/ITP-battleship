@@ -8,7 +8,6 @@ import java.awt.*; // Grafik-Werkzeuge für Farben, Schriftarten und die Zeichen
  * @author Matthias Wiese
  */
 public class RoundTextField extends JTextField { // erbt die Klasse JTextField also unter anderem alle Funktionen eines normalen Eingabefeldes
-
     /**
      * Initializes the RoundTextField.
      * Sets the font, colors, the background not to be painted, and centered text input.
@@ -21,7 +20,6 @@ public class RoundTextField extends JTextField { // erbt die Klasse JTextField a
         setFont(new Font("Consolas", Font.PLAIN, 18));
         setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10)); // dadurch klebt der Text nicht direkt am Rand also 5 Pixel oben, 10 Pixel links, 5 Pixel unten und 10 Pixel rechts
     }
-
     /**
      * Draws the text field with a glass effect and rounded corners.
      * @param g graphic object provided by the system to display the component on the screen

@@ -1,8 +1,5 @@
 package src.gui;
 import javax.swing.*;
-
-import src.coms.Server;
-
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
 import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
@@ -13,13 +10,11 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * Screen, where the player is waiting for the host to start a game.
  * @author Max Steingräber, Matthias Wiese
  */
-
 public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
     JLabel waitMsg;
-
     /**
      * Initializes the screen where the joining player is waiting.
      * Creates and initializes objects and sets the layout.
@@ -93,8 +88,6 @@ public class Joinwaitscreen extends JPanel { // JPanel ist ein Standard-Containe
                 frame.showScreen("settings");
         });
     }
-
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

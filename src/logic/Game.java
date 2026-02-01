@@ -375,7 +375,7 @@ public class Game {
                             u_turn = 0;
                             coms.sendPass();
                         }
-                        coms.receivemessagewsave();
+                        coms.receiveMessagewsave();
                     } catch (Exception e) {
                         System.err.println("Network error caught in start_opp_turn(): " + e);
                     }
