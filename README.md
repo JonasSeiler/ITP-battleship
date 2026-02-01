@@ -13,7 +13,9 @@ ITP-battleship/
 │── docs/  
 │   ├── index.html  
 │   ├── ...  
-│   └── etc. 
+│   └── etc.
 ├── .jar  
-├── battleshipClass.png  
+├── battleshipClasses.png  
+├── Game instructions.rtf
+├── comp.sh
 └── README.md  
