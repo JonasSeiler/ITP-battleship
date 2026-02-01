@@ -5,94 +5,97 @@ import java.io.*;
 import java.util.*;
 
 /**
- * 
+ * Bot is a subclass of NetworkPlayer that acts like a client object and also
+ * generates the responsible answers
+ * @author Jamie Kopp
+ * @author Jonas Seiler
  */
 public class Bot extends NetworkPlayer {
     /**
-     * 
+     * Board object used for part of the logic
      */
     public Board ownBoard;
     /**
-     * 
+     * a object for randomization
      */
     private Random random;
     /**
-     * 
+     * coordiante of bot generated shot
      */
     private Coordinate generatedshot;
     /**
-     * 
+     * game object for part of the logic
      */
     private Game user; 
 
     /**
-     * 
+     * a variavle for the game difficulty set to medium = 2 as default
      */
     private int difficulty = 2;
     /**
-     * 
+     * list of the ships lenghts which are left
      */
     private List<Integer> shiplengthsleft;
     /**
-     * 
+     * number of shipssunk
      */
     private int shipssunk = 0;
     /**
-     * 
+     * probability map for making shooting decision
      */
     private int [][] probmap;
     /**
-     * 
+     * booleand to check if probability map is initialized
      */
     private boolean probmapinit = false;
 
     /**
-     * 
+     * list of the last hits for making shooting decisions
      */
     private List<Coordinate> hitseq;
     /**
-     * 
+     * boolean to see if hunting mode is on
      */
     private boolean hunting = true;
     /**
-     * 
+     * coordinate of current target
      */
     private Coordinate currenttarget = null;
     /**
-     * 
+     * variable to find out the direction of enemy ship
      */
     private int currentdirection = -1;
     /**
-     * 
+     * boolean to check if last shot was a hit or not
      */
     private boolean lastshothit = false;
 
     /**
-     * 
+     * variable to check if game has been loaded
      */
     private boolean isLoadGame = false;
     /**
-     * 
+     * the id of the game to be loaded
      */
     private String loadGameId = null;
     /**
-     * 
+     * the board size of the game
      */
     private int boardSize = 0;
     /**
-     * 
+     * array of the ship lengths
      */
     private int[] shiplengths;
     /**
-     *
+     * boolean array to check which direction have been tried out when making shooting decisions
      */
     private boolean[] triedDirections = new boolean[4]; // 0: right, 1: down, 2: left, 3: up
     /**
-     *  
+     * boolean for if one end of a ship has been found
      */
     private boolean foundPositiveEnd = false;
     /**
-     *  
+     *  boolean for if another end of a ship has been found
      */
     private boolean foundNegativeEnd = false;
 
@@ -101,7 +104,7 @@ public class Bot extends NetworkPlayer {
     //
 
     /**
-     * 
+     * {@inheritDoc} 
      */
     @Override
     public void start() {
@@ -115,8 +118,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
-     * @param lvl
+     * setter method for setting the difficulty of the algorithm 
+     * @param lvl of the difficulty
      * @throws IOException
      */
     public void setdifficulty(int lvl) throws IOException {
@@ -128,16 +131,18 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
-     * @return
+     * getter method for difficulty
+     *
+     * @return the difficulty currently set
      */
     public int getdifficulty() {
         return difficulty;
     } 
 
     /**
-     * 
-     * @param size
+     * sets the board size sent by user
+     *
+     * @param size of board
      * @return
      * @throws IOException
      */
@@ -148,9 +153,10 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * sets variables related to the ships array sent by user
+     *
      * @param shiplengths
-     * @return
+     * @return true if successfull
      * @throws IOException
      */
     public boolean sendShips(int[] shiplengths) throws IOException {
@@ -176,7 +182,7 @@ public class Bot extends NetworkPlayer {
 
     /**
      * 
-     * loads the Bot's side of the Game
+     * loads the Bot's side of the Game including the difficulty and probability map
      *
      * @param id
      * @return
@@ -188,9 +194,34 @@ public class Bot extends NetworkPlayer {
         load_game(id + "Bot");
         return true;
     }
-    
+
     public void load_game(String filepath) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+        System.out.println(filepath);
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + filepath;
+        System.out.println(savePath);
+        try(BufferedReader reader = new BufferedReader(new FileReader(savePath))) {
             System.out.println("Reading: ");
             // read grid size
             int new_s = Integer.parseInt(reader.readLine().trim());
@@ -245,7 +276,7 @@ public class Bot extends NetworkPlayer {
                 for (int i = 0; i < s.length; i++) {
                     s.lifes[i] = Integer.parseInt(parts[i]);
                 }
-            s.dir = Integer.parseInt(reader.readLine().trim());
+                s.dir = Integer.parseInt(reader.readLine().trim());
             } 
 
             // read and copy opp_hit
@@ -284,8 +315,9 @@ public class Bot extends NetworkPlayer {
 
 
     /**
-     * 
-     * @return
+     * sets gamestarted to true if user send ready
+     *
+     * @return true so game can start
      * @throws IOException
      */
     public boolean sendReady() throws IOException {
@@ -294,7 +326,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * registers the shot from user
+     *
      * @param row
      * @param col
      * @return
@@ -315,11 +348,12 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * the bot generates a shot and register the shot at the players bot
+     *
      * @throws IOException
      */
     @Override
-    public void receivemessagewsave() throws IOException {
+    public void receiveMessagewsave() throws IOException {
         generatedshot = genshot();
 
         if (generatedshot == null) {
@@ -334,7 +368,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * Bot uses answer from his generated shot to update shooting algorithm 
+     *
      * @param answerCode
      * @throws IOException
      */
@@ -353,7 +388,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * saves the Bot's side of the Game
+     * saves the Bot's side of the Game by saving the board first and then appending the probabillity map and difficulty
      *
      * @param id 
      * @return 
@@ -361,7 +396,30 @@ public class Bot extends NetworkPlayer {
     @Override 
     public boolean sendSave(String id) {
         ownBoard.save_game(id + "Bot");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(id + "Bot", true))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + id + "Bot";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(savePath, true))) {
             writer.newLine();
             writer.write(String.valueOf(difficulty));
             writer.newLine();
@@ -381,27 +439,29 @@ public class Bot extends NetworkPlayer {
     }
     
     /**
+     * for bot this method does nothing
      * 
      * @param message
      * @throws IOException
      */
     @Override
-    protected void sendmessage(String message) throws IOException {
+    protected void sendMessage(String message) throws IOException {
     }
 
     /**
-     * 
+     * for bot this method does nothing
+     *
      * @return
      * @throws IOException
      */
     @Override
-    protected String receivemessage() throws IOException {
+    protected String receiveMessage() throws IOException {
         return "";
 
     }
 
     /**
-     * 
+     * {@inheritDoc}
      */
     @Override
     public void close() {
@@ -427,7 +487,8 @@ public class Bot extends NetworkPlayer {
     //
 
     /**
-     * 
+     * method for the bot to place his ships
+     *
      * @param shiplengths
      * @throws IOException
      */
@@ -466,7 +527,8 @@ public class Bot extends NetworkPlayer {
     //
 
     /**
-     * 
+     * method to generate to shot according to the difficulty set
+     *
      * @return
      */
     private Coordinate genshot() {
@@ -484,7 +546,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     *  shoots completely random shots at the Board 
+     * shoots completely random shots at the Board 
+     *
      * @return shot Coordinate
      * @throws IOException
      */
@@ -494,6 +557,7 @@ public class Bot extends NetworkPlayer {
 
     /**
      * shoots in a parity pattern and huntships once found
+     *
      * @return shot Coordinate
      * @throws IOException
      */
@@ -509,7 +573,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * shoots in a parity pattern and huntships once found
+     * shoots in a parity pattern and huntships once found, updates the pattern according to smallest ship and doesnt shoot cells surrounding sunken ships
      * 
      * @return
      * @throws IOException
@@ -530,7 +594,7 @@ public class Bot extends NetworkPlayer {
     // Probabilitymap related functions
 
     /**
-     * 
+     * method for initializing the probability map
      */
     private void initprobmap() {
 
@@ -576,7 +640,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     *
+     * resest tracking direction
      *
      */
     private void resetDirectionTracking() {
@@ -586,7 +650,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     *
+     * updates the shooting pattern to the one of the smallest ship
      *
      */
     private void updateprobmapforsmallestship() {
@@ -613,8 +677,9 @@ public class Bot extends NetworkPlayer {
 
 
     /**
-     * 
-     * @return
+     * method that gives back the cell with the highest probility
+     *
+     * @return the coordinate
      * @throws IOException
      */
     private Coordinate gethighestprobcell() throws IOException {
@@ -651,6 +716,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
+     * method for updating the probability of the map
      * 
      * @param shot
      * @param result
@@ -731,6 +797,7 @@ public class Bot extends NetworkPlayer {
 
 
     /**
+     * method for checking if a cell is available
      * 
      * @param x
      * @param y
@@ -760,7 +827,8 @@ public class Bot extends NetworkPlayer {
         return true;
     }
     /** 
-     * 
+     * converting coordinate to two integers
+     *
      * @param coord
      * @return
      */
@@ -770,8 +838,9 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
+     * generates a random cell
      * 
-     * @return
+     * @return a coordinate
      * @throws IOException
      */
     private Coordinate getrandomcell() throws IOException {
@@ -799,7 +868,8 @@ public class Bot extends NetworkPlayer {
 
 
     /**
-     * 
+     * a method for targeting a ship
+     *
      * @return
      * @throws IOException
      */
@@ -860,7 +930,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     *
+     * method for trying directions of a successfull hit
      *
      */
     private Coordinate tryDirectionsFromFirstHit() throws IOException {
@@ -889,7 +959,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     *
+     * method for desciding which direction the ship that has been hit is 
      */
     private void determineDirectionFromHits() {
         if (hitseq.size() < 2) return;
@@ -915,7 +985,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * method for getting the direction
+     *
      * @param from
      * @param to
      * @return
@@ -929,7 +1000,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * method to get opposite direction 
+     *
      * @param dir
      * @return
      */
@@ -938,6 +1010,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
+     * getter method related to target algorithm
      * 
      * @param dir
      * @return
@@ -950,8 +1023,9 @@ public class Bot extends NetworkPlayer {
         }
     }
 
-    /**
-     * 
+    /** 
+     * getter method related to target algorithm
+     *
      * @param dir
      * @return
      */
@@ -964,7 +1038,8 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * 
+     * method for update the tracking algorithm
+     *
      * @param shot
      * @param result
      */
@@ -1027,7 +1102,8 @@ public class Bot extends NetworkPlayer {
 
 
     /**
-     * 
+     * setter method to set the user object
+     *
      * @param u
      */
     public void set_game(Game u) {

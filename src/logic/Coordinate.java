@@ -16,7 +16,7 @@ public class Coordinate {
      * return true if the x and y integers of the two Coordinate objects match
      *
      * @param obj 
-     * @return 
+     * @return  true if x and y of this and obj have the same value else false
      */
     public boolean equals(Object obj) {
         if(this == obj) return true;

@@ -37,6 +37,12 @@ public class Board {
      */
     public int[][] opp_hit;
 
+    /**
+     * Initializes the variables the board needs
+     *
+     * @param s         board size 
+     * @param ship_set  ship length array
+     */
     public Board(int s, int[] ship_set) {
         size = s;
         ship_pos = new int[size][size];
@@ -57,6 +63,15 @@ public class Board {
 
     }
 
+ /**
+  * Specifically for the Bot to check if a placement of a ship is valid (true)
+  * or would interfere with another ship (false)
+  *
+  * @param head     most top left tile of a ship
+  * @param dir      direction of the ship 
+  * @param s_index  index in the ship set array 
+  * @return 
+  */
  public boolean isPlacementvalid(Coordinate head, int dir, int s_index) {
 
     int length = fleet[s_index].length;
@@ -91,9 +106,9 @@ public class Board {
     /**
      * places a Ship 
      * 
-     * @param head the field a Ship is in with the lowest (x&y position) for the specific Ship
-     * @param dir direction the Ship is facing, 0 = horizontal | 1 = vertical
-     * @param s_index 
+     * @param head     most top left tile of a ship
+     * @param dir      direction of the ship 
+     * @param s_index  index in the ship set array 
      */
     public void place_ship(Coordinate head, int dir, int s_index) {
         // dir: 0 = x,     1 =  y
@@ -119,8 +134,9 @@ public class Board {
     /**
      * registers a shot the user shot at the opponent by saving it in opp_hit
      * and lowers the opponents hp by 1 if a Ship was hit
-     * @param shot coordinte where the user has shot at
-     * @param response the answer the opponent gave for the shot at that position
+     *
+     * @param shot      coordinte where the user has shot at
+     * @param response  the answer the opponent gave for the shot at that position
      */
     public void register_shot(Coordinate shot, int response) {
         opp_hit[shot.x][shot.y] = response;
@@ -157,8 +173,8 @@ public class Board {
     /**
      * checks the own Board what an opponent's shot hit
      *
-     * @param att position the opponent is attacking
-     * @return what the opponent hit (0 = water, 1 = Ship, 2 = Ship, also the entire Ship was sunk)
+     * @param att   position the opponent is attacking
+     * @return      what the opponent hit (0 = water, 1 = Ship, 2 = Ship, also the entire Ship was sunk)
      */
     public int check_hit(Coordinate att) {
         // registers hit
@@ -184,7 +200,7 @@ public class Board {
     /**
      * checks if the user lost the game because all of his ships were destroyed
      *
-     * @return 
+     * @return true if the player lost else false
      */
     public boolean lost() {
         for(Ship s : fleet) {
@@ -197,6 +213,8 @@ public class Board {
 
     /**
      * checks if user won because he sunk all his opponents ships
+     *
+     * @return true if the player won else false
      */
     public boolean won() {
         if(opp_hp == 0) { 
@@ -205,7 +223,9 @@ public class Board {
         return false;
     }
     /**
-     * checks if someone won
+     * checks if the game is over
+     *
+     * @return true if the game is over else false
      */
     public boolean game_over() {
         if(won() || lost()) {
@@ -219,10 +239,33 @@ public class Board {
      * saves the game by writing the data of the Board object into a file that
      * can later be used to restore the game state
      *
-     * @param file 
+     * @param file  file name
      */
     public void save_game(String file) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + file;
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(savePath))) {
             // write size into file
             writer.write(String.valueOf(size));
             writer.newLine();

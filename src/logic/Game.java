@@ -12,16 +12,50 @@ import src.coms.*;
  *
  */
 public class Game {
+    /**
+     * the player's board
+     */
     private Board board1;
+    /**
+     * gui screen the logic needs to interact with
+     */
     private Battlescreen gui;
+    /**
+     * connection to the opponent
+     */
     private NetworkPlayer coms;
+    /**
+     * 1 = it's the players turn; 0 = it's the opponents turn; 2 = game over
+     */
     public int u_turn = 1;
+    /**
+     * array that is used for converting the bool DIR array from the gui to the 0/1 array that the logic uses
+     */
     private int[] s_dir;
+    /**
+     * array that the Mainframe uses to initialize the battlescreen when a game is loaded
+     */
     public Coordinate[] s_heads;
+    /**
+     * array that the Mainframe uses to initialize the battlescreen when a game is loaded
+     */
     public boolean[] gui_dir;
+    /**
+     * array that the Mainframe uses to initialize the battlescreen when a game is loaded
+     */
     public int[] s_len;
+    /**
+     * board size
+     */
     public int size;
-    // add gui and coms classes
+
+    /**
+     * initializes the board, connects the NetworkPlayer and initializes the s_dir array
+     *
+     * @param size 
+     * @param ship_set 
+     * @param n 
+     */
     public Game(int size, int[] ship_set, NetworkPlayer n) {
         board1 = new Board(size, ship_set);
         this.coms = n;
@@ -36,7 +70,31 @@ public class Game {
      * @param filepath the name of a file that stores Game data from a previous Game session
      */
     public void load_game(String filepath) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + filepath;
+
+        try(BufferedReader reader = new BufferedReader(new FileReader(savePath))) {
            
             // read grid size
             int new_s = Integer.parseInt(reader.readLine().trim());
@@ -121,6 +179,9 @@ public class Game {
         }
     }
 
+    /**
+     * syncs the gui to the board object when a game is loaded from a file
+     */
     public void load_gui() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -134,6 +195,12 @@ public class Game {
             }
         }
     }
+    /**
+     * sets the Battlescreen and converts the bool direction array that the gui uses
+     * into the int direction array the logic uses
+     *
+     * @param b 
+     */
     public void set_gui(Battlescreen b) {
         this.gui = b; 
         for (int i = 0; i < gui.DIR.length; i++) {
@@ -145,8 +212,7 @@ public class Game {
     } 
 
     /**
-     * setup_board() syncs the Board with the Battlescreen after the user 
-     * placed all his ships
+     * szncs the Board with the Battlescreen after the user placed all his ships
      */
     public void setup_board() {
         Coordinate[] c = gui.COR;
@@ -231,8 +297,8 @@ public class Game {
     }
 
     /**
-     * the opponent is shooting at the players Board the Game automatically
-     * answers forwards the Coordinate and answer to the gui
+     * when the opponent is shooting at the players Board the Game automatically
+     * answers and forwards the Coordinate and answer to the gui to visualize the shot
      *
      * @param p Coordinate of the position the opponent is shooting at
      */
@@ -309,7 +375,7 @@ public class Game {
                             u_turn = 0;
                             coms.sendPass();
                         }
-                        coms.receivemessagewsave();
+                        coms.receiveMessagewsave();
                     } catch (Exception e) {
                         System.err.println("Network error caught in start_opp_turn(): " + e);
                     }

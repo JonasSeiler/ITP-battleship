@@ -45,9 +45,11 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
 
         // Das abgerundete Rechteck zeichnen
         g2d.fillRoundRect(0, 0, getWidth(), getHeight(), cornerRadius, cornerRadius); // dadurch wird gemalt Startpunkt oben links (0,0), getWidth() und getHeight() füllt die komplette Fläche aus und der cornerRadius rundet die Ecken ab
+        
 
         // Den Text zeichnen (muss nach dem Hintergrund kommen!)
         super.paintComponent(g2d); // dadurch wird der Text gezeichnet in der Oberklassenmethode paintComponent. Es wird das g2d Objekt genommen, damit auch der Text von der Kantenglättung profitiert
+
         g2d.dispose(); // Kopie es Objekts wird verworfen
     }
 }

@@ -132,7 +132,7 @@ public class Battlescreen extends JPanel {
         pFieldPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
 
         /*--saveButton--*/
-        saveButton = new RoundButton("Save Game");
+        saveButton = new RoundButton("<html><font color='white'>Save Game</font></html>");
         saveButton.setEnabled(true);
         saveButton.addActionListener(e -> {
             gameSaved = true;
@@ -152,6 +152,7 @@ public class Battlescreen extends JPanel {
         /*--creating enemy field (right cells)--*/
         eCells = new JButton[gridSize][gridSize];
         eField = createField(gridSize, gridSize, eCells, true);
+        eField.setForeground(Color.black);
         eSide.add(eField, BorderLayout.CENTER);
 
         /*--enemyTitle--*/
@@ -188,7 +189,7 @@ public class Battlescreen extends JPanel {
         eSide.add(eCenterWrapper, BorderLayout.CENTER);
 
         /*--ConfirmShot/Exit button--*/
-        confirmShotButton = new RoundButton("Confirm Shot");
+        confirmShotButton = new RoundButton("<html><font color='white'>Confirm Shot</font></html>");
         confirmShotButton.setEnabled(true);
         confirmShotButton.addActionListener(e -> confirmShot());
         JButton exitButton = new RoundButton("Exit Game");
@@ -208,6 +209,7 @@ public class Battlescreen extends JPanel {
         board.add(pSide);
         board.add(eSide);
         this.add(board, BorderLayout.CENTER);
+        UIManager.put("Button.disabledText", Color.BLACK);
         drawPlayerShips();
         setupKeyBindings(exitButton);
         setFocusable(true);
@@ -291,6 +293,7 @@ public class Battlescreen extends JPanel {
     public void colorPlayerShip(int x, int y, int i) {
         switch(i) {
             case 0:
+                pCells[x][y].setForeground(Color.black);
                 pCells[x][y].setText("X");
                 break;
             case 1:
@@ -324,8 +327,6 @@ public class Battlescreen extends JPanel {
         eCells[x][y].setEnabled(false);
         switch(i) {
             case 0:
-                //eCells[x][y].setForeground(Color.black);
-                //eCells[x][y].repaint();
                 eCells[x][y].setText("X");
                 break;
             case 1:

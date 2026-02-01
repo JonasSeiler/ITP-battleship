@@ -88,10 +88,14 @@ public class Mainframe extends JFrame {
         cLayout.show(cPanel, name);
     }
     /**
-     * Sets the communication for multiplayer
+     * properly handles the initialization phase of the game, where 
+     * the Server sends the game parameters to the opponent,
+     * the Client recieves the variables or a file id to laod
+     * or the Bot gets set up with the game parameters and his difficulty
+     *
+     * @return  true if the Client recieved a load command else false
      */
-    public void setupComs() {
-
+    public boolean setupComs() {
         if (coms instanceof Server) {
             ships = PreGameScreen.ships;
             size = PreGameScreen.gridSize;
@@ -103,14 +107,18 @@ public class Mainframe extends JFrame {
             System.err.println("failed transmitting the setup variables: " + e);
         }
         } else if (coms instanceof Client) {
+            logic = new Game(1, new int[1], coms);
+            coms.set_game(logic);
             Client joinee = (Client) coms;
+            boolean loaded = false;
             try {
-                joinee.receiveSetup();
+                loaded = joinee.receiveSetup();
             } catch (Exception e) {
                 System.err.println("Failed to recieve Setup variables: " + e);
             }
             ships = joinee.ships;
             size = joinee.size;
+            return loaded;
         } else {
             try {
                 ships = PreGameScreen2.ships;
@@ -123,19 +131,23 @@ public class Mainframe extends JFrame {
                 System.err.println("Bot couldnt receive parameters: " + e);
             }
         }
+        return false;
     }
     /**
      * Starts the 'gamescreen'
      */
     public void startGamescreen() {
         if (GameScreen != null) cPanel.remove(GameScreen);
-
         new SwingWorker<Void, Void>() {
+            public boolean load = false;
             protected Void doInBackground() throws Exception {
-                setupComs();
+                load = setupComs();
                 return null;
             }
             protected void done() {
+                if(load) {
+                    startBattle(load);
+                } else {
 
                 GameScreen = new Gamescreen(frame, ships, size);
 
@@ -143,23 +155,30 @@ public class Mainframe extends JFrame {
                 cLayout.show(cPanel, "gamescreen");
                 cPanel.revalidate();
                 cPanel.repaint();
-
+                }
             }
         }.execute();
     }
     /**
      * Starts the game and opens 'battlescreen'
      */
-    public void startBattle() {
+    public void startBattle(boolean load) {
         if (BattleScreen != null) cPanel.remove(BattleScreen);
 
-        BattleScreen = new Battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
-
-        if (logic != null) logic = null;
-        logic = new Game(BattleScreen.gridSize, BattleScreen.SHIPS, coms);
-        BattleScreen.setGame(logic);
-        coms.set_game(logic);
-
+        if(!load) {
+            BattleScreen = new Battlescreen(this, GameScreen.COR, GameScreen.SHIPS, GameScreen.DIR, GameScreen.gridSize);
+            if (logic != null) logic = null;
+            logic = new Game(BattleScreen.gridSize, BattleScreen.SHIPS, coms);
+            BattleScreen.setGame(logic);
+            logic.set_gui(BattleScreen);
+            coms.set_game(logic);
+        } else {
+            BattleScreen = new Battlescreen(this, logic.s_heads, logic.s_len,logic.gui_dir, logic.size);
+            BattleScreen.setGame(logic);
+            coms.set_game(logic);       
+            logic.set_gui(BattleScreen);
+            logic.load_gui();
+        }
          new SwingWorker<Void, Void>() {
             protected Void doInBackground() throws Exception {
                     try {
@@ -206,29 +225,77 @@ public class Mainframe extends JFrame {
      * @return true if a file was successfully selected. False if the selection was canceled by the player or an error occurred.
      */
     public boolean handleLoadGame() {
-      File saveFolder = new File("saves"); // Instanz der Klasse File. Es ist quasi ein Zeiger hinter dem sich ein Ordner oder eine Datei befindet
-      
-      if (!saveFolder.exists()) {
-        saveFolder.mkdir();
-      }
-      JFileChooser fileChooser = new JFileChooser(saveFolder); // Objekt wird erstellt, und es wird der saveFolder Ordner als Startpunkt gesetzt, von wo aus der User später eine Datei auswählen kann
-      int result = fileChooser.showOpenDialog(this); //öffnet das Fenster, indem der User eine Datei auswählen kann
-      if (result == JFileChooser.APPROVE_OPTION) {
-        File selectedFile = fileChooser.getSelectedFile(); // jetzt ist selectedFile ein Zeiger auf die ausgewählte Datei 
-        String path = selectedFile.getAbsolutePath(); // der Pfad zur Datei wird in path gespeichert
-        System.out.println("Dateiauswahl erfolgreich" + path);
-        return true;
-      } else if (result == JFileChooser.CANCEL_OPTION){
-        System.out.println("Vorgang wurde vom Spieler abgebrochen");
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir;
+        File saveFolder = new File(savePath); // Instanz der Klasse File. Es ist quasi ein Zeiger hinter dem sich ein Ordner oder eine Datei befindet
+
+        JFileChooser fileChooser = new JFileChooser(saveFolder); // Objekt wird erstellt, und es wird der saveFolder Ordner als Startpunkt gesetzt, von wo aus der User später eine Datei auswählen kann
+        int result = fileChooser.showOpenDialog(this); //öffnet das Fenster, indem der User eine Datei auswählen kann
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File selectedFile = fileChooser.getSelectedFile(); // jetzt ist selectedFile ein Zeiger auf die ausgewählte Datei 
+            String path = selectedFile.getName(); // der Pfad zur Datei wird in path gespeichert
+            // do all the behind the scenes startGamescreen() thingys
+            System.out.println("loading: " + path);
+            if (coms instanceof Server) {
+                try {
+                    Server host = (Server) coms;
+                    host.sendLoad(path);
+                } catch (Exception e) {
+
+                }
+            } else {
+                try {
+                    Bot comp = (Bot) coms;
+                    comp.sendLoad(path);
+                } catch(Exception e) {
+
+                }
+            }
+            if (logic != null) {
+                logic = null;
+            }
+            logic = new Game(1, new int[1], coms);
+            logic.load_game(path);  
+
+            startBattle(true);
+
+            System.out.println("Dateiauswahl erfolgreich" + path);
+
+            return true;
+        } else if (result == JFileChooser.CANCEL_OPTION){
+            System.out.println("Vorgang wurde vom Spieler abgebrochen");
+            return false;
+        } else if (result == JFileChooser.ERROR_OPTION) {
+            System.out.println("Es ist ein Fehler aufgetreten");
+            return false;
+        }
         return false;
-      } else if (result == JFileChooser.ERROR_OPTION) {
-        System.out.println("Es ist ein Fehler aufgetreten");
-        return false;
-      }
-      return false;
     }
+
     /**
-     * Starts the main program
+     * gets called to start the program
+     *
      * @param args  string arguments
      */
     public static void main(String[] args) {
