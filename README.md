@@ -10,28 +10,10 @@ ITP-battleship/
 ├── img/  
 │   ├── .jpeg  
 │   ├── ...  
-│   └── .png  
+│── docs/  
+│   ├── index.html  
+│   ├── ...  
+│   └── etc. 
 ├── .jar  
-├── battleshipClass.uxf  
+├── battleshipClass.png  
 └── README.md  
-
-The class diagramm is stored in the .uxf file (battleshipClass.uxf) and can be 
-opened via the application UMLet or in the browser via this URL:
-https://www.umletino.com
-  
-  
-title screen:
- - Singleplayer -> always new/load
- - Multiplayer  
-
-Multiplayer:
- - join/ host:
-
-new/load:
- - new Game     -> single: Singleplayer
- - load Game    -> single: ship placement
-
-Game settigs: 
- - board size:
- - ships:
- - confirm:
