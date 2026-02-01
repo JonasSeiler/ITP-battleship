@@ -35,5 +35,3 @@ Game settigs:
  - board size:
  - ships:
  - confirm:
-
-
