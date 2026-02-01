@@ -7,6 +7,7 @@ import java.io.*;
  * a field that signifies where the opponent has already shot  and 
  * a field that signifies where the user has already shot at
  *
+ * @author Jonas Seiler
  */
 public class Board {
     /**

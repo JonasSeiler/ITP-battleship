@@ -49,11 +49,11 @@ public class Battlescreen extends JPanel {
     /**
      * Constructor of 'battlescreen'
      * 
-     * @param frame         mainframe (window), which contains all screens and manages them
+     * @param f             mainframe (window), which contains all screens and manages them
      * @param c             coordinates (x, y) of each ship
      * @param s             ship length of each ship
      * @param d             direction (false -> vertical, true -> horizontal) of each ship
-     * @param inGridSize    shared grid size of {@link hostpregamescreen}
+     * @param inGridSize    shared grid size of {@link Pregamescreen}
      */
     public Battlescreen(Mainframe f, Coordinate[] c, int[] s, boolean[] d, int inGridSize) {
         /*--saves shared input data--*/

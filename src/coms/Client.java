@@ -45,7 +45,7 @@ public class Client extends NetworkPlayer {
     /**
      * setter method to set the server address
      * 
-     * @param ip address from Host
+     * @param address ip address from Host
      * @author Jamie Kopp
      */
     public void setServerAddress(String address) {

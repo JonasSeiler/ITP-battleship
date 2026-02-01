@@ -72,9 +72,9 @@ public class Gamescreen extends JPanel {
     /**
      * Constructor 'gamescreen'
      * 
-     * @param frame         mainframe (window), which contains and manages every screen
-     * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link hostpregamescreen}
-     * @param inGridSize    passed grid size of {@link hostpregamescreen}
+     * @param f             mainframe (window), which contains and manages every screen
+     * @param inShips       passed ship-field e.g. {5, 5, 4, 3, 3, 3, 2} of {@link Pregamescreen}
+     * @param inGridSize    passed grid size of {@link Pregamescreen}
      */
     public Gamescreen(Mainframe f, int[] inShips, int inGridSize) {
         /*--save passed class parameters--*/

@@ -3,6 +3,7 @@ package src.logic;
 /**
  * implements a simple Coordinate class consisting of a x and a y integer
  *
+ * @author Jonas Seiler
  */
 public class Coordinate {
     public int x, y;

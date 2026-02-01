@@ -3,6 +3,7 @@ import java.util.Arrays;
 /**
  * implements a singular Ship
  *
+ * @author Jonas Seiler
  */
 public class Ship {
     /**

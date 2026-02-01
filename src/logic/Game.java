@@ -9,7 +9,7 @@ import src.coms.*;
 /**
  * the Game class uses a Board object to implement the games logic, controls the turn order
  * of the player and is used to process the communication with the opponent
- *
+ * @author Jonas Seiler
  */
 public class Game {
     /**
