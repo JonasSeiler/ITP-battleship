@@ -54,7 +54,7 @@ public class Client extends NetworkPlayer {
      * 
      * @throws IOException
      */
-    public void receiveSetup() throws IOException {
+    public boolean receiveSetup() throws IOException {
         if(in == null) 
             throw new IOException("in not inited");
 
@@ -89,12 +89,12 @@ public class Client extends NetworkPlayer {
             logic.load_game(loadId);
             
             sendmessage("ok");
-            
+            return true;
 
         } else {
             throw new IOException("Ungültiges Setup-Protokoll: " + message);
         }
-
+        return false;
     }
     @Override    
     public boolean sendReady() {

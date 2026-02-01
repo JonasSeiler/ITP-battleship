@@ -86,7 +86,7 @@ public class Multiplayer extends JPanel { // JPanel ist ein Standard-Container o
                 protected Void doInBackground() throws Exception {
                     try {
                         frame.coms.start();
-                        frame.showScreen("pregamescreen");
+                        frame.showScreen("hostscreen");
                     } catch(Exception ex) {
                         System.err.println("Error starting to host: " + ex);
                     }

@@ -5,13 +5,36 @@ import java.util.Arrays;
  *
  */
 public class Ship {
+    /**
+     * length of the ship
+     */
     public int length;
+    /**
+     * x Coordinate of the ships head
+     */
     public int head_x;
+    /**
+     * y Coordinate of the ships head
+     */
     public int head_y;
+    /**
+     * decides if the ship is oriented vertically (1) or horizontally (0)
+     */
     public int dir;        // 0 = x+, 1 = y+
+    /**
+     * stores the lifes of the ship per tile 
+     */
     public int[] lifes;
+    /**
+     * stores the Coordinates the ship occupies
+     */
     public Coordinate[] pos;
 
+    /**
+     * properly initializes all the variables without actually placing the ship
+     *
+     * @param length    length of the ship
+     */
     public Ship(int length) {
         this.length = length;
         this.lifes = new int[length];
@@ -34,8 +57,8 @@ public class Ship {
     /**
      * sets the direction and the head of a Ship
      *
-     * @param head 
-     * @param d 
+     * @param head  Coordinate for the head 
+     * @param d     direction 
      */
     public void set_dir_head(Coordinate head, int d) {
         this.dir = d;
@@ -47,9 +70,9 @@ public class Ship {
      * return the position of the index'th segment
      *
      * @param index specifies which segment's position to return
-     * @return 
+     * @return the coordinate of the index
      */
-    public Coordinate get_pos (int index) {
+    public Coordinate get_pos(int index) {
         return pos[index];
     }
 

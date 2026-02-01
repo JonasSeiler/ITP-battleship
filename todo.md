@@ -9,10 +9,16 @@
     v/
 - make save_game() put files in a savestates/ dir
 - make load_game() start the gui good
+v/
 - make load_game() for Bot
+v/
+- check if load_game() works for multiplayer
 - go bug hunting
+v/
 - write a comprehensable manual
+v/
 - add @author tags for swag
+v/
 - UML-Class diagram (eeewww)
 - add waiting indicators for all the times you need to wait 
     - host waiting for connect 
@@ -30,5 +36,6 @@ v/
 v/
 
 - make hard, not target surrounding tiles
+v/
 
-jar --create --file=battleship.jar --main-class=src.gui.mainframe -C out/ .
+jar --create --file=battleship.jar --main-class=src.gui.Mainframe -C out/ .

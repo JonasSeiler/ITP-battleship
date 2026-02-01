@@ -181,10 +181,12 @@ public class Gamescreen extends JPanel {
         pFieldPanel.add(shipSelector);
 
         /*--Start Button--*/
-        JButton startButton = new RoundButton("Start Game");
-        startButton.addActionListener(e -> {if (allShipsPlaced())
+        startButton = new RoundButton("Start Game");
+        startButton.addActionListener(e -> {
+            if (allShipsPlaced()) {
             startButton.setText("waiting...");
             frame.startBattle(false);
+            }
         });
         pFieldPanel.add(startButton);
 
@@ -381,7 +383,7 @@ public class Gamescreen extends JPanel {
         am.put("confirmShot", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (startButton.isEnabled()) {
+                if (startButton != null && startButton.isEnabled()) {
                     startButton.doClick();
                 }
             }

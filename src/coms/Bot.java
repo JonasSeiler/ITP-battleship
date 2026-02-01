@@ -176,7 +176,7 @@ public class Bot extends NetworkPlayer {
 
     /**
      * 
-     * loads the Bot's side of the Game
+     * loads the Bot's side of the Game including the difficulty and probability map
      *
      * @param id
      * @return
@@ -188,9 +188,34 @@ public class Bot extends NetworkPlayer {
         load_game(id + "Bot");
         return true;
     }
-    
+
     public void load_game(String filepath) {
-        try(BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+        System.out.println(filepath);
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + filepath;
+        System.out.println(savePath);
+        try(BufferedReader reader = new BufferedReader(new FileReader(savePath))) {
             System.out.println("Reading: ");
             // read grid size
             int new_s = Integer.parseInt(reader.readLine().trim());
@@ -245,7 +270,7 @@ public class Bot extends NetworkPlayer {
                 for (int i = 0; i < s.length; i++) {
                     s.lifes[i] = Integer.parseInt(parts[i]);
                 }
-            s.dir = Integer.parseInt(reader.readLine().trim());
+                s.dir = Integer.parseInt(reader.readLine().trim());
             } 
 
             // read and copy opp_hit
@@ -353,7 +378,7 @@ public class Bot extends NetworkPlayer {
     }
 
     /**
-     * saves the Bot's side of the Game
+     * saves the Bot's side of the Game by saving the board first and then appending the probabillity map and difficulty
      *
      * @param id 
      * @return 
@@ -361,7 +386,30 @@ public class Bot extends NetworkPlayer {
     @Override 
     public boolean sendSave(String id) {
         ownBoard.save_game(id + "Bot");
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(id + "Bot", true))) {
+        String userHome = System.getProperty("user.home");
+        String saveDir;
+        String os = System.getProperty("os.name").toLowerCase();
+
+        // Platform-specific save locations
+        if (os.contains("win")) {
+            // Windows: Documents\Battleship\
+            saveDir = userHome + "\\Documents\\Battleship\\";
+        } else if (os.contains("mac")) {
+            // macOS: ~/Library/Application Support/Battleship/
+            saveDir = userHome + "/Library/Application Support/Battleship/";
+        } else {
+            // Linux/Unix: ~/.local/share/battleship/
+            saveDir = userHome + "/.local/share/battleship/";
+        }
+
+        // Create directory if it doesn't exist
+        File directory = new File(saveDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String savePath = saveDir + id + "Bot";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(savePath, true))) {
             writer.newLine();
             writer.write(String.valueOf(difficulty));
             writer.newLine();
