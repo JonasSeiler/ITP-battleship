@@ -4,23 +4,25 @@ import java.net.*;
 import java.io.*;
 
 /**
- * 
+ * Client is a subclass of NetworkPlayer that is used to act as the Client of the Network
+ * connection
+ * @author Jamie Kopp
  */
 public class Client extends NetworkPlayer {
     /**
-     * 
+     * the ip address of the host
      */
     private String serverAddress;
     /**
-     * 
+     * socket object for communication
      */
     private Socket socket;
     /**
-     * 
+     * object to read from buffer
      */
     private BufferedReader in;
     /**
-     * 
+     * object to write to buffer
      */
     private Writer out;
 
@@ -28,10 +30,8 @@ public class Client extends NetworkPlayer {
     public int size;
     public int[] ships;
     
-    /**
-     * 
-     * @param address
-     * @throws IOException
+    /** 
+     * {@inheritDoc}
      */
     @Override
     public void start() throws IOException {
@@ -43,31 +43,35 @@ public class Client extends NetworkPlayer {
     }
     
     /**
+     * setter method to set the server address
      * 
-     * @param address
+     * @param ip address from Host
+     * @author Jamie Kopp
      */
     public void setServerAddress(String address) {
         this.serverAddress = address;
     }
     
     /**
-     * 
+     * method for receiving the game setup from a host
+     *
      * @throws IOException
+     * @author Jamie Kopp
      */
     public void receiveSetup() throws IOException {
         if(in == null) 
             throw new IOException("in not inited");
 
 
-        String message = receivemessage();
+        String message = receiveMessage();
         
         if (message.startsWith("size")) {
             String[] parts = message.split(" ");
             size = Integer.parseInt(parts[1]);
             
-            sendmessage("done");
+            sendMessage("done");
 
-            message = receivemessage();
+            message = receiveMessage();
 
             if (message.startsWith("ships")) {
                 String[] shipParts = message.split(" ");
@@ -76,7 +80,7 @@ public class Client extends NetworkPlayer {
                     ships[i-1] = Integer.parseInt(shipParts[i]);
                 }
                 
-                sendmessage("done");
+                sendMessage("done");
                 
             } else {
                 throw new IOException("Erwartete 'ships', bekam: " + message);
@@ -88,7 +92,7 @@ public class Client extends NetworkPlayer {
             
             logic.load_game(loadId);
             
-            sendmessage("ok");
+            sendMessage("ok");
             
 
         } else {
@@ -96,6 +100,10 @@ public class Client extends NetworkPlayer {
         }
 
     }
+
+    /** 
+     * {@inheritDoc}
+     */
     @Override    
     public boolean sendReady() {
         try {
@@ -113,24 +121,20 @@ public class Client extends NetworkPlayer {
     }   
     
     /**
-     * 
-     * @param message
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
-    protected void sendmessage(String message) throws IOException {
+    protected void sendMessage(String message) throws IOException {
         out.write(message + "\n");
         out.flush();
         System.out.println(message);
     }
     
     /**
-     * 
-     * @return
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
-    protected String receivemessage() throws IOException {
+    protected String receiveMessage() throws IOException {
         String line = in.readLine();
         if (line == null) {
             throw new IOException("Verbindung verloren");
@@ -140,8 +144,7 @@ public class Client extends NetworkPlayer {
     }
     
     /**
-     * 
-     * @throws IOException
+     * {@inheritDoc}
      */
     @Override
     public void close() throws IOException {
