@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
@@ -17,7 +16,6 @@ public class Singleplayer extends JPanel { // JPanel ist ein Standard-Container 
     private RoundButton load_game;
     private RoundButton exit;
     private JButton hamburger;
-
     /**
      * Creates the singleplayer screen and initializes buttons.
      * The player can decide to start a new game or load an old game.
@@ -63,7 +61,6 @@ public class Singleplayer extends JPanel { // JPanel ist ein Standard-Container 
         gbc.insets = new Insets(50, 50, 50, 50); // 50 Pixel Abstand (oben, links, unten, rechts)
         add(hamburger, gbc); // Packe den Button mit dieser Bauanleitung auf den singleplayerscreen aber es wird das GridBagLayout vom Anfang genommen und gbc aber berücksichtigt
 
-
         contentPanel.add(title);
         contentPanel.add(new JLabel(""));
         contentPanel.add(new_game);
@@ -83,7 +80,6 @@ public class Singleplayer extends JPanel { // JPanel ist ein Standard-Container 
                 frame.showScreen("settings");
         });
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

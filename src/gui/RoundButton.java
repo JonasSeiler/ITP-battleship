@@ -10,7 +10,6 @@ import java.awt.*; // Werkzeuge für Farben, Schriften und die Grafik-Power
 public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ein JButton
     private Color baseColor = new Color(255, 255, 255, 40); // Halbtransparentes Weiß
     private int cornerRadius = 30; // Wie rund der Button sein soll
-
     /**
      * Initializes the RoundButton.
      * Disables the default Swing theme to use the custom look.
@@ -25,7 +24,6 @@ public class RoundButton extends JButton { //vererbt JButton. RoundButton ist ei
         setForeground(Color.WHITE);
         setCursor(new Cursor(Cursor.HAND_CURSOR)); // Zeiger-Hand beim Hovern
     }
-
     /**
      * Draws the button.
      * Overrides the default method to enable rounded corners and the glass effect.

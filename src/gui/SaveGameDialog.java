@@ -1,10 +1,11 @@
 package src.gui;
-
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * Pop-up dialog, when user saves the game
+ */
 public class SaveGameDialog extends JDialog {
 
     public SaveGameDialog(Mainframe frame) {
@@ -40,7 +41,9 @@ public class SaveGameDialog extends JDialog {
         add(panel);
         setVisible(true);
     }
-
+    /**
+     * Rounded Panel, where save-pop-up-message sits on
+     */
     private static class RoundedPanel extends JPanel {
         private int radius;
         private Color color1;

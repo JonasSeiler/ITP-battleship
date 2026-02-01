@@ -1,5 +1,4 @@
 package src.gui; // Klasse gehört zu src.gui
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
@@ -16,7 +15,6 @@ public class Settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
     private JButton hamburger;
     private RoundButton changeColor;
     private RoundButton game_instructions;
-
     /**
      * Creates the screen and adds the setting buttons.
      * @param frame the reference to the main window used for screen transitions
@@ -72,7 +70,6 @@ public class Settingsscreen extends JPanel { // JPanel ist ein Standard-Containe
         changeColor.addActionListener(e -> {frame.changeColor(); repaint();});
         game_instructions.addActionListener(e -> {frame.showScreen("game_instructions");});
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

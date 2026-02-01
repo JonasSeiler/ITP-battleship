@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
@@ -31,7 +30,6 @@ public class Pregamescreen extends JPanel { // JPanel ist ein Standard-Container
      */
     public int[] ships; // // wird für den GameScreen gebraucht
     private Mainframe frame; // Referenz auf das Hauptfenster
-
     /**
      * Creates the screen for the game settings and initializes buttons and also a capacity bar.
      * @param frame the reference to the main window used for screen transitions
@@ -160,7 +158,6 @@ public class Pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         });
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
     }
-
     /**
      * Stores the selected settings when the start button is pressed.
      * They are stored in an array and integer.
@@ -188,7 +185,6 @@ public class Pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         }
         gridSize = (Integer) gridSize1.getValue();
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
@@ -203,7 +199,6 @@ public class Pregamescreen extends JPanel { // JPanel ist ein Standard-Container
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt.
     }
-
     /**
      * Updates the component settings and calculates the remaining ship capacity.
      * It calculates how much space you can still occupy and whether you can currently add another ship with size x.

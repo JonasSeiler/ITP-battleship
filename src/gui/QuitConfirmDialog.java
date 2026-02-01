@@ -1,12 +1,16 @@
 package src.gui;
-
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+/**
+ * Pop-up dialog, when the user is trying to exit the game
+ */
 public class QuitConfirmDialog extends JDialog {
-
+    /**
+     * Constructor of 'QuitConfirmDialog'
+     * @param frame
+     */
     public QuitConfirmDialog(Mainframe frame) {
         super(frame, true); // modal dialog
         setUndecorated(true); // remove default window borders
@@ -54,7 +58,9 @@ public class QuitConfirmDialog extends JDialog {
         add(panel);
         setVisible(true);
     }
-
+    /**
+     * Rounded Panel, where the quit-dialog sits on
+     */
     private static class RoundedPanel extends JPanel {
         private int radius;
         private Color color1;

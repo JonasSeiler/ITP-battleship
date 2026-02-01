@@ -218,7 +218,6 @@ public class Battlescreen extends JPanel {
         drawPlayerShips();
         setupKeyBindings(exitButton);
         setFocusable(true);
-        //new EndGameDialog(frame, "You Lost!");
     }
     /**
      * Creates playground (grid)
@@ -253,7 +252,6 @@ public class Battlescreen extends JPanel {
                         }
                     });
                 }
-
                 field.add(cell);
             }
         }
@@ -450,7 +448,10 @@ public class Battlescreen extends JPanel {
         eCells[selectedX][selectedY].setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
         gLogic.send_shot(selectedX, selectedY);
     }
-
+    /**
+     * Decides what color each cell gets
+     * @param response  0: 'X', 1: orange, 2: red
+     */
     public void shot_answer(int response) {
         colorEnemyShip(selectedX, selectedY, response);
 
@@ -459,6 +460,10 @@ public class Battlescreen extends JPanel {
         selectedX = -1;
         selectedY = -1;
     }
+    /**
+     * Creates winning/losing dialog message, when the game is over
+     * @param wl
+     */
     public void game_over(boolean wl) {
         if (wl) {
             new EndGameDialog(frame, "You've Won!");
@@ -526,9 +531,3 @@ public class Battlescreen extends JPanel {
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt. Festlegung wo und wie groß der Bereich ist, der gefüllt werden soll mit getWidth(),getHeight() bekomme ich die Breite und Höhe vom singleplayerobjekt
     }
 }
-
-/*  
-    -> selected cells disables
-
-    when somebody wins/loses user msg
-*/

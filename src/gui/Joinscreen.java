@@ -1,5 +1,4 @@
 package src.gui; // Datei gehört in das Verzeichnis src.gui
-
 import javax.swing.*;
 import java.awt.*;
 import src.coms.*;
@@ -12,14 +11,12 @@ import java.awt.event.ActionEvent; // enthält die Struktur für die Daten, die 
  * Screen in multiplayer mode, where the player can join a game by entering the appropriate IP address.
  * @author Max Steingräber, Matthias Wiese
  */
-
 public class Joinscreen extends JPanel { // JPanel ist ein Standard-Container oder Leinwand um Buttons usw. gut zu platzieren
     private Mainframe frame; // Referenz auf das Hauptfenster
     private RoundButton exit;
     private JButton hamburger;
     private JTextField ip;
     private RoundButton connect;
-
     /**
      * Initializes the screen for joining a game.
      * Creates buttons and a textfield for the IP address.
@@ -103,7 +100,6 @@ public class Joinscreen extends JPanel { // JPanel ist ein Standard-Container od
                 frame.showScreen("settings");
         });
     }
-
     /**
      * Establishes a network connection to the specified IP address.
      * After successful completion, the program switches to JoinWaitScreen.
@@ -132,8 +128,6 @@ public class Joinscreen extends JPanel { // JPanel ist ein Standard-Container od
             }
         }.execute();
     }
-
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

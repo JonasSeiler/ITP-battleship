@@ -1,12 +1,9 @@
 package src.gui;
-
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 public class EndGameDialog extends JDialog {
-
     /**
      * Shows a modal dialog with a winning or losing message.
      *
@@ -48,7 +45,6 @@ public class EndGameDialog extends JDialog {
         add(panel);
         setVisible(true);
     }
-
     /**
      * Inner class for rounded panel with gradient
      */

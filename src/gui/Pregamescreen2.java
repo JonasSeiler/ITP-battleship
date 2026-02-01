@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
@@ -34,7 +33,6 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
      */
     public int[] ships; // // wird für den GameScreen gebraucht
     private Mainframe frame; // Referenz auf das Hauptfenster
-
     /**
      * Creates the screen for the game settings and initializes buttons and also a capacity bar.
      * @param frame the reference to the main window used for screen transitions
@@ -187,7 +185,6 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         });
         updateCapacity(); // Zum Start wird die Anzeige auf den aktuellen Stand gebracht
     }
-
     /**
      * Stores the selected settings when the start button is pressed.
      * They are stored in an array and integer.
@@ -215,7 +212,6 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         }
         gridSize = (Integer) gridSize1.getValue();
     }
-
     /**
      * Writes the selected difficulty level of the bot to a variable in the mainframe.
      */
@@ -228,7 +224,6 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
             frame.difficulty = 3;
         }
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.
@@ -243,7 +238,6 @@ public class Pregamescreen2 extends JPanel { // JPanel ist ein Standard-Containe
         g2d.setPaint(oceanGradient); // Dadurch wird gesagt womit gezeichnet wird
         g2d.fillRect(0, 0, getWidth(), getHeight()); // dadurch wird gemalt
     }
-
     /**
      * Updates the component settings and calculates the remaining ship capacity.
      * It calculates how much space you can still occupy and whether you can currently add another ship with size x.

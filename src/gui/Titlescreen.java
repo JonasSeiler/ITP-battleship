@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*;
 import java.awt.*;
 import src.coms.*;
@@ -14,7 +13,6 @@ public class Titlescreen extends JPanel { // JPanel ist ein Standard-Container o
     private RoundButton singleplayer;
     private RoundButton multiplayer;
     private JButton hamburger;
-
     /**
      * Creates the start screen and initializes objects and buttons.
      * @param frame the reference to the main window used for screen transitions
@@ -71,7 +69,6 @@ public class Titlescreen extends JPanel { // JPanel ist ein Standard-Container o
                 frame.showScreen("settings");
         });
     }
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

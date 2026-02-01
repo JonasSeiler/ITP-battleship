@@ -1,8 +1,6 @@
 package src.gui;
 import javax.swing.*;
-
 import src.coms.Server;
-
 import java.awt.*;
 import javax.swing.KeyStroke; // Ein Objekt, dass einen spezifischen Tastendruck definiert
 import javax.swing.AbstractAction; // man kann Aktionen erstellen, welche die Logik enthalten, was passieren soll wenn man den Button drückt oder auf eine spezielle Taste drückt
@@ -22,7 +20,6 @@ public class Waitingscreen extends JPanel { // JPanel ist ein Standard-Container
     private boolean showAddr = false;
     private String ip;
     JLabel waitMsg;
-
     /**
      * Creates the screen and initializes objects and buttons.
      * @param frame the reference to the main window used for screen transitions
@@ -64,7 +61,6 @@ public class Waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
         waitMsg.setForeground(Color.WHITE);
         ip_address = new RoundButton("IP-Address");
-
 
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
@@ -116,8 +112,6 @@ public class Waitingscreen extends JPanel { // JPanel ist ein Standard-Container
                 frame.showScreen("settings");
         });
     }
-
-
     /**
      * Draws the color gradient background of the screen.
      * Method is automatically called by the system when the component needs to be redrawn.

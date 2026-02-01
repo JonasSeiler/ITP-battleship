@@ -1,5 +1,4 @@
 package src.gui;
-
 import javax.swing.*; // importiert alle GUI Komponenten aus dem Swing-Packet (JButton...)
 import java.awt.*; // Basis Werkzeuge für Grafik (Grafik, Schriften)
 import java.awt.geom.RoundRectangle2D; // Berechnet die mathematisch exakte Form der Rundungen für das Zeichnen
@@ -38,7 +37,6 @@ public class RoundSpinner extends JSpinner {
             }
         }
     }
-
     /**
      * Draws the RoundSpinner.
      * Overrides the default method to enable rounded corners and the glass effect.
