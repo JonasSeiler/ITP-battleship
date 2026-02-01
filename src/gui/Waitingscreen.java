@@ -60,7 +60,7 @@ public class Waitingscreen extends JPanel { // JPanel ist ein Standard-Container
         // exit.setFont(new Font("Times New Roman", Font.BOLD,35));
         waitMsg.setFont(new Font("Times New Roman", Font.PLAIN,20));
         waitMsg.setForeground(Color.WHITE);
-        ip_address = new RoundButton("IP-Address");
+        ip_address = new RoundButton("IP Address");
 
         hamburger = new JButton("\u2261");
         hamburger.setFont(new Font("Times New Roman", Font.BOLD,38));
