@@ -6,19 +6,14 @@ import java.awt.Component;
 public class SquareGridPanel extends JPanel {
     /**
     * Creates a quadratic playground
-    * 
-    * Attributes
-    * @param rows      Reihe
-    * @param cols      Spalte
-    * @param gap       Abstand
     */
     private final int rows;
     private final int cols;
     private final int gap = 2;
     /**
      * Constructor of 'SquareGridPanel'
-     * @param rows
-     * @param cols
+     * @param rows      rows
+     * @param cols      columns
      */
     public SquareGridPanel(int rows, int cols) {
         this.rows = rows;

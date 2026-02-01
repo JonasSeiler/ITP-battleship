@@ -8,33 +8,7 @@ import src.logic.*;
  * @author Max Steingräber
  */
 public class Battlescreen extends JPanel {
-    /**
-     * Game Attributes
-     * 
-     * Field Data
-     * @param pCells                player cells
-     * @param eCells                enemy cells
-     * @param pField                player field
-     * @param eField                enemy field
-     * @param frame                 mainframe (window)
-     * @param gameSaved             true -> game was saved
-     *                              false -> game wasn't saved
-     * @param saveButton            save button
-     * @param confirmShotButton     confirms shot
-     * @param selectedX             selected x-Coordinate
-     * @param selectedY             selected y-Coordinate
-     * @param selectedEnemyCell     selected enemy cell
-     * 
-     * Shared Data
-     * @param COR                   coordinates (x, y) of each ship
-     * @param SHIPS                 ship length of each ship
-     * @param DIR                   direction (0 -> horizontal, 1 -> vertical) of each ship
-     * @param status                saves return value of 'send_shot' method
-     *                              (0 -> miss   1 -> hit  2 -> sunk)
-     * @param gridSize              saves shared grid size
-     * @param gLogic                contains game logic and 'send_shot' method
-     * 
-     */
+    /*--field data--*/
     private JButton[][] pCells;
     private JButton[][] eCells;
     private JPanel pField;
@@ -47,17 +21,36 @@ public class Battlescreen extends JPanel {
     private int selectedY = -1;
     private JButton selectedEnemyCell = null;
     
+    /**
+     * coordinates (x, y) of each ship
+     */
     public Coordinate[] COR;
+    /**
+     * ship length of each ship
+     */
     public int[] SHIPS;
+    /**
+     * direction (0 -> horizontal, 1 -> vertical) of each ship
+     */
     public boolean[] DIR;
+    /**
+     * saves return value of 'send_shot' method
+     * (0 -> miss   1 -> hit  2 -> sunk)
+     */
     public int status = 0;
+    /**
+     * saves shared grid size
+     */
     public int gridSize;
+    /**
+     * contains game logic and 'send_shot' method
+     */
     public Game gLogic;
     /**
      * Constructor of 'battlescreen'
      * 
      * @param frame         mainframe (window), which contains all screens and manages them
-     * @param c             coordinaten (x, y) of each ship
+     * @param c             coordinates (x, y) of each ship
      * @param s             ship length of each ship
      * @param d             direction (false -> vertical, true -> horizontal) of each ship
      * @param inGridSize    shared grid size of {@link hostpregamescreen}

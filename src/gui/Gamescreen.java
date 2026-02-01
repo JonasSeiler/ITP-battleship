@@ -9,49 +9,10 @@ import src.logic.*;
  * @author Max Steingräber
  */
 public class Gamescreen extends JPanel {
-    /**
-     * Game Attributes
-     * 
-     * Field Data
-     * @param pCells                player cells
-     * @param eCells                enemy cells
-     * @param pField                player field
-     * @param eField                enemy field
-     * @param placedShipCount   
-     * 
-     * Ship-Processing-Data
-     * @param horizontal            direction (0 -> horizontal, 1 -> vertical)
-     * @param currentShipSize       currently selected ship-size
-     * @param occupied              array, that stores ship-coordinates
-     *                              (0 -> cell free  1 -> cell occupied)   
-     * @param shipsLeft             remaining ships per size
-     * @param hoverRow              rotation preview (row)
-     * @param hoverCol              rotation preview (column)
-     * @param shipSelector          selection box for ship-size
-     * @param frame                 mainframe (window)
-     * @param exitButton            exits the game
-     * 
-     * Shared Data
-     * @param COR                   coordinates (x, y) of each ship
-     * @param SHIPS                 ship length of each ship
-     * @param DIR                   direction (0 -> horizontal, 1 -> vertical) of each ship
-     * @param status                saves return value of 'send_shot' method
-     *                              (0 -> miss   1 -> hit  2 -> sunk)
-     * @param gridSize              saves shared grid size
-     * @param gLogic                contains game logic and 'send_shot' method
-     * @param startButton           startButton
-     * 
-     */
     private JButton[][] pCells;
     private JButton[][] eCells;
     public JPanel pField;
     private JPanel eField;
-    private int placedShipCount = 0;
-
-    private boolean horizontal = true;
-    private int currentShipSize = 2;
-    private boolean[][] occupied;
-    private int[] shipsLeft;
     private int hoverRow = -1;
     private int hoverCol = -1;
     private JComboBox<String> shipSelector;
@@ -59,11 +20,55 @@ public class Gamescreen extends JPanel {
     private JButton exitButton;
     private JButton startButton;
 
+    /**
+     * coordinates (x, y) of each ship
+     */
     public Coordinate[] COR;
+    /**
+     * ship length of each ship
+     */
     public int[] SHIPS;
+    /**
+     * direction (0 -> horizontal, 1 -> vertical) of each ship
+     */
     public boolean[] DIR;
+    /**
+     * saves shared grid size
+     */
     public int gridSize;
+    /**
+     * index of shared ship-format -> COR[i] -> SHIPS[i] -> DIR[i]
+     */
+    private int placedShipCount = 0;
+    /**
+     * direction (false -> horizontal, true -> vertical)
+     */
+    private boolean horizontal = true;
+    /**
+     * currently selected ship-size
+     */
+    private int currentShipSize = 2;
+    /**
+     * array, that stores ship-coordinates
+     * (0 -> cell free  1 -> cell occupied)
+     */
+    private boolean[][] occupied;
+    /**
+     * ship-edit-format
+     * ships[0] = 2-sized ships
+     * ships[1] = 3-sized ships
+     * ships[2] = 4-sized ships
+     * ships[3] = 5-sized ships
+     */
     public int[] ships;
+    /**
+     * ship-edit-format -> how many ships are left
+     * ships[0] = 2-sized ships
+     * ships[1] = 3-sized ships
+     * ships[2] = 4-sized ships
+     * ships[3] = 5-sized ships
+     */
+    private int[] shipsLeft;
     /**
      * Constructor 'gamescreen'
      * 
@@ -81,11 +86,7 @@ public class Gamescreen extends JPanel {
         DIR = new boolean[totalShips];
         SHIPS = new int[totalShips];
 
-        /*--converts to ship-edit-format--
-        --ships[0] = 2-sized--
-        --ships[1] = 3-sized--
-        --ships[2] = 4-sized--
-        --ships[3] = 5-sized--*/
+        /*--converts to ship-edit-format--*/
         ships = convertShipArray(inShips);
 
         /*--layoutmanager 'this'-Panel--*/
